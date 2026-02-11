@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Build Foundation AWS 2026 - The Build Fellowship</title>
+
+    <!-- Google Fonts - similar to presentation fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* ===========================================
+           CSS VARIABLES - Edit these to change theme
+           =========================================== */
+        :root {
+            /* Brand Colors */
+            --primary-blue: #2d2d7a;
+            --primary-purple: #c4a8ff;
+            --light-purple: #d4b8ff;
+            --lavender: #c9b3f5;
+            --lavender-bg: #c9b3f5;
+            --dark-blue: #1e1e5a;
+            --accent-orange: #f5a623;
+            --accent-teal: #4db6ac;
+
+            /* Text Colors */
+            --text-white: #ffffff;
+            --text-dark: #2d2d7a;
+            --text-gray: #666666;
+
+            /* Font Families */
+            --font-display: 'Playfair Display', Georgia, serif;
+            --font-heading: 'Poppins', 'Inter', sans-serif;
+            --font-body: 'Inter', -apple-system, sans-serif;
+        }
+
+        /* ===========================================
+           BASE STYLES
+           =========================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: linear-gradient(135deg, #4a6cf7 0%, #7c4dff 50%, #b47cff 100%);
+            color: var(--text-white);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ===========================================
+           HEADER
+           =========================================== */
+        .header {
+            text-align: center;
+            padding: 80px 60px 40px;
+        }
+
+        .the-label {
+            font-family: var(--font-display);
+            font-size: 28px;
+            font-weight: 400;
+            margin-bottom: -10px;
+        }
+
+        .main-title {
+            font-family: var(--font-display);
+            font-size: 72px;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-family: var(--font-body);
+            font-size: 16px;
+            letter-spacing: 3px;
+            margin-top: 20px;
+            text-transform: uppercase;
+            opacity: 0.9;
+        }
+
+        /* ===========================================
+           CONTENT
+           =========================================== */
+        .content {
+            flex: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 60px;
+            width: 100%;
+        }
+
+        .section-title {
+            font-family: var(--font-heading);
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            display: block;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            text-align: center;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-title {
+            font-family: var(--font-heading);
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .card-description {
+            font-size: 16px;
+            color: var(--text-gray);
+            line-height: 1.5;
+            text-align: center;
+        }
+
+        /* ===========================================
+           FOOTER
+           =========================================== */
+        .footer {
+            padding: 30px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .footer-logos {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .footer-logo {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .footer-logo.build {
+            font-style: italic;
+        }
+
+        .footer-logo.openavenues {
+            color: #c4a8ff;
+            font-family: var(--font-heading);
+            font-weight: 600;
+        }
+
+        .footer-right {
+            text-align: right;
+        }
+
+        .footer-copyright {
+            font-size: 11px;
+            opacity: 0.8;
+        }
+
+        .footer-date {
+            font-size: 11px;
+            opacity: 0.8;
+            margin-top: 2px;
+        }
+
+        /* ===========================================
+           RESPONSIVE
+           =========================================== */
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 48px;
+            }
+
+            .cards-container {
+                grid-template-columns: 1fr;
+            }
+
+            .footer {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .footer-right {
+                text-align: center;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="the-label">The</div>
+        <div class="main-title">Build Fellowship</div>
+        <div class="subtitle">AWS Foundation Course - 2026</div>
+    </div>
+
+    <div class="content">
+        <h2 class="section-title">Course Materials</h2>
+
+        <div class="cards-container">
+            <a href="week1.html" class="card">
+                <div class="card-icon">📚</div>
+                <div class="card-title">Week 1</div>
+                <div class="card-description">Introduction to the Project, general discussions and local setup</div>
+            </a>
+
+            <a href="local-environment-setup.html" class="card">
+                <div class="card-icon">⚙️</div>
+                <div class="card-title">Local Environment Setup</div>
+                <div class="card-description">Setup instructions for Terraform and AWS CLI</div>
+            </a>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="footer-logos">
+            <span class="footer-logo build">The Build Fellowship</span>
+            <span class="footer-logo openavenues">OpenAvenues</span>
+        </div>
+        <div class="footer-right">
+            <span class="footer-copyright">&copy; The Build Fellowship 2026</span>
+            <div class="footer-date">February 2026</div>
+        </div>
+    </div>
+</body>
+</html>
