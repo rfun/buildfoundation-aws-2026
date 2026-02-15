@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 3: IAM Users, Groups, and Least Privilege Policies - The Build Fellowship</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="lab-styles.css">
+    <style>
+        :root {
+            --pillar-color: #e53935;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="index.html" class="back-link">Back to Labs</a>
+        <div class="pillar-badge">Security</div>
+        <h1 class="page-title">Lab 3: IAM Users, Groups, and Least Privilege Policies</h1>
+        <div class="lab-meta">
+            <span>&#9201; ~20 minutes</span>
+            <span>&#9989; Free Tier</span>
+            <span>&#128218; AWS Console Only</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <h2>Overview</h2>
+        <p class="overview-text">
+            AWS Identity and Access Management (IAM) is the foundation of security in AWS. In this lab, you'll create an IAM group with a read-only policy, add a user to it, and use the IAM Policy Simulator to verify that least privilege access works correctly. This connects to the Security pillar principle <em>"Implement a strong identity foundation"</em> from the Week 2 lecture.
+        </p>
+
+        <h2>Objectives</h2>
+        <ul class="objectives-list">
+            <li>Create IAM groups and users to organize identities</li>
+            <li>Attach AWS managed policies to implement least privilege</li>
+            <li>Use the IAM Policy Simulator to test and verify access permissions</li>
+            <li>Understand the difference between allowed and denied actions under ReadOnlyAccess</li>
+        </ul>
+
+        <h2>Prerequisites</h2>
+        <div class="prereq-box">
+            <ul>
+                <li>An AWS account (free tier is sufficient)</li>
+                <li>Signed in to the AWS Management Console</li>
+                <li>Signed in as a user with IAM administrative permissions</li>
+            </ul>
+        </div>
+
+        <h2>Step-by-Step Instructions</h2>
+
+        <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+                <strong>Navigate to IAM in the AWS Console.</strong><br>
+                In the AWS Console, use the search bar at the top and type <code>IAM</code>. Click on the IAM service to open it.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+                <strong>Create a new User Group.</strong><br>
+                Go to <strong>User Groups</strong> in the left sidebar. Click <strong>Create group</strong>. For the group name, enter <code>ReadOnlyTeam</code>.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+                <strong>Attach the ReadOnlyAccess policy.</strong><br>
+                In the <strong>"Attach permissions policies"</strong> section, search for and select <code>ReadOnlyAccess</code>. Click <strong>Create group</strong>.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">4</div>
+            <div class="step-content">
+                <strong>Create a new IAM user.</strong><br>
+                Go to <strong>Users</strong> in the left sidebar. Click <strong>Create user</strong>. For the user name, enter <code>lab-student</code>.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">5</div>
+            <div class="step-content">
+                <strong>Skip console access.</strong><br>
+                Do <strong>NOT</strong> check "Provide user access to the AWS Management Console" &mdash; we're just creating the identity for this lab exercise.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">6</div>
+            <div class="step-content">
+                <strong>Add user to the group.</strong><br>
+                Click <strong>Next</strong>. Under <strong>Add user to group</strong>, select <code>ReadOnlyTeam</code>. Click <strong>Create user</strong>.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">7</div>
+            <div class="step-content">
+                <strong>Open the IAM Policy Simulator.</strong><br>
+                Navigate to the IAM Policy Simulator by searching <code>Policy Simulator</code> in the IAM console, or use the left sidebar.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">8</div>
+            <div class="step-content">
+                <strong>Select the lab-student user.</strong><br>
+                In the Policy Simulator, select <strong>Users</strong> &rarr; <code>lab-student</code> from the left panel.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">9</div>
+            <div class="step-content">
+                <strong>Simulate a read action on S3.</strong><br>
+                Select service <strong>Amazon S3</strong> &rarr; select action <code>GetObject</code> &rarr; click <strong>Run Simulation</strong>. Observe that the result is <strong>"allowed"</strong>.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">10</div>
+            <div class="step-content">
+                <strong>Simulate a destructive action on S3.</strong><br>
+                Clear the selection, then select action <code>DeleteBucket</code> &rarr; click <strong>Run Simulation</strong>. Observe that the result is <strong>"denied"</strong>.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">11</div>
+            <div class="step-content">
+                <strong>Simulate a read action on EC2.</strong><br>
+                Change service to <strong>Amazon EC2</strong> &rarr; select <code>DescribeInstances</code> &rarr; click <strong>Run Simulation</strong>. Observe the result is <strong>"allowed"</strong> (read action).
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">12</div>
+            <div class="step-content">
+                <strong>Simulate a destructive action on EC2.</strong><br>
+                Select <code>TerminateInstances</code> &rarr; click <strong>Run Simulation</strong>. Observe the result is <strong>"denied"</strong> (write/destructive action).
+            </div>
+        </div>
+
+        <div class="note-box">
+            <strong>Note:</strong> Notice the pattern: ReadOnlyAccess allows all <code>Describe*</code>, <code>Get*</code>, <code>List*</code> actions (read operations) but denies <code>Put*</code>, <code>Create*</code>, <code>Delete*</code>, <code>Terminate*</code> actions (write operations). This is least privilege in action &mdash; granting only the minimum permissions needed.
+        </div>
+
+        <h2>Completion Screenshot</h2>
+        <div class="screenshot-box">
+            <strong>&#128247; What to capture:</strong>
+            <p>
+                Take a screenshot of the <strong>IAM Policy Simulator</strong> showing:
+            </p>
+            <ul style="margin-top: 8px; margin-left: 20px;">
+                <li>At least one <strong>"allowed"</strong> and one <strong>"denied"</strong> result for the <code>lab-student</code> user</li>
+                <li>The user name and policy visible in the left panel</li>
+            </ul>
+            <p style="margin-top: 12px;"><strong>Important:</strong> Your screenshot must include your AWS account name/ID visible in the top right corner of the AWS Console to verify completion.</p>
+        </div>
+
+        <h2>Cleanup</h2>
+        <div class="cleanup-box">
+            <strong>&#128465; Cleanup Steps:</strong>
+            <ol>
+                <li>Go to <strong>IAM</strong> &rarr; <strong>Users</strong> &rarr; select <code>lab-student</code> &rarr; <strong>Delete</strong> &rarr; confirm by typing the username</li>
+                <li>Go to <strong>IAM</strong> &rarr; <strong>User Groups</strong> &rarr; select <code>ReadOnlyTeam</code> &rarr; <strong>Delete</strong> &rarr; confirm</li>
+            </ol>
+        </div>
+
+        <h2>Key Takeaways</h2>
+        <ul class="takeaways-list">
+            <li>IAM groups let you manage permissions for multiple users efficiently rather than per-user</li>
+            <li>AWS managed policies like ReadOnlyAccess provide pre-built least privilege templates</li>
+            <li>The Policy Simulator is a powerful tool for testing permissions without making actual API calls</li>
+            <li>Least privilege means granting only the permissions needed &mdash; read-only users shouldn't be able to delete resources</li>
+        </ul>
+
+        <h2>Additional Resources</h2>
+        <div class="resources-box">
+            <strong>&#128218; Further Reading:</strong>
+            <ul>
+                <li><a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html" target="_blank">AWS IAM User Guide</a> &mdash; Comprehensive IAM documentation</li>
+                <li><a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html" target="_blank">IAM Best Practices</a> &mdash; Security recommendations from AWS</li>
+                <li><a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html" target="_blank">IAM Policies and Permissions</a> &mdash; Understanding policy structure</li>
+                <li><a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_testing-policies.html" target="_blank">Testing IAM Policies with Policy Simulator</a> &mdash; Validating least privilege access</li>
+                <li><a href="https://aws.amazon.com/iam/features/analyze-access/" target="_blank">IAM Access Analyzer</a> &mdash; Identify unintended access to resources</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="footer-logos">
+            <span class="footer-logo build">The Build Fellowship</span>
+            <span class="footer-logo openavenues">OpenAvenues</span>
+        </div>
+        <div class="footer-right">
+            <span class="footer-copyright">&copy; The Build Fellowship 2026</span>
+            <div class="footer-date">February 2026</div>
+        </div>
+    </div>
+</body>
+</html>

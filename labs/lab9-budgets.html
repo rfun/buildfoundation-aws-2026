@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 9: Setting Up AWS Budgets and Free Tier Tracking - The Build Fellowship</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="lab-styles.css">
+    <style>
+        :root {
+            --pillar-color: #43a047;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="index.html" class="back-link">Back to Labs</a>
+        <div class="pillar-badge">Cost Optimization</div>
+        <h1 class="page-title">Lab 9: Setting Up AWS Budgets and Free Tier Tracking</h1>
+        <div class="lab-meta">
+            <span>&#9201; ~20 minutes</span>
+            <span>&#9989; Free Tier</span>
+            <span>&#128218; AWS Console Only</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <h2>Overview</h2>
+        <p class="overview-text">
+            AWS Budgets is a proactive financial planning tool that lets you set custom cost thresholds and receive alerts
+            before you overspend. In this lab, you'll explore the Billing Dashboard, check your free tier usage, and create
+            two budgets &mdash; a zero-spend alert and a monthly cost budget. This connects to the Cost Optimization pillar
+            principles <em>"Implement cloud financial management"</em> and <em>"Analyze and attribute expenditure"</em>
+            from the Week 2 lecture.
+        </p>
+
+        <h2>Objectives</h2>
+        <ul class="objectives-list">
+            <li>Navigate the AWS Billing Dashboard and understand your current spending</li>
+            <li>Track free tier usage to avoid unexpected charges</li>
+            <li>Create a zero-spend budget alert for immediate notification of any charges</li>
+            <li>Set up a monthly cost budget with a percentage-based threshold alert</li>
+        </ul>
+
+        <h2>Prerequisites</h2>
+        <div class="prereq-box">
+            <ul>
+                <li>An AWS account (free tier is sufficient)</li>
+                <li>Signed in to the AWS Management Console as a root user or IAM user with billing access</li>
+                <li>Note: IAM users need explicit billing access &mdash; the root account has it by default</li>
+            </ul>
+        </div>
+
+        <h2>Step-by-Step Instructions</h2>
+
+        <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+                <strong>Navigate to Billing and Cost Management.</strong><br>
+                In the AWS Console, use the search bar at the top and type <code>Billing</code>. Click on <strong>Billing and Cost Management</strong> to open it.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+                <strong>Review the Billing Dashboard.</strong><br>
+                On the Billing Dashboard, review: <strong>Month-to-date spend</strong>, <strong>top services by cost</strong>, and the <strong>cost trend chart</strong>. This is your financial command center.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+                <strong>Check Free Tier usage.</strong><br>
+                Click <strong>Free Tier</strong> in the left sidebar and review your current free tier usage for each service. This shows how much of each free tier allowance you've consumed.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">4</div>
+            <div class="step-content">
+                <strong>Navigate to Budgets.</strong><br>
+                Click <strong>Budgets</strong> in the left sidebar, then click <strong>Create a budget</strong>.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">5</div>
+            <div class="step-content">
+                <strong>Select the Zero Spend budget template.</strong><br>
+                Select <strong>Use a template</strong>, then choose <strong>Zero spend budget</strong>.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">6</div>
+            <div class="step-content">
+                <strong>Name your budget.</strong><br>
+                Enter <code>ZeroSpendAlert</code> as the budget name.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">7</div>
+            <div class="step-content">
+                <strong>Add email and create the budget.</strong><br>
+                Add your email address in the recipients field, then click <strong>Create budget</strong>.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">8</div>
+            <div class="step-content">
+                <strong>Start creating a second budget.</strong><br>
+                Back on the Budgets page, click <strong>Create a budget</strong> again.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">9</div>
+            <div class="step-content">
+                <strong>Select the Monthly Cost budget template.</strong><br>
+                Select <strong>Use a template</strong>, then choose <strong>Monthly cost budget</strong>.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">10</div>
+            <div class="step-content">
+                <strong>Configure the monthly cost budget.</strong><br>
+                Enter <code>MonthlyCostBudget</code> as the budget name. Set the budget amount to <strong>$10</strong>. Add your email address in the recipients field, then click <strong>Create budget</strong>.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">11</div>
+            <div class="step-content">
+                <strong>Review the Budgets dashboard.</strong><br>
+                You should see both budgets listed with their status and thresholds. Verify that <strong>ZeroSpendAlert</strong> and <strong>MonthlyCostBudget</strong> are both visible and active.
+            </div>
+        </div>
+
+        <div class="note-box">
+            <strong>Note:</strong> The Zero Spend budget alerts you the moment ANY charge appears &mdash; perfect for students who want to stay strictly in the free tier. The Monthly Cost budget alerts at 85% and 100% of your threshold, giving you time to react before hitting your limit.
+        </div>
+
+        <div class="note-box">
+            <strong>Note:</strong> How is this different from Lab 2's billing alarm? Lab 2 used a CloudWatch alarm (reactive operational monitoring &mdash; alerts AFTER a metric crosses a threshold). AWS Budgets (this lab) is a proactive financial planning tool with forecasting capabilities &mdash; it can alert you when your FORECASTED spend is expected to exceed the budget, even before you actually hit the threshold.
+        </div>
+
+        <h2>Completion Screenshot</h2>
+        <div class="screenshot-box">
+            <strong>&#128247; What to capture:</strong>
+            <p>
+                Take a screenshot of the <strong>AWS Budgets</strong> page showing both budgets (<strong>ZeroSpendAlert</strong> and <strong>MonthlyCostBudget</strong>) with their status, budget amounts, and alert thresholds visible in the list.
+            </p>
+            <p style="margin-top: 12px;"><strong>Important:</strong> Your screenshot must include your AWS account name/ID visible in the top right corner of the AWS Console to verify completion.</p>
+        </div>
+
+        <h2>Cleanup</h2>
+        <div class="cleanup-box">
+            <strong>&#128465; Cleanup Steps:</strong>
+            <p style="margin-top: 8px;">
+                <strong>Recommended: Keep both budgets active</strong> &mdash; they're useful for ongoing cost monitoring and the first 2 budgets per month are free.
+            </p>
+            <p style="margin-top: 12px;">If you want to remove them:</p>
+            <ol>
+                <li>Navigate to <strong>Budgets</strong></li>
+                <li>Select <strong>ZeroSpendAlert</strong> &rarr; Actions &rarr; Delete &rarr; confirm</li>
+                <li>Select <strong>MonthlyCostBudget</strong> &rarr; Actions &rarr; Delete &rarr; confirm</li>
+            </ol>
+        </div>
+
+        <h2>Key Takeaways</h2>
+        <ul class="takeaways-list">
+            <li>AWS Budgets enables proactive financial management &mdash; a core Cost Optimization practice</li>
+            <li>The zero-spend budget is a safety net for free tier users to catch any unexpected charges immediately</li>
+            <li>Percentage-based alerts give you warning before hitting your limits, not just after</li>
+            <li>Combining budgets with the Free Tier dashboard gives you complete visibility into your AWS spending</li>
+        </ul>
+
+        <h2>Additional Resources</h2>
+        <div class="resources-box">
+            <strong>&#128218; Further Reading:</strong>
+            <ul>
+                <li><a href="https://docs.aws.amazon.com/cost-management/latest/userguide/budgets-managing-costs.html" target="_blank">AWS Budgets User Guide</a> &mdash; Complete budgets and alerts documentation</li>
+                <li><a href="https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/tracking-free-tier-usage.html" target="_blank">Tracking Free Tier Usage</a> &mdash; Monitor your free tier consumption</li>
+                <li><a href="https://docs.aws.amazon.com/cost-management/latest/userguide/ce-what-is.html" target="_blank">AWS Cost Explorer</a> &mdash; Visualizing and analyzing costs</li>
+                <li><a href="https://docs.aws.amazon.com/wellarchitected/latest/cost-optimization-pillar/welcome.html" target="_blank">Cost Optimization Pillar Whitepaper</a> &mdash; Best practices for managing costs</li>
+                <li><a href="https://aws.amazon.com/aws-cost-management/aws-cost-optimization/" target="_blank">AWS Cost Optimization Resources</a> &mdash; Tools and strategies for reducing spend</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="footer-logos">
+            <span class="footer-logo build">The Build Fellowship</span>
+            <span class="footer-logo openavenues">OpenAvenues</span>
+        </div>
+        <div class="footer-right">
+            <span class="footer-copyright">&copy; The Build Fellowship 2026</span>
+            <div class="footer-date">February 2026</div>
+        </div>
+    </div>
+</body>
+</html>

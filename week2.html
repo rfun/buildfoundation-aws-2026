@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 2: AWS Well-Architected Framework</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* ===========================================
+           CSS VARIABLES - Edit these to change theme
+           =========================================== */
+        :root {
+            /* Brand Colors */
+            --primary-blue: #2d2d7a;
+            --primary-purple: #c4a8ff;
+            --light-purple: #d4b8ff;
+            --lavender: #c9b3f5;
+            --lavender-bg: #c9b3f5;
+            --dark-blue: #1e1e5a;
+            --accent-orange: #f5a623;
+            --accent-teal: #4db6ac;
+
+            /* Text Colors */
+            --text-white: #ffffff;
+            --text-dark: #2d2d7a;
+            --text-gray: #666666;
+
+            /* Font Families */
+            --font-display: 'Playfair Display', Georgia, serif;
+            --font-heading: 'Poppins', 'Inter', sans-serif;
+            --font-body: 'Inter', -apple-system, sans-serif;
+        }
+
+        /* ===========================================
+           BASE STYLES
+           =========================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: #1a1a2e;
+            color: var(--text-white);
+            line-height: 1.5;
+        }
+
+        /* ===========================================
+           PRESENTATION CONTAINER
+           =========================================== */
+        .presentation {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+            display: none;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slide::before {
+            content: none;
+        }
+
+        /* ===========================================
+           FOOTER (appears on most slides)
+           =========================================== */
+        .footer {
+            position: absolute;
+            bottom: 80px;
+            left: 40px;
+            right: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+        }
+
+        .footer-logos {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .footer-logo {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .footer-logo.build {
+            font-style: italic;
+        }
+
+        .footer-logo.openavenues {
+            color: #7c4dff;
+            font-family: var(--font-heading);
+            font-weight: 600;
+        }
+
+        .footer-right {
+            text-align: right;
+        }
+
+        .footer-copyright {
+            font-size: 11px;
+            opacity: 0.8;
+        }
+
+        .footer-date {
+            font-size: 11px;
+            opacity: 0.8;
+            margin-top: 2px;
+        }
+
+        /* ===========================================
+           SLIDE TYPE: Title (Gradient Background)
+           =========================================== */
+        .slide-title {
+            background: linear-gradient(135deg, #4a6cf7 0%, #7c4dff 50%, #b47cff 100%);
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 60px;
+        }
+
+        .slide-title .the-label {
+            font-family: var(--font-display);
+            font-size: 28px;
+            font-weight: 400;
+            margin-bottom: -10px;
+        }
+
+        .slide-title .main-title {
+            font-family: var(--font-display);
+            font-size: 96px;
+            font-weight: 700;
+            line-height: 1.1;
+        }
+
+        .slide-title .subtitle {
+            font-family: var(--font-body);
+            font-size: 16px;
+            letter-spacing: 3px;
+            margin-top: 30px;
+            text-transform: uppercase;
+        }
+
+        /* ===========================================
+           SLIDE TYPE: Section Header (Light Purple)
+           =========================================== */
+        .slide-section-light {
+            background: var(--lavender-bg);
+            padding: 60px 80px;
+            justify-content: center;
+        }
+
+        .slide-section-light .brand-header {
+            font-family: var(--font-display);
+            font-style: italic;
+            font-size: 24px;
+            color: var(--dark-blue);
+            margin-bottom: 20px;
+        }
+
+        .slide-section-light .section-title {
+            font-family: var(--font-heading);
+            font-size: 80px;
+            font-weight: 700;
+            color: var(--text-white);
+        }
+
+        .slide-section-light .section-date {
+            position: absolute;
+            bottom: 40px;
+            left: 60px;
+            font-size: 14px;
+            color: var(--dark-blue);
+        }
+
+        /* ===========================================
+           SLIDE TYPE: Section Header (Dark Blue)
+           =========================================== */
+        .slide-section-dark {
+            background: var(--primary-blue);
+            padding: 60px 80px;
+            justify-content: center;
+        }
+
+        .slide-section-dark .section-title {
+            font-family: var(--font-heading);
+            font-size: 80px;
+            font-weight: 700;
+            color: var(--light-purple);
+            line-height: 1.2;
+        }
+
+        /* ===========================================
+           SLIDE TYPE: Agenda
+           =========================================== */
+        .slide-agenda {
+            background: var(--primary-blue);
+            padding: 60px 80px;
+            flex-direction: row;
+            align-items: center;
+        }
+
+        .slide-agenda .agenda-title {
+            font-family: var(--font-heading);
+            font-size: 72px;
+            font-weight: 700;
+            color: var(--light-purple);
+            width: 35%;
+        }
+
+        .slide-agenda .agenda-list {
+            list-style: none;
+            width: 65%;
+        }
+
+        .slide-agenda .agenda-list li {
+            font-size: 24px;
+            color: var(--light-purple);
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .slide-agenda .agenda-list li::before {
+            content: '';
+            width: 12px;
+            height: 12px;
+            background: var(--light-purple);
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        /* ===========================================
+           SLIDE TYPE: Content (White Background)
+           =========================================== */
+        .slide-content {
+            background: #ffffff;
+            padding: 60px 80px;
+            justify-content: center;
+        }
+
+        .slide-content .content-title {
+            font-family: var(--font-heading);
+            font-size: 52px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+
+        .slide-content .content-subtitle {
+            font-family: var(--font-heading);
+            font-size: 18px;
+            font-weight: 600;
+            font-style: italic;
+            color: var(--text-dark);
+            margin-bottom: 30px;
+        }
+
+        .slide-content .content-description {
+            font-size: 18px;
+            color: var(--text-dark);
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .slide-content .content-reading,
+        .slide-section-dark .content-reading,
+        .slide-callout .content-reading {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(0,0,0,0.1);
+            font-size: 13px;
+        }
+
+        .slide-section-dark .content-reading {
+            border-top-color: rgba(255,255,255,0.2);
+        }
+
+        .content-reading .reading-label {
+            font-family: var(--font-heading);
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+            opacity: 0.7;
+        }
+
+        .slide-content .content-reading .reading-label,
+        .slide-callout .content-reading .reading-label {
+            color: var(--text-dark);
+        }
+
+        .content-reading a {
+            font-size: 13px;
+            text-decoration: none;
+            margin-right: 20px;
+            transition: opacity 0.2s;
+        }
+
+        .content-reading a:hover {
+            text-decoration: underline;
+            opacity: 0.8;
+        }
+
+        .slide-content .content-reading a,
+        .slide-callout .content-reading a {
+            color: #5a4fcf;
+        }
+
+        .slide-section-dark .content-reading a {
+            color: var(--light-purple);
+        }
+
+        .slide-content .content-list {
+            list-style: none;
+            margin-top: 20px;
+        }
+
+        .slide-content .content-list li {
+            font-size: 20px;
+            color: var(--text-dark);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            line-height: 1.5;
+        }
+
+        .slide-content .content-list li::before {
+            content: '';
+            width: 10px;
+            height: 10px;
+            background: var(--text-dark);
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-top: 6px;
+        }
+
+        /* ===========================================
+           SLIDE TYPE: Two Column Layout
+           =========================================== */
+        .slide-two-column {
+            background: #ffffff;
+            padding: 60px 80px;
+            justify-content: center;
+        }
+
+        .slide-two-column .column-container {
+            display: flex;
+            gap: 60px;
+            margin-top: 20px;
+        }
+
+        .slide-two-column .column {
+            flex: 1;
+        }
+
+        .slide-two-column .column-title {
+            font-family: var(--font-heading);
+            font-size: 52px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .slide-two-column .week-item {
+            margin-bottom: 25px;
+        }
+
+        .slide-two-column .week-label {
+            font-family: var(--font-heading);
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-dark);
+            text-decoration: underline;
+            margin-bottom: 5px;
+        }
+
+        .slide-two-column .week-desc {
+            font-size: 18px;
+            color: var(--text-dark);
+            line-height: 1.5;
+        }
+
+        /* ===========================================
+           SLIDE TYPE: Image Background
+           =========================================== */
+        .slide-image-bg {
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-color: #1a1a2e;
+        }
+
+        .slide-image-bg .overlay-text {
+            position: absolute;
+            background: rgba(0,0,0,0.7);
+            padding: 20px;
+            color: white;
+        }
+
+        /* ===========================================
+           SLIDE TYPE: Quote/Callout Box
+           =========================================== */
+        .slide-callout {
+            background: var(--lavender-bg);
+            padding: 60px 80px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .callout-box {
+            background: var(--accent-orange);
+            padding: 40px 60px;
+            border-radius: 8px;
+            max-width: 80%;
+        }
+
+        .callout-box .callout-title {
+            font-family: var(--font-heading);
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--text-white);
+            margin-bottom: 20px;
+        }
+
+        .callout-box .callout-text {
+            font-size: 18px;
+            color: var(--text-white);
+            line-height: 1.5;
+        }
+
+        /* ===========================================
+           SLIDE TYPE: Table/Checklist
+           =========================================== */
+        .slide-table {
+            background: #5a7fdc;
+            padding: 60px 80px;
+            justify-content: center;
+        }
+
+        .slide-table .table-title {
+            font-family: var(--font-heading);
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--dark-blue);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .table-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 2px;
+            background: #4a6fd0;
+        }
+
+        .table-row {
+            display: contents;
+        }
+
+        .table-cell {
+            background: #5a7fdc;
+            padding: 12px 15px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .table-cell.header {
+            font-weight: 600;
+            color: var(--dark-blue);
+        }
+
+        .check-icon {
+            width: 20px;
+            height: 20px;
+            background: var(--accent-orange);
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+        }
+
+        /* ===========================================
+           SLIDE TYPE: Cards Layout
+           =========================================== */
+        .slide-cards {
+            background: #5a7fdc;
+            padding: 60px 80px;
+            justify-content: center;
+        }
+
+        .slide-cards .cards-title {
+            font-family: var(--font-heading);
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--dark-blue);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .cards-title span {
+            color: var(--accent-orange);
+        }
+
+        .cards-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 200px;
+            text-align: center;
+        }
+
+        .card-icon {
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            font-size: 48px;
+        }
+
+        .card-title {
+            font-family: var(--font-heading);
+            font-size: 14px;
+            font-weight: 700;
+            font-style: italic;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+
+        .card-text {
+            font-size: 12px;
+            color: var(--text-gray);
+            line-height: 1.4;
+        }
+
+        /* ===========================================
+           SLIDE TYPE: Benefits/Features
+           =========================================== */
+        .slide-benefits {
+            background: var(--primary-blue);
+            padding: 60px 80px;
+            justify-content: center;
+        }
+
+        .benefit-row {
+            background: #6b6b8d;
+            margin-bottom: 15px;
+            padding: 20px 30px;
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .benefit-icon {
+            width: 60px;
+            height: 60px;
+            font-size: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .benefit-content {
+            flex: 1;
+        }
+
+        .benefit-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .benefit-title .highlight {
+            color: #4caf50;
+        }
+
+        .benefit-title .highlight-orange {
+            color: var(--accent-orange);
+        }
+
+        .benefit-title .highlight-blue {
+            color: #64b5f6;
+        }
+
+        .benefit-text {
+            font-size: 14px;
+            color: #ccc;
+        }
+
+        /* ===========================================
+           SLIDE NAVIGATION BUTTONS
+           =========================================== */
+        .slide-nav {
+            position: fixed;
+            bottom: 30px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 40px;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        .slide-nav button {
+            pointer-events: auto;
+            background: rgba(45, 45, 122, 0.85);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 12px 28px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: var(--font-body);
+            font-size: 16px;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            transition: all 0.2s ease;
+        }
+
+        .slide-nav button:hover {
+            background: rgba(30, 30, 90, 0.95);
+            border-color: var(--accent-orange);
+        }
+
+        .slide-nav button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .slide-nav button:disabled:hover {
+            background: rgba(45, 45, 122, 0.85);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .slide-counter {
+            pointer-events: auto;
+            font-family: var(--font-body);
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+            background: rgba(0, 0, 0, 0.5);
+            padding: 8px 16px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        /* ===========================================
+           BACK TO HOME LINK
+           =========================================== */
+        .back-home {
+            position: fixed;
+            top: 30px;
+            left: 40px;
+            z-index: 1001;
+            pointer-events: auto;
+        }
+
+        .back-home a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-family: var(--font-body);
+            font-size: 14px;
+            font-weight: 500;
+            background: rgba(45, 45, 122, 0.85);
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+            transition: all 0.2s ease;
+            display: inline-block;
+        }
+
+        .back-home a:hover {
+            background: rgba(30, 30, 90, 0.95);
+            border-color: var(--accent-orange);
+        }
+
+        .back-home a::before {
+            content: "\2190 ";
+        }
+
+        /* ===========================================
+           SPEAKER NOTES PANEL
+           =========================================== */
+        .speaker-notes {
+            position: fixed;
+            bottom: 80px;
+            left: 40px;
+            right: 40px;
+            background: rgba(45, 45, 122, 0.95);
+            padding: 20px 30px;
+            border-radius: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 999;
+            display: none;
+        }
+
+        .speaker-notes.visible {
+            display: block;
+        }
+
+        .speaker-notes h3 {
+            font-family: var(--font-heading);
+            font-size: 14px;
+            color: var(--accent-orange);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .speaker-notes p {
+            font-size: 13px;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.85);
+            white-space: pre-wrap;
+        }
+
+        /* ===========================================
+           PRINT STYLES
+           =========================================== */
+        @media print {
+            html, body {
+                overflow: visible;
+                height: auto;
+            }
+
+            .slide {
+                position: relative;
+                display: flex !important;
+                page-break-after: always;
+                box-shadow: none;
+                height: 100vh;
+            }
+
+            .slide-nav {
+                display: none;
+            }
+
+            .back-home {
+                display: none;
+            }
+
+            .footer {
+                display: none;
+            }
+
+            .speaker-notes {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Back to Home Link -->
+    <div class="back-home">
+        <a href="index.html">Back to Home</a>
+    </div>
+
+    <div class="presentation">
+
+        <!-- Slide 1 -->
+        <div class="slide slide-image-bg active" data-slide="Slide 1" style="background-image: url('Week 2 JPGS/Week2/Slide1.jpeg');">
+            <div class="footer" style="background: rgba(255,255,255,0.9); padding: 15px 40px; bottom: 0; left: 0; right: 0;">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 2 -->
+        <div class="slide slide-section-light" data-slide="Slide 2">
+            <div class="brand-header">The Build Fellowship</div>
+            <div class="section-title">AWS Well-Architected Framework</div>
+            <div class="section-date">Feb 2026</div>
+        </div>
+        <!-- Slide 3 -->
+        <div class="slide slide-agenda" data-slide="Slide 3">
+            <div class="agenda-title">Agenda</div>
+            <ul class="agenda-list">
+                <li>Operational Excellence Pillar</li>
+                <li>Sustainability Pillar</li>
+                <li>Reliability Pillar</li>
+                <li>Performance Efficiency Pillar</li>
+                <li>Security Pillar</li>
+                <li>Cost Optimization Pillar</li>
+                <li>AWS Well Architected Tool</li>
+                <li>Labs</li>
+            </ul>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build">The Build Fellowship</span>
+                    <span class="footer-logo openavenues" style="color: #c4a8ff;">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date">February 2026</div>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 4 -->
+        <div class="slide slide-section-dark" data-slide="Slide 4">
+            <div class="section-title">Operational Excellence Pillar</div>
+            <div class="content-reading">
+                <div class="reading-label">Additional Reading</div>
+                <a href="https://docs.aws.amazon.com/wellarchitected/latest/operational-excellence-pillar/welcome.html" target="_blank">Operational Excellence Pillar Whitepaper</a>
+                <a href="https://docs.aws.amazon.com/wellarchitected/latest/operational-excellence-pillar/design-principles.html" target="_blank">Design Principles</a>
+            </div>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build">The Build Fellowship</span>
+                    <span class="footer-logo openavenues" style="color: #c4a8ff;">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date">February 2026</div>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 5 -->
+        <div class="slide slide-image-bg" data-slide="Slide 5" style="background-image: url('Week 2 JPGS/Week2/Slide5.jpeg');">
+            <div class="footer" style="background: rgba(255,255,255,0.9); padding: 15px 40px; bottom: 0; left: 0; right: 0;">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 6 -->
+        <div class="slide slide-content" data-slide="Slide 6">
+            <div class="content-title">Organization</div>
+            <div class="content-description">Your teams need to have a shared understanding of your entire workload, their role in it, and shared business goals to set the priorities that will create business success. Well-defined priorities will maximize the benefits of your efforts. Review your priorities regularly so that they can be updated as your organization&#x27;s needs change.</div>
+            <ul class="content-list">
+                <li>Evaluate external and internal Customer needs</li>
+                <li>Governance and compliance requirements</li>
+                <li>Threat evaluation – AWS Trusted Advisor</li>
+                <li>Evaluate tradeoffs while managing benefits and risks</li>
+            </ul>
+            <div class="content-reading">
+                <div class="reading-label">Additional Reading</div>
+                <a href="https://docs.aws.amazon.com/wellarchitected/latest/operational-excellence-pillar/organization.html" target="_blank">Organization Best Practices</a>
+            </div>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 7 -->
+        <div class="slide slide-content" data-slide="Slide 7">
+            <div class="content-title">Prepare</div>
+            <div class="content-description">Prepare and design workflows to provide deep insights into the status of various services of your infrastructure</div>
+            <ul class="content-list">
+                <li>Implement Observability</li>
+                <li>Design for operations</li>
+                <li>Mitigate deployment risks</li>
+                <li>Evaluate tradeoffs while managing benefits and risks</li>
+            </ul>
+            <div class="content-reading">
+                <div class="reading-label">Additional Reading</div>
+                <a href="https://docs.aws.amazon.com/wellarchitected/latest/operational-excellence-pillar/prepare.html" target="_blank">Prepare Best Practices</a>
+            </div>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 8 -->
+        <div class="slide slide-content" data-slide="Slide 8">
+            <div class="content-title">Operate</div>
+            <div class="content-description">Successful operation of a workload is measured by the achievement of business and customer outcomes.</div>
+            <ul class="content-list">
+                <li>Utilizing Workload Observability</li>
+                <li>Understanding operational health</li>
+                <li>Responding to Events</li>
+            </ul>
+            <div class="content-reading">
+                <div class="reading-label">Additional Reading</div>
+                <a href="https://docs.aws.amazon.com/wellarchitected/latest/operational-excellence-pillar/operate.html" target="_blank">Operate Best Practices</a>
+            </div>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 9 -->
+        <div class="slide slide-content" data-slide="Slide 9">
+            <div class="content-title">Evolve</div>
+            <div class="content-description">It’s essential that you regularly provide time for analysis of operations activities, analysis of failures, experimentation, and making improvements. When things fail, you will want to ensure that your team, as well as your larger engineering community, learns from those failures. You should analyze failures to identify lessons learned and plan improvements. You will want to regularly review your lessons learned with other teams to validate your insights.</div>
+            <div class="content-reading">
+                <div class="reading-label">Additional Reading</div>
+                <a href="https://docs.aws.amazon.com/wellarchitected/latest/operational-excellence-pillar/evolve.html" target="_blank">Evolve Best Practices</a>
+            </div>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 10 -->
+        <div class="slide slide-content" data-slide="Slide 10">
+            <div class="content-title">Operational Excellence Pillar - Summary</div>
+            <ul class="content-list">
+                <li>Organize teams around business outcomes</li>
+                <li>Implement observability for actionable insights</li>
+                <li>Safely automate where possible</li>
+                <li>Make frequent, small, reversible changes</li>
+                <li>Refine operations procedures frequently</li>
+                <li>Anticipate failure and learn from it</li>
+            </ul>
+            <div class="content-reading">
+                <div class="reading-label">Additional Reading</div>
+                <a href="https://docs.aws.amazon.com/wellarchitected/latest/operational-excellence-pillar/welcome.html" target="_blank">Full Operational Excellence Pillar Whitepaper</a>
+                <a href="https://docs.aws.amazon.com/wellarchitected/latest/framework/operational-excellence.html" target="_blank">Framework Overview</a>
+            </div>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 11 -->
+        <div class="slide slide-section-dark" data-slide="Slide 11">
+            <div class="section-title">Sustainability Pillar</div>
+            <div class="content-reading">
+                <div class="reading-label">Additional Reading</div>
+                <a href="https://docs.aws.amazon.com/wellarchitected/latest/sustainability-pillar/sustainability-pillar.html" target="_blank">Sustainability Pillar Whitepaper</a>
+                <a href="https://docs.aws.amazon.com/wellarchitected/latest/framework/sustainability.html" target="_blank">Framework Overview</a>
+            </div>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build">The Build Fellowship</span>
+                    <span class="footer-logo openavenues" style="color: #c4a8ff;">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date">February 2026</div>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 12 -->
+        <div class="slide slide-image-bg" data-slide="Slide 12" style="background-image: url('Week 2 JPGS/Week2/Slide12.jpeg');">
+            <div class="footer" style="background: rgba(255,255,255,0.9); padding: 15px 40px; bottom: 0; left: 0; right: 0;">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 13 -->
+        <div class="slide slide-image-bg" data-slide="Slide 13" style="background-image: url('Week 2 JPGS/Week2/Slide13.jpeg');">
+            <div class="footer" style="background: rgba(255,255,255,0.9); padding: 15px 40px; bottom: 0; left: 0; right: 0;">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 14 -->
+        <div class="slide slide-section-dark" data-slide="Slide 14">
+            <div class="section-title">Reliability Pillar</div>
+            <div class="content-reading">
+                <div class="reading-label">Additional Reading</div>
+                <a href="https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/welcome.html" target="_blank">Reliability Pillar Whitepaper</a>
+                <a href="https://docs.aws.amazon.com/wellarchitected/latest/framework/a-reliability.html" target="_blank">Framework Overview</a>
+            </div>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build">The Build Fellowship</span>
+                    <span class="footer-logo openavenues" style="color: #c4a8ff;">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date">February 2026</div>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 15 -->
+        <div class="slide slide-image-bg" data-slide="Slide 15" style="background-image: url('Week 2 JPGS/Week2/Slide15.jpeg');">
+            <div class="footer" style="background: rgba(255,255,255,0.9); padding: 15px 40px; bottom: 0; left: 0; right: 0;">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 16 -->
+        <div class="slide slide-image-bg" data-slide="Slide 16" style="background-image: url('Week 2 JPGS/Week2/Slide16.jpeg');">
+            <div class="footer" style="background: rgba(255,255,255,0.9); padding: 15px 40px; bottom: 0; left: 0; right: 0;">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 17 -->
+        <div class="slide slide-section-dark" data-slide="Slide 17">
+            <div class="section-title">Performance Efficiency Pillar</div>
+            <div class="content-reading">
+                <div class="reading-label">Additional Reading</div>
+                <a href="https://docs.aws.amazon.com/wellarchitected/latest/performance-efficiency-pillar/welcome.html" target="_blank">Performance Efficiency Pillar Whitepaper</a>
+                <a href="https://docs.aws.amazon.com/wellarchitected/latest/performance-efficiency-pillar/design-principles.html" target="_blank">Design Principles</a>
+            </div>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build">The Build Fellowship</span>
+                    <span class="footer-logo openavenues" style="color: #c4a8ff;">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date">February 2026</div>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 18 -->
+        <div class="slide slide-content" data-slide="Slide 18">
+            <div class="content-title">Performance Efficiency Pillar</div>
+            <div class="content-subtitle">Definition</div>
+            <div class="content-description">Use cloud resources efficiently to meet performance requirements and maintain that efficiency as demand changes and technologies evolve</div>
+            <ul class="content-list">
+                <li>Select efficient, high-performing cloud resources and architecture patterns.</li>
+                <li>Architecture Selection</li>
+                <li>Identify and optimize compute options for performance efficiency in the cloud</li>
+                <li>Compute &amp; Hardware</li>
+            </ul>
+            <div class="content-reading">
+                <div class="reading-label">Additional Reading</div>
+                <a href="https://docs.aws.amazon.com/wellarchitected/latest/performance-efficiency-pillar/architecture-selection.html" target="_blank">Architecture Selection</a>
+                <a href="https://docs.aws.amazon.com/wellarchitected/latest/performance-efficiency-pillar/compute-and-hardware.html" target="_blank">Compute &amp; Hardware</a>
+            </div>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 19 -->
+        <div class="slide slide-content" data-slide="Slide 19">
+            <div class="content-title">Performance Efficiency Pillar</div>
+            <div class="content-subtitle">Data Management</div>
+            <div class="content-description">Optimize data storage, movement and access patterns, and performance efficiency of data stores.</div>
+            <ul class="content-list">
+                <li>Design optimal networking that reduces latency, increases throughput and eliminates jitter</li>
+                <li>Networking and Content Delivery</li>
+                <li>Build a culture that fosters performance efficiency of cloud workloads</li>
+                <li>Process &amp; Culture</li>
+            </ul>
+            <div class="content-reading">
+                <div class="reading-label">Additional Reading</div>
+                <a href="https://docs.aws.amazon.com/wellarchitected/latest/performance-efficiency-pillar/data-management.html" target="_blank">Data Management</a>
+                <a href="https://docs.aws.amazon.com/wellarchitected/latest/performance-efficiency-pillar/networking-and-content-delivery.html" target="_blank">Networking &amp; Content Delivery</a>
+                <a href="https://docs.aws.amazon.com/wellarchitected/latest/performance-efficiency-pillar/process-and-culture.html" target="_blank">Process &amp; Culture</a>
+            </div>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 20 -->
+        <div class="slide slide-section-dark" data-slide="Slide 20">
+            <div class="section-title">Security Pillar</div>
+            <div class="content-reading">
+                <div class="reading-label">Additional Reading</div>
+                <a href="https://docs.aws.amazon.com/wellarchitected/latest/security-pillar/welcome.html" target="_blank">Security Pillar Whitepaper</a>
+                <a href="https://docs.aws.amazon.com/wellarchitected/latest/framework/security.html" target="_blank">Framework Overview</a>
+            </div>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build">The Build Fellowship</span>
+                    <span class="footer-logo openavenues" style="color: #c4a8ff;">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date">February 2026</div>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 21 -->
+        <div class="slide slide-image-bg" data-slide="Slide 21" style="background-image: url('Week 2 JPGS/Week2/Slide21.jpeg');">
+            <div class="footer" style="background: rgba(255,255,255,0.9); padding: 15px 40px; bottom: 0; left: 0; right: 0;">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 22 -->
+        <div class="slide slide-section-dark" data-slide="Slide 22">
+            <div class="section-title">Cost Optimization Pillar</div>
+            <div class="content-reading">
+                <div class="reading-label">Additional Reading</div>
+                <a href="https://docs.aws.amazon.com/wellarchitected/latest/cost-optimization-pillar/welcome.html" target="_blank">Cost Optimization Pillar Whitepaper</a>
+                <a href="https://docs.aws.amazon.com/wellarchitected/latest/framework/cost-optimization.html" target="_blank">Framework Overview</a>
+            </div>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build">The Build Fellowship</span>
+                    <span class="footer-logo openavenues" style="color: #c4a8ff;">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date">February 2026</div>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 23 -->
+        <div class="slide slide-image-bg" data-slide="Slide 23" style="background-image: url('Week 2 JPGS/Week2/Slide23.jpeg');">
+            <div class="footer" style="background: rgba(255,255,255,0.9); padding: 15px 40px; bottom: 0; left: 0; right: 0;">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 24 -->
+        <div class="slide slide-image-bg" data-slide="Slide 24" style="background-image: url('Week 2 JPGS/Week2/Slide24.jpeg');">
+            <div class="footer" style="background: rgba(255,255,255,0.9); padding: 15px 40px; bottom: 0; left: 0; right: 0;">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 25 -->
+        <div class="slide slide-content" data-slide="Slide 25">
+            <div class="content-title">AWS Well-Architected Tool</div>
+            <div class="content-subtitle">Best practices and an action plan</div>
+            <div class="content-description">Manual intervention and sound understanding of the business case is still needed</div>
+            <ul class="content-list">
+                <li>Architectural Guidance</li>
+                <li>Point-in-time milestones, track changes</li>
+                <li>Measure improvements</li>
+                <li>Not a silver bullet</li>
+            </ul>
+            <div class="content-reading">
+                <div class="reading-label">Additional Reading</div>
+                <a href="https://aws.amazon.com/well-architected-tool/" target="_blank">AWS Well-Architected Tool</a>
+                <a href="https://docs.aws.amazon.com/wellarchitected/latest/userguide/intro.html" target="_blank">User Guide</a>
+                <a href="https://aws.amazon.com/well-architected-tool/faqs/" target="_blank">FAQs</a>
+            </div>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 26 -->
+        <div class="slide slide-section-dark" data-slide="Slide 26">
+            <div class="section-title">Labs</div>
+            <div class="content-reading">
+                <div class="reading-label">Hands-On Labs</div>
+                <a href="./labs/index.html">Go to Labs →</a>
+            </div>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build">The Build Fellowship</span>
+                    <span class="footer-logo openavenues" style="color: #c4a8ff;">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date">February 2026</div>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 27 -->
+        <div class="slide slide-image-bg" data-slide="Slide 27" style="background-image: url('Week 2 JPGS/Week2/Slide27.jpeg');">
+            <div class="footer" style="background: rgba(255,255,255,0.9); padding: 15px 40px; bottom: 0; left: 0; right: 0;">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide Navigation -->
+    <div class="slide-nav">
+        <button id="prevBtn" onclick="changeSlide(-1)">&#8592; Back</button>
+        <span class="slide-counter" id="slideCounter">1 / 27</span>
+        <button id="nextBtn" onclick="changeSlide(1)">Next &#8594;</button>
+    </div>
+
+    <!-- Speaker Notes Panel -->
+    <div class="speaker-notes" id="speakerNotes">
+        <h3>Speaker Notes</h3>
+        <p id="notesContent"></p>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        // Speaker notes data
+        const speakerNotes = {"26": "https://aws.amazon.com/architecture/well-architected/?wa-lens-whitepapers.sort-by=item.additionalFields.sortDate&wa-lens-whitepapers.sort-order=desc&wa-guidance-whitepapers.sort-by=item.additionalFields.sortDate&wa-guidance-whitepapers.sort-order=desc&awsm.page-wa-lens-whitepapers=1\n\n\nhttps://www.wellarchitectedlabs.com/"};
+
+        function showSlide(index) {
+            slides.forEach(s => s.classList.remove('active'));
+            slides[index].classList.add('active');
+            currentSlide = index;
+
+            // Update counter
+            document.getElementById('slideCounter').textContent = (index + 1) + ' / ' + totalSlides;
+
+            // Update button states
+            document.getElementById('prevBtn').disabled = (index === 0);
+            document.getElementById('nextBtn').disabled = (index === totalSlides - 1);
+
+            // Update speaker notes
+            updateSpeakerNotes(index + 1);
+        }
+
+        function changeSlide(direction) {
+            const newIndex = currentSlide + direction;
+            if (newIndex >= 0 && newIndex < totalSlides) {
+                showSlide(newIndex);
+            }
+        }
+
+        function updateSpeakerNotes(slideNum) {
+            const notesContent = document.getElementById('notesContent');
+            if (notesContent && speakerNotes[slideNum]) {
+                notesContent.textContent = speakerNotes[slideNum];
+            } else if (notesContent) {
+                notesContent.textContent = 'No notes for this slide.';
+            }
+        }
+
+        function toggleNotes() {
+            const notes = document.getElementById('speakerNotes');
+            if (notes) {
+                notes.classList.toggle('visible');
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+                e.preventDefault();
+                changeSlide(1);
+            }
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                e.preventDefault();
+                changeSlide(-1);
+            }
+        });
+
+        // Initialize first slide
+        showSlide(0);
+    </script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800">
+  <defs>
+    <style>
+      .bg { fill: #c9b3f5; }
+      .circle { fill: #b8a6e3; stroke: #9885d1; stroke-width: 3; }
+      .center-circle { fill: #9885d1; }
+      .arrow { fill: none; stroke: #ffffff; stroke-width: 12; stroke-linecap: round; }
+      .text { font-family: 'Inter', 'Arial', sans-serif; font-size: 18px; font-weight: 600; fill: #2d2d7a; text-anchor: middle; }
+      .small-text { font-size: 14px; font-weight: 400; }
+      .footer-text { font-family: 'Playfair Display', Georgia, serif; font-size: 16px; font-weight: 700; fill: #2d2d7a; }
+      .footer-text-brand { font-style: italic; }
+      .footer-text-oa { font-family: 'Poppins', sans-serif; fill: #7c4dff; }
+      .footer-small { font-size: 12px; font-weight: 400; fill: #666; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect class="bg" width="1200" height="800"/>
+
+  <!-- Center Circle -->
+  <circle class="center-circle" cx="600" cy="350" r="85"/>
+  <text class="text" x="600" y="345" style="fill: white; font-size: 16px;">Test and</text>
+  <text class="text" x="600" y="368" style="fill: white; font-size: 16px;">validate</text>
+
+  <!-- Top Circle -->
+  <circle class="circle" cx="600" cy="150" r="90"/>
+  <text class="text" x="600" y="142">Identify</text>
+  <text class="text" x="600" y="163">targets for</text>
+  <text class="text" x="600" y="184">improvement</text>
+
+  <!-- Top Right Circle -->
+  <circle class="circle" cx="810" cy="230" r="90"/>
+  <text class="text" x="810" y="222">Evaluate</text>
+  <text class="text" x="810" y="243">specific</text>
+  <text class="text" x="810" y="264">improvements</text>
+
+  <!-- Bottom Right Circle -->
+  <circle class="circle" cx="810" cy="470" r="90"/>
+  <text class="text" x="810" y="462">Prioritize and</text>
+  <text class="text" x="810" y="483">plan</text>
+  <text class="text" x="810" y="504">improvements</text>
+
+  <!-- Bottom Circle -->
+  <circle class="circle" cx="600" cy="550" r="90"/>
+  <text class="text" x="600" y="542">Deploy</text>
+  <text class="text" x="600" y="563">changes to</text>
+  <text class="text" x="600" y="584">production</text>
+
+  <!-- Bottom Left Circle -->
+  <circle class="circle" cx="390" cy="470" r="90"/>
+  <text class="text" x="390" y="455">Measure</text>
+  <text class="text" x="390" y="476">results and</text>
+  <text class="text" x="390" y="497">replicate</text>
+  <text class="text" x="390" y="518">successes</text>
+
+  <!-- Arrows (clockwise flow) -->
+  <!-- Top to Top-Right -->
+  <path class="arrow" d="M 670 185 L 740 205" marker-end="url(#arrowhead)"/>
+
+  <!-- Top-Right to Bottom-Right -->
+  <path class="arrow" d="M 845 315 L 845 385" marker-end="url(#arrowhead)"/>
+
+  <!-- Bottom-Right to Bottom -->
+  <path class="arrow" d="M 740 505 L 670 525" marker-end="url(#arrowhead)"/>
+
+  <!-- Bottom to Bottom-Left -->
+  <path class="arrow" d="M 530 515 L 460 495" marker-end="url(#arrowhead)"/>
+
+  <!-- Bottom-Left to Top (completing cycle) -->
+  <path class="arrow" d="M 355 385 L 355 315" marker-end="url(#arrowhead)"/>
+
+  <!-- Top-Left connection -->
+  <path class="arrow" d="M 460 205 L 530 185" marker-end="url(#arrowhead)"/>
+
+  <!-- Arrow marker definition -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#ffffff"/>
+    </marker>
+  </defs>
+
+  <!-- Footer -->
+  <text class="footer-text footer-text-brand" x="80" y="770">The Build Fellowship</text>
+  <text class="footer-text footer-text-oa" x="350" y="770">OpenAvenues</text>
+  <text class="footer-small" x="1100" y="760" text-anchor="end">© The Build Fellowship 2026</text>
+  <text class="footer-small" x="1100" y="780" text-anchor="end">February 2026</text>
+</svg>

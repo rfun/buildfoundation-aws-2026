@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 8: Creating and Querying a DynamoDB Table - The Build Fellowship</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="lab-styles.css">
+    <style>
+        :root {
+            --pillar-color: #f5a623;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="index.html" class="back-link">Back to Labs</a>
+        <div class="pillar-badge">Performance Efficiency</div>
+        <h1 class="page-title">Lab 8: Creating and Querying a DynamoDB Table</h1>
+        <div class="lab-meta">
+            <span>&#9201; ~20 minutes</span>
+            <span>&#9989; Free Tier</span>
+            <span>&#128218; AWS Console Only</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <h2>Overview</h2>
+        <p class="overview-text">
+            Amazon DynamoDB is a fully managed NoSQL database that delivers single-digit millisecond performance at any scale.
+            In this lab, you'll create a table with a partition key and sort key, add items, run queries and scans, and explore
+            capacity modes. This connects to the Performance Efficiency pillar principle of
+            <em>Data Management</em> &mdash; optimizing data storage, access patterns, and performance from the Week 2 lecture.
+        </p>
+
+        <h2>Objectives</h2>
+        <ul class="objectives-list">
+            <li>Create a DynamoDB table with a composite key (partition key + sort key)</li>
+            <li>Add and manage items in the table</li>
+            <li>Understand the difference between Query (efficient, targeted) and Scan (full table)</li>
+            <li>Compare On-demand vs Provisioned capacity modes for performance planning</li>
+        </ul>
+
+        <h2>Prerequisites</h2>
+        <div class="prereq-box">
+            <ul>
+                <li>An AWS account (free tier is sufficient)</li>
+                <li>Signed in to the AWS Management Console</li>
+            </ul>
+        </div>
+
+        <h2>Step-by-Step Instructions</h2>
+
+        <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+                <strong>Navigate to DynamoDB.</strong><br>
+                In the AWS Console, use the search bar at the top and type <code>DynamoDB</code>. Click on the DynamoDB service to open it.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+                <strong>Create a new table.</strong><br>
+                Click <strong>"Create table"</strong> to begin setting up your DynamoDB table.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+                <strong>Set the table name.</strong><br>
+                Enter <code>CourseStudents</code> as the Table name.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">4</div>
+            <div class="step-content">
+                <strong>Set the partition key.</strong><br>
+                For Partition key, enter <code>StudentId</code> and select <strong>String</strong> as the type.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">5</div>
+            <div class="step-content">
+                <strong>Set the sort key.</strong><br>
+                For Sort key, enter <code>CourseName</code> and select <strong>String</strong> as the type.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">6</div>
+            <div class="step-content">
+                <strong>Configure capacity mode and create the table.</strong><br>
+                Under Table settings, select <strong>"Customize settings"</strong>. For Capacity mode, choose <strong>"On-demand"</strong>. Click <strong>"Create table"</strong> and wait for the table status to become <strong>Active</strong>.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">7</div>
+            <div class="step-content">
+                <strong>Navigate to item creation.</strong><br>
+                Click on <strong>"CourseStudents"</strong> to open the table. Click <strong>"Explore table items"</strong>, then click <strong>"Create item"</strong>.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">8</div>
+            <div class="step-content">
+                <strong>Create the first item.</strong><br>
+                Enter the following values:
+                <ul style="margin-top: 8px; margin-left: 20px;">
+                    <li><code>StudentId</code> = <code>student-001</code></li>
+                    <li><code>CourseName</code> = <code>AWS-Foundations</code></li>
+                </ul>
+                Click <strong>"Add new attribute"</strong> &rarr; <strong>String</strong> &rarr; Name = <code>Name</code>, Value = <code>Alice</code>.<br>
+                Click <strong>"Add new attribute"</strong> &rarr; <strong>Number</strong> &rarr; Name = <code>Grade</code>, Value = <code>95</code>.<br>
+                Click <strong>"Create item"</strong>.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">9</div>
+            <div class="step-content">
+                <strong>Create additional items.</strong><br>
+                Repeat the item creation process to add the following items:
+                <ul style="margin-top: 8px; margin-left: 20px;">
+                    <li><code>StudentId</code>: <code>student-002</code>, <code>CourseName</code>: <code>AWS-Foundations</code>, <code>Name</code>: <code>Bob</code>, <code>Grade</code>: <code>88</code></li>
+                    <li><code>StudentId</code>: <code>student-001</code>, <code>CourseName</code>: <code>Cloud-Security</code>, <code>Name</code>: <code>Alice</code>, <code>Grade</code>: <code>92</code></li>
+                    <li><code>StudentId</code>: <code>student-003</code>, <code>CourseName</code>: <code>AWS-Foundations</code>, <code>Name</code>: <code>Charlie</code>, <code>Grade</code>: <code>97</code></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">10</div>
+            <div class="step-content">
+                <strong>Run a Query.</strong><br>
+                In the <strong>"Scan or query items"</strong> section, switch from <strong>"Scan"</strong> to <strong>"Query"</strong>. Enter the Partition key value = <code>student-001</code> and click <strong>"Run"</strong>. Observe that it returns only Alice's records (2 items) &mdash; this is an efficient, targeted lookup.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">11</div>
+            <div class="step-content">
+                <strong>Run a Scan.</strong><br>
+                Switch back to <strong>"Scan"</strong> and click <strong>"Run"</strong>. Observe that it returns <strong>ALL</strong> items in the table &mdash; this reads every item and is less efficient.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">12</div>
+            <div class="step-content">
+                <strong>Explore monitoring and settings.</strong><br>
+                Go back to the table overview. Explore the <strong>"Monitor"</strong> tab to see read/write metrics, and the <strong>"Additional settings"</strong> tab to confirm the capacity mode is set to On-demand.
+            </div>
+        </div>
+
+        <div class="note-box">
+            <strong>Query vs Scan:</strong> A Query uses the partition key to go directly to the data &mdash; it's fast and efficient.
+            A Scan reads every item in the entire table &mdash; it works but gets expensive and slow as the table grows.
+            Always design your keys to support Query access patterns.
+        </div>
+
+        <div class="note-box">
+            <strong>Capacity Modes:</strong> On-demand mode automatically handles scaling &mdash; you pay per request.
+            Provisioned mode lets you set fixed read/write capacity units &mdash; it's cheaper for predictable workloads
+            but requires you to plan capacity. For this lab, On-demand is simplest.
+        </div>
+
+        <h2>Completion Screenshot</h2>
+        <div class="screenshot-box">
+            <strong>&#128247; What to capture:</strong>
+            <p>
+                Take a screenshot of the <strong>DynamoDB table Items view</strong> showing:
+            </p>
+            <ul style="margin-top: 8px; margin-left: 20px;">
+                <li>Query results with multiple items visible (showing <code>StudentId</code>, <code>CourseName</code>, <code>Name</code>, and <code>Grade</code> columns)</li>
+                <li>The table's <strong>Overview</strong> tab showing the table status and capacity mode</li>
+            </ul>
+            <p style="margin-top: 12px;"><strong>Important:</strong> Your screenshot must include your AWS account name/ID visible in the top right corner of the AWS Console to verify completion.</p>
+        </div>
+
+        <h2>Cleanup</h2>
+        <div class="cleanup-box">
+            <strong>&#128465; Cleanup Steps:</strong>
+            <ol>
+                <li>Navigate to <strong>DynamoDB</strong> &rarr; <strong>Tables</strong></li>
+                <li>Select <strong>"CourseStudents"</strong></li>
+                <li>Click <strong>"Delete"</strong> &rarr; confirm by typing <code>delete</code> &rarr; <strong>Delete table</strong></li>
+            </ol>
+        </div>
+
+        <h2>Key Takeaways</h2>
+        <ul class="takeaways-list">
+            <li>DynamoDB delivers consistent, single-digit millisecond performance &mdash; a key Performance Efficiency service</li>
+            <li>Choosing the right key design (partition key + sort key) determines your query efficiency</li>
+            <li>Query is always preferred over Scan &mdash; design your access patterns around your partition key</li>
+            <li>On-demand mode provides automatic scaling for unpredictable workloads, while Provisioned mode optimizes cost for stable workloads</li>
+        </ul>
+
+        <h2>Additional Resources</h2>
+        <div class="resources-box">
+            <strong>&#128218; Further Reading:</strong>
+            <ul>
+                <li><a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html" target="_blank">Amazon DynamoDB Developer Guide</a> &mdash; Complete NoSQL database documentation</li>
+                <li><a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html" target="_blank">DynamoDB Core Components</a> &mdash; Understanding tables, items, and attributes</li>
+                <li><a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-partition-key-design.html" target="_blank">Partition Key Design Best Practices</a> &mdash; Optimizing performance with key design</li>
+                <li><a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.html" target="_blank">Query vs Scan Operations</a> &mdash; Efficient data retrieval patterns</li>
+                <li><a href="https://aws.amazon.com/dynamodb/pricing/" target="_blank">DynamoDB Pricing</a> &mdash; Understanding on-demand vs provisioned capacity</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="footer-logos">
+            <span class="footer-logo build">The Build Fellowship</span>
+            <span class="footer-logo openavenues">OpenAvenues</span>
+        </div>
+        <div class="footer-right">
+            <span class="footer-copyright">&copy; The Build Fellowship 2026</span>
+            <div class="footer-date">February 2026</div>
+        </div>
+    </div>
+</body>
+</html>

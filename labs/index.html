@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS Well-Architected Framework Labs - The Build Fellowship</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-blue: #2d2d7a;
+            --primary-purple: #c4a8ff;
+            --light-purple: #d4b8ff;
+            --lavender: #c9b3f5;
+            --dark-blue: #1e1e5a;
+            --accent-orange: #f5a623;
+            --accent-teal: #4db6ac;
+            --text-white: #ffffff;
+            --text-dark: #2d2d7a;
+            --text-gray: #666666;
+            --font-display: 'Playfair Display', Georgia, serif;
+            --font-heading: 'Poppins', 'Inter', sans-serif;
+            --font-body: 'Inter', -apple-system, sans-serif;
+
+            --pillar-opex: #4db6ac;
+            --pillar-security: #e53935;
+            --pillar-reliability: #1e88e5;
+            --pillar-performance: #f5a623;
+            --pillar-cost: #43a047;
+            --pillar-sustainability: #8e24aa;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html, body { min-height: 100%; }
+
+        body {
+            font-family: var(--font-body);
+            background: linear-gradient(135deg, #4a6cf7 0%, #7c4dff 50%, #b47cff 100%);
+            color: var(--text-white);
+            line-height: 1.6;
+        }
+
+        .header {
+            text-align: center;
+            padding: 60px 40px 30px;
+        }
+
+        .back-link {
+            display: inline-block;
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            font-size: 14px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+        .back-link:hover { color: #ffffff; }
+        .back-link::before { content: "\2190 "; }
+
+        .page-title {
+            font-family: var(--font-heading);
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            font-size: 17px;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .info-box {
+            max-width: 900px;
+            margin: 30px auto 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 24px 28px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .info-box h3 {
+            font-family: var(--font-heading);
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 12px;
+        }
+
+        .info-box p, .info-box ul {
+            font-size: 15px;
+            line-height: 1.7;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .info-box ul {
+            margin-left: 24px;
+            list-style: disc;
+        }
+
+        .info-box li {
+            margin-bottom: 8px;
+        }
+
+        .disclaimer-box {
+            max-width: 900px;
+            margin: 20px auto 30px;
+            background: rgba(255, 243, 224, 0.95);
+            border-left: 4px solid var(--accent-orange);
+            border-radius: 0 12px 12px 0;
+            padding: 20px 24px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .disclaimer-box h3 {
+            font-family: var(--font-heading);
+            font-size: 18px;
+            font-weight: 700;
+            color: #e65100;
+            margin-bottom: 10px;
+        }
+
+        .disclaimer-box p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #444;
+        }
+
+        .content {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px 40px 80px;
+        }
+
+        .pillar-section {
+            margin-bottom: 50px;
+        }
+
+        .pillar-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .pillar-icon {
+            font-size: 28px;
+        }
+
+        .pillar-name {
+            font-family: var(--font-heading);
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .pillar-divider {
+            flex: 1;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.3);
+            margin-left: 10px;
+        }
+
+        .lab-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .lab-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px 28px;
+            text-decoration: none;
+            display: block;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 5px solid transparent;
+        }
+
+        .lab-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .lab-card-number {
+            font-family: var(--font-heading);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+
+        .lab-card-title {
+            font-family: var(--font-heading);
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .lab-card-meta {
+            font-size: 13px;
+            color: var(--text-gray);
+            margin-bottom: 10px;
+        }
+
+        .lab-card-desc {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.5;
+        }
+
+        /* Pillar-specific border and accent colors */
+        .lab-card.opex { border-left-color: var(--pillar-opex); }
+        .lab-card.opex .lab-card-number { color: var(--pillar-opex); }
+
+        .lab-card.security { border-left-color: var(--pillar-security); }
+        .lab-card.security .lab-card-number { color: var(--pillar-security); }
+
+        .lab-card.reliability { border-left-color: var(--pillar-reliability); }
+        .lab-card.reliability .lab-card-number { color: var(--pillar-reliability); }
+
+        .lab-card.performance { border-left-color: var(--pillar-performance); }
+        .lab-card.performance .lab-card-number { color: var(--pillar-performance); }
+
+        .lab-card.cost { border-left-color: var(--pillar-cost); }
+        .lab-card.cost .lab-card-number { color: var(--pillar-cost); }
+
+        .lab-card.sustainability { border-left-color: var(--pillar-sustainability); }
+        .lab-card.sustainability .lab-card-number { color: var(--pillar-sustainability); }
+
+        .footer {
+            padding: 30px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .footer-logos { display: flex; align-items: center; gap: 20px; }
+
+        .footer-logo {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 14px;
+        }
+        .footer-logo.build { font-style: italic; }
+        .footer-logo.openavenues {
+            color: #c4a8ff;
+            font-family: var(--font-heading);
+            font-weight: 600;
+        }
+
+        .footer-right { text-align: right; }
+        .footer-copyright, .footer-date { font-size: 11px; opacity: 0.8; }
+        .footer-date { margin-top: 2px; }
+
+        @media (max-width: 768px) {
+            .header { padding: 40px 20px 20px; }
+            .page-title { font-size: 28px; }
+            .content { padding: 20px 20px 60px; }
+            .lab-cards { grid-template-columns: 1fr; }
+            .footer { flex-direction: column; gap: 15px; text-align: center; }
+            .footer-right { text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="../index.html" class="back-link">Back to Home</a>
+        <h1 class="page-title">AWS Well-Architected Framework Labs</h1>
+        <p class="page-subtitle">12 hands-on labs covering all 6 pillars. Free tier compatible, AWS Console only, under 30 minutes each.</p>
+    </div>
+
+    <div class="info-box">
+        <h3>📋 Week 2 Assignment Instructions</h3>
+        <p><strong>Complete any 2 of these labs</strong> for Week 2's assignment. When you're done:</p>
+        <ul>
+            <li>Take screenshots as specified in each lab's "Completion Screenshot" section</li>
+            <li>Add your screenshots to the homework directory under your respective name</li>
+            <li>Feel free to complete additional labs beyond the required 2 to gain more hands-on experience with AWS!</li>
+        </ul>
+    </div>
+
+    <div class="disclaimer-box">
+        <h3>⚠️ Disclaimer</h3>
+        <p>These labs are custom-made for this course and tie directly with what we discussed in Week 2. Due to the nature of that, the labs may contain incorrect instructions or outdated information. If you encounter any issues or find something that doesn't work as described, please report it by emailing me directly and I will get it fixed as soon as possible.</p>
+    </div>
+
+    <div class="content">
+
+        <!-- Pillar 1: Operational Excellence -->
+        <div class="pillar-section">
+            <div class="pillar-header">
+                <span class="pillar-icon">&#9881;</span>
+                <span class="pillar-name">Operational Excellence</span>
+                <div class="pillar-divider"></div>
+            </div>
+            <div class="lab-cards">
+                <a href="lab1-cloudtrail.html" class="lab-card opex">
+                    <div class="lab-card-number">Lab 1</div>
+                    <div class="lab-card-title">Exploring CloudTrail Event History</div>
+                    <div class="lab-card-meta">&#9201; ~15 min &bull; CloudTrail</div>
+                    <div class="lab-card-desc">Explore the audit trail of all API activity in your AWS account. Learn to filter events and read event records.</div>
+                </a>
+                <a href="lab2-cloudwatch-dashboard.html" class="lab-card opex">
+                    <div class="lab-card-number">Lab 2</div>
+                    <div class="lab-card-title">Building a CloudWatch Dashboard with a Billing Alarm</div>
+                    <div class="lab-card-meta">&#9201; ~25 min &bull; CloudWatch, SNS</div>
+                    <div class="lab-card-desc">Create a CloudWatch dashboard with billing metrics and set up an alarm to notify you of unexpected charges.</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Pillar 2: Security -->
+        <div class="pillar-section">
+            <div class="pillar-header">
+                <span class="pillar-icon">&#128274;</span>
+                <span class="pillar-name">Security</span>
+                <div class="pillar-divider"></div>
+            </div>
+            <div class="lab-cards">
+                <a href="lab3-iam.html" class="lab-card security">
+                    <div class="lab-card-number">Lab 3</div>
+                    <div class="lab-card-title">IAM Users, Groups, and Least Privilege Policies</div>
+                    <div class="lab-card-meta">&#9201; ~20 min &bull; IAM</div>
+                    <div class="lab-card-desc">Create IAM users and groups, attach policies, and use the Policy Simulator to test least privilege access.</div>
+                </a>
+                <a href="lab4-s3-security.html" class="lab-card security">
+                    <div class="lab-card-number">Lab 4</div>
+                    <div class="lab-card-title">Securing an S3 Bucket with Encryption and Access Controls</div>
+                    <div class="lab-card-meta">&#9201; ~25 min &bull; S3</div>
+                    <div class="lab-card-desc">Create a secure S3 bucket with encryption, versioning, public access blocking, and an HTTPS-only bucket policy.</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Pillar 3: Reliability -->
+        <div class="pillar-section">
+            <div class="pillar-header">
+                <span class="pillar-icon">&#128737;</span>
+                <span class="pillar-name">Reliability</span>
+                <div class="pillar-divider"></div>
+            </div>
+            <div class="lab-cards">
+                <a href="lab5-s3-versioning.html" class="lab-card reliability">
+                    <div class="lab-card-number">Lab 5</div>
+                    <div class="lab-card-title">S3 Versioning and Object Recovery</div>
+                    <div class="lab-card-meta">&#9201; ~15 min &bull; S3</div>
+                    <div class="lab-card-desc">Enable S3 versioning to protect against accidental deletions and practice recovering deleted objects.</div>
+                </a>
+                <a href="lab6-vpc-availability.html" class="lab-card reliability">
+                    <div class="lab-card-number">Lab 6</div>
+                    <div class="lab-card-title">Exploring VPC Infrastructure and Availability Zones</div>
+                    <div class="lab-card-meta">&#9201; ~20 min &bull; VPC</div>
+                    <div class="lab-card-desc">Explore VPC components, subnets across Availability Zones, route tables, and create a security group.</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Pillar 4: Performance Efficiency -->
+        <div class="pillar-section">
+            <div class="pillar-header">
+                <span class="pillar-icon">&#9889;</span>
+                <span class="pillar-name">Performance Efficiency</span>
+                <div class="pillar-divider"></div>
+            </div>
+            <div class="lab-cards">
+                <a href="lab7-ec2-instance-types.html" class="lab-card performance">
+                    <div class="lab-card-number">Lab 7</div>
+                    <div class="lab-card-title">Exploring EC2 Instance Types and Launching an Instance</div>
+                    <div class="lab-card-meta">&#9201; ~25 min &bull; EC2</div>
+                    <div class="lab-card-desc">Compare EC2 instance families, launch a free-tier instance, and explore monitoring metrics.</div>
+                </a>
+                <a href="lab8-dynamodb.html" class="lab-card performance">
+                    <div class="lab-card-number">Lab 8</div>
+                    <div class="lab-card-title">Creating and Querying a DynamoDB Table</div>
+                    <div class="lab-card-meta">&#9201; ~20 min &bull; DynamoDB</div>
+                    <div class="lab-card-desc">Create a DynamoDB table, add items, run queries and scans, and explore capacity modes.</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Pillar 5: Cost Optimization -->
+        <div class="pillar-section">
+            <div class="pillar-header">
+                <span class="pillar-icon">&#128176;</span>
+                <span class="pillar-name">Cost Optimization</span>
+                <div class="pillar-divider"></div>
+            </div>
+            <div class="lab-cards">
+                <a href="lab9-budgets.html" class="lab-card cost">
+                    <div class="lab-card-number">Lab 9</div>
+                    <div class="lab-card-title">Setting Up AWS Budgets and Free Tier Tracking</div>
+                    <div class="lab-card-meta">&#9201; ~20 min &bull; AWS Budgets, Billing</div>
+                    <div class="lab-card-desc">Create budgets to proactively monitor spending, explore the Billing Dashboard, and track free tier usage.</div>
+                </a>
+                <a href="lab10-pricing-calculator.html" class="lab-card cost">
+                    <div class="lab-card-number">Lab 10</div>
+                    <div class="lab-card-title">AWS Pricing Calculator and Trusted Advisor</div>
+                    <div class="lab-card-meta">&#9201; ~20 min &bull; Pricing Calculator, Trusted Advisor</div>
+                    <div class="lab-card-desc">Estimate costs for a sample architecture and explore Trusted Advisor recommendations for optimization.</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Pillar 6: Sustainability -->
+        <div class="pillar-section">
+            <div class="pillar-header">
+                <span class="pillar-icon">&#127793;</span>
+                <span class="pillar-name">Sustainability</span>
+                <div class="pillar-divider"></div>
+            </div>
+            <div class="lab-cards">
+                <a href="lab11-s3-lifecycle.html" class="lab-card sustainability">
+                    <div class="lab-card-number">Lab 11</div>
+                    <div class="lab-card-title">Configuring S3 Lifecycle Policies for Efficient Data Management</div>
+                    <div class="lab-card-meta">&#9201; ~15 min &bull; S3</div>
+                    <div class="lab-card-desc">Set up lifecycle policies to automatically transition data to cheaper storage and reduce environmental impact.</div>
+                </a>
+                <a href="lab12-wa-tool.html" class="lab-card sustainability">
+                    <div class="lab-card-number">Lab 12</div>
+                    <div class="lab-card-title">Running an AWS Well-Architected Framework Review</div>
+                    <div class="lab-card-meta">&#9201; ~25 min &bull; Well-Architected Tool</div>
+                    <div class="lab-card-desc">Use the Well-Architected Tool to conduct a framework review, focusing on sustainability questions and improvement plans.</div>
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="footer">
+        <div class="footer-logos">
+            <span class="footer-logo build">The Build Fellowship</span>
+            <span class="footer-logo openavenues">OpenAvenues</span>
+        </div>
+        <div class="footer-right">
+            <span class="footer-copyright">&copy; The Build Fellowship 2026</span>
+            <div class="footer-date">February 2026</div>
+        </div>
+    </div>
+</body>
+</html>

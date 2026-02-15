@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 2: Building a CloudWatch Dashboard with a Billing Alarm - The Build Fellowship</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="lab-styles.css">
+    <style>
+        :root {
+            --pillar-color: #4db6ac;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="index.html" class="back-link">Back to Labs</a>
+        <div class="pillar-badge">Operational Excellence</div>
+        <h1 class="page-title">Lab 2: Building a CloudWatch Dashboard with a Billing Alarm</h1>
+        <div class="lab-meta">
+            <span>&#9201; ~25 minutes</span>
+            <span>&#9989; Free Tier</span>
+            <span>&#128218; AWS Console Only</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <h2>Overview</h2>
+        <p class="overview-text">
+            CloudWatch is AWS's monitoring and observability service. In this lab, you'll create an SNS notification topic,
+            set up a billing alarm to detect unexpected charges, and build a CloudWatch dashboard to visualize your spending.
+            This connects to the <em>Prepare &amp; Operate</em> phases of Operational Excellence &mdash; specifically
+            "Implement observability" and "Respond to events" from the Week 2 lecture.
+        </p>
+
+        <h2>Objectives</h2>
+        <ul class="objectives-list">
+            <li>Create an SNS topic and email subscription for notifications</li>
+            <li>Set up a CloudWatch billing alarm to detect unexpected charges</li>
+            <li>Build a custom CloudWatch dashboard with billing widgets</li>
+            <li>Understand how monitoring and alerting support Operational Excellence</li>
+        </ul>
+
+        <h2>Prerequisites</h2>
+        <div class="prereq-box">
+            <ul>
+                <li>An AWS account (free tier is sufficient)</li>
+                <li>Signed in to the AWS Management Console</li>
+                <li>Access to an email address for SNS notification confirmation</li>
+            </ul>
+        </div>
+
+        <h2>Step-by-Step Instructions</h2>
+
+        <div class="note-box">
+            <strong>Important:</strong> Before creating a billing alarm, you must enable billing alerts.
+            Go to <strong>Billing Dashboard</strong> &rarr; <strong>Billing Preferences</strong> (left sidebar) &rarr;
+            check <strong>"Receive Billing Alerts"</strong> &rarr; <strong>Save</strong>.
+            This only needs to be done once.
+        </div>
+
+        <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+                <strong>Navigate to SNS and create a topic.</strong><br>
+                In the AWS Console, use the search bar at the top and type <code>SNS</code>. Click on the Simple Notification Service to open it. Click <strong>Topics</strong> in the left sidebar, then click <strong>Create topic</strong>. Select <strong>Standard</strong> type and set the name to <code>BillingAlerts</code>. Click <strong>Create topic</strong>.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+                <strong>Create an email subscription to the topic.</strong><br>
+                On the topic detail page, click <strong>Create subscription</strong>. For Protocol, select <strong>Email</strong>. For Endpoint, enter your email address. Click <strong>Create subscription</strong>.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+                <strong>Confirm your email subscription.</strong><br>
+                Check your email inbox for a message from AWS Notifications. Click the <strong>Confirm subscription</strong> link in the email. You should see a confirmation page in your browser. Back in the SNS console, the subscription status should change to <strong>Confirmed</strong>.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">4</div>
+            <div class="step-content">
+                <strong>Navigate to CloudWatch Alarms.</strong><br>
+                Use the search bar and type <code>CloudWatch</code>. Click on the CloudWatch service to open it. In the left sidebar, click <strong>Alarms</strong> &rarr; <strong>All alarms</strong>, then click <strong>Create alarm</strong>.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">5</div>
+            <div class="step-content">
+                <strong>Select the billing metric.</strong><br>
+                Click <strong>Select metric</strong>. Navigate to <strong>Billing</strong> &rarr; <strong>Total Estimated Charge</strong> &rarr; <strong>USD</strong>. Select the checkbox next to the USD metric, then click <strong>Select metric</strong>.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">6</div>
+            <div class="step-content">
+                <strong>Set the alarm threshold.</strong><br>
+                Under Conditions, select <strong>Static</strong> threshold type. Choose <strong>Greater than</strong> and enter <code>5</code> as the threshold value (or adjust to your comfort level). Click <strong>Next</strong>.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">7</div>
+            <div class="step-content">
+                <strong>Configure the notification.</strong><br>
+                Under Notification, select <strong>In alarm</strong> as the alarm state trigger. Choose <strong>Select an existing SNS topic</strong> and select the <code>BillingAlerts</code> topic you created earlier. Click <strong>Next</strong>.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">8</div>
+            <div class="step-content">
+                <strong>Name and create the alarm.</strong><br>
+                Set the alarm name to <code>BillingThresholdAlarm</code>. Optionally add a description like "Alert when estimated charges exceed $5." Review the configuration and click <strong>Create alarm</strong>.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">9</div>
+            <div class="step-content">
+                <strong>Navigate to CloudWatch Dashboards.</strong><br>
+                In the CloudWatch left sidebar, click <strong>Dashboards</strong>. Click <strong>Create dashboard</strong>. Enter the name <code>MyBillingDashboard</code> and click <strong>Create dashboard</strong>.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">10</div>
+            <div class="step-content">
+                <strong>Add a Number widget for billing.</strong><br>
+                In the Add widget dialog, select <strong>Number</strong>. Click <strong>Next</strong>, then choose <strong>Metrics</strong> as the data source. Navigate to <strong>Billing</strong> &rarr; <strong>Total Estimated Charge</strong> &rarr; <strong>USD</strong>. Select the metric and click <strong>Create widget</strong>.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">11</div>
+            <div class="step-content">
+                <strong>Add a Text widget.</strong><br>
+                Click <strong>Add widget</strong> (the <strong>+</strong> button at the top). Select <strong>Text</strong>. In the markdown editor, add a note such as:<br>
+                <code>## Billing Monitor</code><br>
+                <code>This dashboard tracks my AWS spending. Alarm triggers at $5.</code><br>
+                Click <strong>Create widget</strong>.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">12</div>
+            <div class="step-content">
+                <strong>Save the dashboard.</strong><br>
+                Click <strong>Save</strong> at the top of the dashboard page. Your CloudWatch dashboard is now live with a billing number widget and an informational text widget.
+            </div>
+        </div>
+
+        <div class="note-box">
+            <strong>Tip:</strong> The billing metric may take a few hours to populate if your account is brand new.
+            The Number widget may initially show "No data" &mdash; this is normal. It will update as AWS processes
+            your billing data.
+        </div>
+
+        <h2>Completion Screenshot</h2>
+        <div class="screenshot-box">
+            <strong>&#128247; What to capture:</strong>
+            <p>
+                Take a screenshot of the <strong>CloudWatch Dashboard</strong> page showing:
+            </p>
+            <ul style="margin-top: 8px; margin-left: 20px;">
+                <li>The <strong>billing Number widget</strong> displaying the estimated charge (or "No data" if new account)</li>
+                <li>The <strong>Text widget</strong> with your markdown note visible</li>
+                <li>The <strong>URL bar</strong> showing you are on the CloudWatch Dashboards page</li>
+            </ul>
+            <p style="margin-top: 12px;"><strong>Important:</strong> Your screenshot must include your AWS account name/ID visible in the top right corner of the AWS Console to verify completion.</p>
+        </div>
+
+        <h2>Cleanup</h2>
+        <div class="cleanup-box">
+            <strong>&#128465; Cleanup Steps:</strong>
+            <p style="margin-top: 8px;">
+                <strong>Optional</strong> &mdash; we recommend keeping the billing alarm and dashboard as they are useful for ongoing cost monitoring. If you do want to remove them:
+            </p>
+            <ol>
+                <li>Delete the dashboard: <strong>CloudWatch</strong> &rarr; <strong>Dashboards</strong> &rarr; select <code>MyBillingDashboard</code> &rarr; <strong>Delete</strong></li>
+                <li>Delete the alarm: <strong>CloudWatch</strong> &rarr; <strong>Alarms</strong> &rarr; select <code>BillingThresholdAlarm</code> &rarr; <strong>Delete</strong></li>
+                <li>Delete the SNS subscription: <strong>SNS</strong> &rarr; <strong>Subscriptions</strong> &rarr; select your email subscription &rarr; <strong>Delete</strong></li>
+                <li>Delete the SNS topic: <strong>SNS</strong> &rarr; <strong>Topics</strong> &rarr; select <code>BillingAlerts</code> &rarr; <strong>Delete</strong></li>
+            </ol>
+        </div>
+
+        <h2>Key Takeaways</h2>
+        <ul class="takeaways-list">
+            <li>CloudWatch dashboards provide at-a-glance operational visibility &mdash; a core Operational Excellence practice</li>
+            <li>Billing alarms enable proactive response to unexpected costs before they grow</li>
+            <li>SNS topics decouple notification delivery from the alarm itself, following good architecture patterns</li>
+            <li>Combining monitoring (CloudWatch) with alerting (SNS) implements the "Respond to events" principle</li>
+        </ul>
+
+        <h2>Additional Resources</h2>
+        <div class="resources-box">
+            <strong>&#128218; Further Reading:</strong>
+            <ul>
+                <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/WhatIsCloudWatch.html" target="_blank">Amazon CloudWatch User Guide</a> &mdash; Complete monitoring documentation</li>
+                <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html" target="_blank">Creating CloudWatch Alarms</a> &mdash; Detailed alarm configuration guide</li>
+                <li><a href="https://docs.aws.amazon.com/sns/latest/dg/welcome.html" target="_blank">Amazon SNS Developer Guide</a> &mdash; Understanding notification services</li>
+                <li><a href="https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/tracking-free-tier-usage.html" target="_blank">Tracking Free Tier Usage</a> &mdash; Monitor your AWS spend</li>
+                <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Dashboards.html" target="_blank">CloudWatch Dashboards</a> &mdash; Building custom monitoring views</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="footer-logos">
+            <span class="footer-logo build">The Build Fellowship</span>
+            <span class="footer-logo openavenues">OpenAvenues</span>
+        </div>
+        <div class="footer-right">
+            <span class="footer-copyright">&copy; The Build Fellowship 2026</span>
+            <div class="footer-date">February 2026</div>
+        </div>
+    </div>
+</body>
+</html>

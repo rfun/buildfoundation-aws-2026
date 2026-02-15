@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 6: Exploring VPC Infrastructure and Availability Zones - The Build Fellowship</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="lab-styles.css">
+    <style>
+        :root {
+            --pillar-color: #1e88e5;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="index.html" class="back-link">Back to Labs</a>
+        <div class="pillar-badge">Reliability</div>
+        <h1 class="page-title">Lab 6: Exploring VPC Infrastructure and Availability Zones</h1>
+        <div class="lab-meta">
+            <span>&#9201; ~20 minutes</span>
+            <span>&#9989; Free Tier</span>
+            <span>&#128218; AWS Console Only</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <h2>Overview</h2>
+        <p class="overview-text">
+            Amazon VPC is the networking foundation of your AWS environment. Every AWS account comes with a default VPC
+            that spans multiple Availability Zones &mdash; this is the basis for building reliable, fault-tolerant architectures.
+            In this lab, you'll explore VPC components, understand how subnets distribute across AZs, and create a security group.
+            This connects to the Reliability pillar principles of <em>"Networking, quotas, and constraints"</em> and the
+            AWS Global Infrastructure concepts (regions, AZs) from the Week 2 lecture.
+        </p>
+
+        <h2>Objectives</h2>
+        <ul class="objectives-list">
+            <li>Understand VPC components: subnets, route tables, internet gateways, and security groups</li>
+            <li>See how the default VPC distributes subnets across multiple Availability Zones</li>
+            <li>Create a custom security group with specific inbound rules</li>
+            <li>Explore AWS service quotas to understand account limits</li>
+        </ul>
+
+        <h2>Prerequisites</h2>
+        <div class="prereq-box">
+            <ul>
+                <li>An AWS account (free tier is sufficient)</li>
+                <li>Signed in to the AWS Management Console</li>
+            </ul>
+        </div>
+
+        <h2>Step-by-Step Instructions</h2>
+
+        <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+                <strong>Navigate to the VPC Dashboard.</strong><br>
+                In the AWS Console, use the search bar at the top and type <code>VPC</code>. Click on the VPC service to open it. Review the summary showing counts of VPCs, subnets, route tables, internet gateways, and other components.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+                <strong>Examine the default VPC.</strong><br>
+                Click on <strong>"VPCs"</strong> (or <strong>"Your VPCs"</strong>) in the left sidebar, then click on the default VPC. Note the IPv4 CIDR block (typically <code>172.31.0.0/16</code>). This is the IP address range for your entire VPC.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+                <strong>Explore subnets across Availability Zones.</strong><br>
+                Click on <strong>"Subnets"</strong> in the left sidebar. Observe that you have multiple subnets, each in a different Availability Zone (check the <strong>"Availability Zone"</strong> column). This is the foundation of multi-AZ reliability &mdash; if one AZ goes down, resources in other AZ subnets remain available.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">4</div>
+            <div class="step-content">
+                <strong>Examine route tables.</strong><br>
+                Click on <strong>"Route Tables"</strong> in the left sidebar, then click on the default route table. Examine the <strong>Routes</strong> tab. You should see:
+                <ul style="margin-top: 8px; margin-left: 20px;">
+                    <li>A <strong>"local"</strong> route &mdash; for traffic within the VPC</li>
+                    <li>A route pointing to an <strong>Internet Gateway</strong> &mdash; for internet access (typically <code>0.0.0.0/0 &rarr; igw-xxx</code>)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">5</div>
+            <div class="step-content">
+                <strong>View the Internet Gateway.</strong><br>
+                Click on <strong>"Internet Gateways"</strong> in the left sidebar. Observe the default internet gateway attached to your VPC. This enables communication between your VPC and the internet.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">6</div>
+            <div class="step-content">
+                <strong>Create a custom security group.</strong><br>
+                Navigate to <strong>"Security Groups"</strong> in the left sidebar, then click <strong>"Create security group"</strong>:
+                <ul style="margin-top: 8px; margin-left: 20px;">
+                    <li><strong>Security group name:</strong> <code>web-server-sg</code></li>
+                    <li><strong>Description:</strong> <code>Allows HTTP and HTTPS inbound traffic</code></li>
+                    <li><strong>VPC:</strong> select the default VPC</li>
+                    <li><strong>Add inbound rule:</strong> Type = <code>HTTP</code>, Source = <code>0.0.0.0/0</code> (Anywhere IPv4)</li>
+                    <li><strong>Add inbound rule:</strong> Type = <code>HTTPS</code>, Source = <code>0.0.0.0/0</code> (Anywhere IPv4)</li>
+                    <li>Leave outbound rules as default (All traffic)</li>
+                    <li>Click <strong>"Create security group"</strong></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">7</div>
+            <div class="step-content">
+                <strong>Review security group rules.</strong><br>
+                Review your new security group's <strong>Inbound rules</strong> tab to confirm HTTP (port 80) and HTTPS (port 443) are listed.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">8</div>
+            <div class="step-content">
+                <strong>Explore Service Quotas.</strong><br>
+                Navigate to Service Quotas (search <code>Service Quotas</code> in the console), then search for <strong>"VPC"</strong>. Explore quotas like <strong>"VPCs per Region"</strong> and <strong>"Subnets per VPC"</strong>. These limits are important to understand when planning architectures.
+            </div>
+        </div>
+
+        <div class="note-box">
+            <strong>Note:</strong> The default VPC is designed to get you started quickly. In production, you would create custom VPCs with carefully planned CIDR blocks, private subnets, NAT gateways, and more restrictive security groups.
+        </div>
+
+        <h2>Completion Screenshot</h2>
+        <div class="screenshot-box">
+            <strong>&#128247; What to capture:</strong>
+            <p>
+                Take two screenshots:
+            </p>
+            <ul style="margin-top: 8px; margin-left: 20px;">
+                <li>The <strong>VPC Subnets page</strong> showing subnets in multiple Availability Zones (the AZ column must be visible)</li>
+                <li>The custom <strong>"web-server-sg"</strong> security group's <strong>Inbound rules</strong> tab showing HTTP and HTTPS rules</li>
+            </ul>
+            <p style="margin-top: 12px;"><strong>Important:</strong> Your screenshot must include your AWS account name/ID visible in the top right corner of the AWS Console to verify completion.</p>
+        </div>
+
+        <h2>Cleanup</h2>
+        <div class="cleanup-box">
+            <strong>&#128465; Cleanup Steps:</strong>
+            <ol>
+                <li>Navigate to VPC &rarr; Security Groups</li>
+                <li>Select the <strong>"web-server-sg"</strong> security group</li>
+                <li>Click Actions &rarr; Delete security group &rarr; confirm</li>
+            </ol>
+            <div class="warning-box" style="margin-top: 12px;">
+                <strong>Important:</strong> Do NOT delete the default VPC, default security group, or default subnets &mdash; these are used by other AWS services.
+            </div>
+        </div>
+
+        <h2>Key Takeaways</h2>
+        <ul class="takeaways-list">
+            <li>VPCs provide network isolation &mdash; your resources live in your own virtual network</li>
+            <li>Subnets across multiple Availability Zones are the foundation of high availability and fault tolerance</li>
+            <li>Security groups act as virtual firewalls, controlling inbound and outbound traffic at the instance level</li>
+            <li>Service quotas define the boundaries of your architecture &mdash; always check limits when planning</li>
+        </ul>
+
+        <h2>Additional Resources</h2>
+        <div class="resources-box">
+            <strong>&#128218; Further Reading:</strong>
+            <ul>
+                <li><a href="https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-vpc.html" target="_blank">Amazon VPC User Guide</a> &mdash; Complete VPC documentation</li>
+                <li><a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html" target="_blank">Regions and Availability Zones</a> &mdash; Understanding AWS global infrastructure</li>
+                <li><a href="https://docs.aws.amazon.com/vpc/latest/userguide/vpc-security-groups.html" target="_blank">Security Groups for Your VPC</a> &mdash; Configuring firewall rules</li>
+                <li><a href="https://docs.aws.amazon.com/vpc/latest/userguide/configure-subnets.html" target="_blank">Subnets for Your VPC</a> &mdash; Network segmentation patterns</li>
+                <li><a href="https://aws.amazon.com/architecture/well-architected/" target="_blank">AWS Well-Architected Framework</a> &mdash; Reliability pillar guidance</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="footer-logos">
+            <span class="footer-logo build">The Build Fellowship</span>
+            <span class="footer-logo openavenues">OpenAvenues</span>
+        </div>
+        <div class="footer-right">
+            <span class="footer-copyright">&copy; The Build Fellowship 2026</span>
+            <div class="footer-date">February 2026</div>
+        </div>
+    </div>
+</body>
+</html>

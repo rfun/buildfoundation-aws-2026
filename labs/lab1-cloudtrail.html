@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 1: Exploring CloudTrail Event History - The Build Fellowship</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="lab-styles.css">
+    <style>
+        :root {
+            --pillar-color: #4db6ac;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="index.html" class="back-link">Back to Labs</a>
+        <div class="pillar-badge">Operational Excellence</div>
+        <h1 class="page-title">Lab 1: Exploring CloudTrail Event History</h1>
+        <div class="lab-meta">
+            <span>&#9201; ~15 minutes</span>
+            <span>&#9989; Free Tier</span>
+            <span>&#128218; AWS Console Only</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <h2>Overview</h2>
+        <p class="overview-text">
+            AWS CloudTrail records every API call made in your AWS account, providing a complete audit trail of activity.
+            In this lab, you'll explore CloudTrail's Event History to understand <strong>who</strong> did <strong>what</strong>,
+            <strong>when</strong>, and <strong>where</strong> in your account. This connects directly to the
+            <em>Organize &amp; Operate</em> phases of Operational Excellence &mdash; specifically the principle
+            "Utilize workload observability" from the Week 2 lecture.
+        </p>
+
+        <h2>Objectives</h2>
+        <ul class="objectives-list">
+            <li>Navigate to CloudTrail and understand its purpose as an audit and governance tool</li>
+            <li>Read and interpret CloudTrail event records (who, what, when, where)</li>
+            <li>Apply filters to find specific events by source, user, and time range</li>
+            <li>Understand how CloudTrail supports the Operational Excellence pillar through observability</li>
+        </ul>
+
+        <h2>Prerequisites</h2>
+        <div class="prereq-box">
+            <ul>
+                <li>An AWS account (free tier is sufficient)</li>
+                <li>Signed in to the AWS Management Console</li>
+                <li>Some prior activity in your account (even just logging in creates events)</li>
+            </ul>
+        </div>
+
+        <h2>Step-by-Step Instructions</h2>
+
+        <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+                <strong>Navigate to CloudTrail.</strong><br>
+                In the AWS Console, use the search bar at the top and type <code>CloudTrail</code>. Click on the CloudTrail service to open it.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+                <strong>Open Event History.</strong><br>
+                In the left sidebar, click <strong>Event history</strong>. This shows the last 90 days of management events in your account &mdash; completely free, no setup needed.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+                <strong>Examine a recent event.</strong><br>
+                Find a <code>ConsoleLogin</code> event (or any recent event) in the list. Click on it to expand the event details. Read through the JSON record and identify the key fields:
+                <ul style="margin-top: 8px; margin-left: 20px;">
+                    <li><code>userIdentity</code> &mdash; <strong>Who</strong> performed the action</li>
+                    <li><code>eventName</code> &mdash; <strong>What</strong> action was taken</li>
+                    <li><code>eventTime</code> &mdash; <strong>When</strong> it happened</li>
+                    <li><code>awsRegion</code> &mdash; <strong>Where</strong> it occurred</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">4</div>
+            <div class="step-content">
+                <strong>Filter events by Event source.</strong><br>
+                Use the filter dropdown at the top (it defaults to "Read only"). Change the lookup attribute to <strong>Event source</strong>, and type <code>signin.amazonaws.com</code>. Press Enter to filter. You should see all sign-in related events.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">5</div>
+            <div class="step-content">
+                <strong>Filter events by User name.</strong><br>
+                Change the lookup attribute to <strong>User name</strong> and enter your root account email or IAM username. This shows all actions performed by that specific identity.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">6</div>
+            <div class="step-content">
+                <strong>Filter by a specific time range.</strong><br>
+                Use the time range selector to narrow the events to just today or the past hour. Notice how the number of events changes based on the time window.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">7</div>
+            <div class="step-content">
+                <strong>Understand the event record fields.</strong><br>
+                Click on another event and review the full JSON. The key fields to understand are:
+                <ul style="margin-top: 8px; margin-left: 20px;">
+                    <li><strong>userIdentity</strong> &mdash; The IAM identity that made the request (type, ARN, account ID)</li>
+                    <li><strong>eventName</strong> &mdash; The specific API action (e.g., <code>CreateBucket</code>, <code>DescribeInstances</code>)</li>
+                    <li><strong>eventTime</strong> &mdash; UTC timestamp of the event</li>
+                    <li><strong>awsRegion</strong> &mdash; The region where the API call was made</li>
+                    <li><strong>sourceIPAddress</strong> &mdash; Where the request originated from</li>
+                    <li><strong>requestParameters</strong> &mdash; What parameters were passed to the API</li>
+                    <li><strong>responseElements</strong> &mdash; What the API returned</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="note-box">
+            <strong>Tip:</strong> CloudTrail Event History is a read-only view of the last 90 days.
+            For longer retention, you would create a <em>Trail</em> that stores events in S3 &mdash; but
+            the 90-day event history is always available for free with no configuration.
+        </div>
+
+        <h2>Completion Screenshot</h2>
+        <div class="screenshot-box">
+            <strong>&#128247; What to capture:</strong>
+            <p>
+                Take a screenshot of the <strong>Event History</strong> page showing:
+            </p>
+            <ul style="margin-top: 8px; margin-left: 20px;">
+                <li>A filter applied (e.g., Event source or User name) visible at the top</li>
+                <li>At least <strong>3 events</strong> in the list. If you don't see 3 events, try logging off your AWS account and logging back in a few times.</li>
+                <li>One event's detail <strong>expanded</strong> showing the username/identity information</li>
+            </ul>
+            <p style="margin-top: 12px;"><strong>Important:</strong> Your screenshot must include your AWS account name/ID visible in the top right corner of the AWS Console to verify completion.</p>
+        </div>
+
+        <h2>Cleanup</h2>
+        <div class="cleanup-box">
+            <strong>&#128465; Cleanup Steps:</strong>
+            <p style="margin-top: 8px;">
+                <strong>No cleanup needed!</strong> CloudTrail Event History is a read-only exploration of existing audit data.
+                You haven't created any resources in this lab.
+            </p>
+        </div>
+
+        <h2>Key Takeaways</h2>
+        <ul class="takeaways-list">
+            <li>CloudTrail provides automatic auditing of all API activity &mdash; a key observability tool for Operational Excellence</li>
+            <li>Every action in AWS generates an event with who, what, when, and where information</li>
+            <li>Filters let you quickly investigate specific activity, supporting the "respond to events" principle</li>
+            <li>The 90-day Event History is always free and requires no setup &mdash; you already have it enabled</li>
+        </ul>
+
+        <h2>Additional Resources</h2>
+        <div class="resources-box">
+            <strong>&#128218; Further Reading:</strong>
+            <ul>
+                <li><a href="https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-user-guide.html" target="_blank">AWS CloudTrail User Guide</a> &mdash; Complete official documentation</li>
+                <li><a href="https://docs.aws.amazon.com/awscloudtrail/latest/userguide/view-cloudtrail-events.html" target="_blank">Viewing CloudTrail Events in Event History</a> &mdash; Detailed guide on using the Event History interface</li>
+                <li><a href="https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference.html" target="_blank">CloudTrail Event Reference</a> &mdash; Understanding event structure and fields</li>
+                <li><a href="https://docs.aws.amazon.com/awscloudtrail/latest/userguide/best-practices-security.html" target="_blank">Security Best Practices for CloudTrail</a> &mdash; Advanced security patterns</li>
+                <li><a href="https://aws.amazon.com/cloudtrail/pricing/" target="_blank">CloudTrail Pricing</a> &mdash; Understanding costs for trails beyond Event History</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="footer-logos">
+            <span class="footer-logo build">The Build Fellowship</span>
+            <span class="footer-logo openavenues">OpenAvenues</span>
+        </div>
+        <div class="footer-right">
+            <span class="footer-copyright">&copy; The Build Fellowship 2026</span>
+            <div class="footer-date">February 2026</div>
+        </div>
+    </div>
+</body>
+</html>

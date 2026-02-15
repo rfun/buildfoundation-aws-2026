@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 10: AWS Pricing Calculator and Trusted Advisor - The Build Fellowship</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="lab-styles.css">
+    <style>
+        :root {
+            --pillar-color: #43a047;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="index.html" class="back-link">Back to Labs</a>
+        <div class="pillar-badge">Cost Optimization</div>
+        <h1 class="page-title">Lab 10: AWS Pricing Calculator and Trusted Advisor</h1>
+        <div class="lab-meta">
+            <span>&#9201; ~20 minutes</span>
+            <span>&#9989; Free Tier</span>
+            <span>&#128218; AWS Console Only</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <h2>Overview</h2>
+        <p class="overview-text">
+            Understanding costs before you build is a key Cost Optimization practice. The AWS Pricing Calculator lets you
+            estimate costs for architectures before deploying them, while AWS Trusted Advisor provides automated recommendations
+            to optimize your existing environment. In this lab, you'll estimate costs for a sample 3-service architecture and
+            explore Trusted Advisor's free checks. This connects to the Cost Optimization pillar principles
+            <em>"Adopt a consumption model"</em>, <em>"Measure overall efficiency"</em>, and
+            <em>"Stop spending money on undifferentiated heavy lifting"</em> from the Week 2 lecture.
+        </p>
+
+        <h2>Objectives</h2>
+        <ul class="objectives-list">
+            <li>Use the AWS Pricing Calculator to estimate costs for a multi-service architecture</li>
+            <li>Understand the cost impact of instance right-sizing (t3.micro vs t3.medium)</li>
+            <li>Explore AWS Trusted Advisor's free checks across all pillar categories</li>
+            <li>Learn how automated recommendations help optimize cost, security, and performance</li>
+        </ul>
+
+        <h2>Prerequisites</h2>
+        <div class="prereq-box">
+            <ul>
+                <li>An AWS account (free tier is sufficient)</li>
+                <li>Signed in to the AWS Management Console</li>
+                <li>A web browser (Pricing Calculator is a separate web tool)</li>
+            </ul>
+        </div>
+
+        <h2>Step-by-Step Instructions</h2>
+
+        <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+                <strong>Open the AWS Pricing Calculator.</strong><br>
+                In a new browser tab, go to <code>calculator.aws</code> (or search "AWS Pricing Calculator" in your browser). Click <strong>"Create estimate"</strong> to start building your cost estimate.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+                <strong>Add an Amazon EC2 instance.</strong><br>
+                Click <strong>"Add service"</strong> &rarr; search for <code>Amazon EC2</code> &rarr; select it. Configure the following:
+                <ul style="margin-top: 8px; margin-left: 20px;">
+                    <li><strong>Region:</strong> US East (N. Virginia)</li>
+                    <li><strong>OS:</strong> Linux</li>
+                    <li><strong>Instance type:</strong> t3.micro</li>
+                    <li><strong>Quantity:</strong> 1</li>
+                    <li><strong>Usage:</strong> 730 hours/month (this means running 24/7)</li>
+                    <li>Leave other settings as defaults &rarr; click <strong>"Save and add service"</strong></li>
+                </ul>
+                <p style="margin-top: 8px;">Note the monthly cost estimate for EC2.</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+                <strong>Add Amazon S3 storage.</strong><br>
+                Click <strong>"Add service"</strong> &rarr; search for <code>Amazon S3</code> &rarr; select it. Configure the following:
+                <ul style="margin-top: 8px; margin-left: 20px;">
+                    <li><strong>Region:</strong> US East (N. Virginia)</li>
+                    <li><strong>S3 Standard storage:</strong> 50 GB per month</li>
+                    <li><strong>GET requests:</strong> 10,000 per month</li>
+                    <li><strong>PUT requests:</strong> 1,000 per month</li>
+                    <li>Leave other settings as defaults &rarr; Save and view summary</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">4</div>
+            <div class="step-content">
+                <strong>Add Amazon DynamoDB.</strong><br>
+                Click <strong>"Add service"</strong> &rarr; search for <code>Amazon DynamoDB</code> &rarr; select it. Configure the following:
+                <ul style="margin-top: 8px; margin-left: 20px;">
+                    <li><strong>Region:</strong> US East (N. Virginia)</li>
+                    <li><strong>Table class:</strong> Standard</li>
+                    <li><strong>Capacity mode:</strong> On-demand</li>
+                    <li><strong>Average item size:</strong> 1 KB</li>
+                    <li><strong>Read request units:</strong> 25 per second</li>
+                    <li><strong>Write request units:</strong> 25 per second</li>
+                    <li>Save and view summary</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">5</div>
+            <div class="step-content">
+                <strong>Review the total monthly estimate.</strong><br>
+                Review the total monthly estimate for all three services. This is a simple web application architecture: compute (EC2), storage (S3), and database (DynamoDB).
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">6</div>
+            <div class="step-content">
+                <strong>Demonstrate the impact of right-sizing.</strong><br>
+                Go back to the EC2 configuration &rarr; change the instance type from <code>t3.micro</code> to <code>t3.medium</code> &rarr; observe how the monthly cost changes. This shows why choosing the right instance size matters for cost optimization!
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">7</div>
+            <div class="step-content">
+                <strong>Navigate to Trusted Advisor.</strong><br>
+                Switch to the AWS Console &rarr; use the search bar and type <code>Trusted Advisor</code>. Click on it to open the Trusted Advisor dashboard.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">8</div>
+            <div class="step-content">
+                <strong>Explore the available checks in each category.</strong><br>
+                <ul style="margin-top: 8px; margin-left: 20px;">
+                    <li><strong>Cost Optimization:</strong> Look for recommendations about idle resources, underutilized instances</li>
+                    <li><strong>Security:</strong> Check for open security groups, MFA on root account, public S3 buckets</li>
+                    <li><strong>Fault Tolerance:</strong> Review warnings about single-AZ deployments, backups</li>
+                    <li><strong>Performance:</strong> Review suggestions about overutilized instances</li>
+                    <li><strong>Service Limits:</strong> Check your current usage vs account limits</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">9</div>
+            <div class="step-content">
+                <strong>Review the Trusted Advisor dashboard summary.</strong><br>
+                Note the green (OK), yellow (warning), and red (action recommended) indicators for each category. These provide a quick visual overview of your account's optimization status.
+            </div>
+        </div>
+
+        <div class="note-box">
+            <strong>Note:</strong> Not all Trusted Advisor checks are available on the Basic (free) support plan. You'll see some checks marked as requiring a Business or Enterprise support plan. Focus on the free checks available &mdash; they still provide valuable insights.
+        </div>
+
+        <h2>Completion Screenshot</h2>
+        <div class="screenshot-box">
+            <strong>&#128247; What to capture:</strong>
+            <p>
+                Capture two things:
+            </p>
+            <ul style="margin-top: 8px; margin-left: 20px;">
+                <li>The <strong>AWS Pricing Calculator</strong> showing your 3-service estimate with the total monthly cost visible</li>
+                <li>The <strong>Trusted Advisor dashboard</strong> showing the check categories with their status indicators (green/yellow/red)</li>
+            </ul>
+            <p style="margin-top: 12px;"><strong>Important:</strong> Your screenshot must include your AWS account name/ID visible in the top right corner of the AWS Console to verify completion.</p>
+        </div>
+
+        <h2>Cleanup</h2>
+        <div class="cleanup-box">
+            <strong>&#128465; Cleanup Steps:</strong>
+            <p style="margin-top: 8px;">
+                <strong>No cleanup needed!</strong>
+            </p>
+            <ul style="margin-top: 8px; margin-left: 20px; list-style: disc;">
+                <li>The AWS Pricing Calculator is a web-based tool &mdash; your estimate is in the browser only</li>
+                <li>Trusted Advisor is read-only &mdash; it only shows recommendations, it doesn't change anything</li>
+            </ul>
+        </div>
+
+        <h2>Key Takeaways</h2>
+        <ul class="takeaways-list">
+            <li>Always estimate costs before building &mdash; the Pricing Calculator prevents surprises in your AWS bill</li>
+            <li>Right-sizing (choosing the correct instance type) can dramatically reduce costs with no performance penalty</li>
+            <li>Trusted Advisor automates the "measure overall efficiency" principle by continuously checking your environment</li>
+            <li>The combination of planning (Pricing Calculator) and monitoring (Trusted Advisor) implements a complete cost optimization lifecycle</li>
+        </ul>
+
+        <h2>Additional Resources</h2>
+        <div class="resources-box">
+            <strong>&#128218; Further Reading:</strong>
+            <ul>
+                <li><a href="https://calculator.aws/" target="_blank">AWS Pricing Calculator</a> &mdash; Estimate costs for your architecture</li>
+                <li><a href="https://docs.aws.amazon.com/awssupport/latest/user/trusted-advisor.html" target="_blank">AWS Trusted Advisor Documentation</a> &mdash; Understanding optimization recommendations</li>
+                <li><a href="https://aws.amazon.com/pricing/" target="_blank">AWS Pricing Overview</a> &mdash; How AWS pricing works across services</li>
+                <li><a href="https://docs.aws.amazon.com/wellarchitected/latest/cost-optimization-pillar/design-principles.html" target="_blank">Cost Optimization Design Principles</a> &mdash; Architectural patterns for cost efficiency</li>
+                <li><a href="https://aws.amazon.com/blogs/aws-cloud-financial-management/" target="_blank">AWS Cloud Financial Management Blog</a> &mdash; Latest cost optimization strategies</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="footer-logos">
+            <span class="footer-logo build">The Build Fellowship</span>
+            <span class="footer-logo openavenues">OpenAvenues</span>
+        </div>
+        <div class="footer-right">
+            <span class="footer-copyright">&copy; The Build Fellowship 2026</span>
+            <div class="footer-date">February 2026</div>
+        </div>
+    </div>
+</body>
+</html>

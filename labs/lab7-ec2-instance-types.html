@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 7: Exploring EC2 Instance Types and Launching an Instance - The Build Fellowship</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="lab-styles.css">
+    <style>
+        :root {
+            --pillar-color: #f5a623;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="index.html" class="back-link">Back to Labs</a>
+        <div class="pillar-badge">Performance Efficiency</div>
+        <h1 class="page-title">Lab 7: Exploring EC2 Instance Types and Launching an Instance</h1>
+        <div class="lab-meta">
+            <span>&#9201; ~25 minutes</span>
+            <span>&#9989; Free Tier</span>
+            <span>&#128218; AWS Console Only</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <h2>Overview</h2>
+        <p class="overview-text">
+            Choosing the right EC2 instance type is a core Performance Efficiency decision. Different instance families
+            are optimized for different workloads &mdash; general purpose, compute-optimized, memory-optimized, and more.
+            In this lab, you'll explore instance type families, launch a free-tier eligible instance, and examine its
+            monitoring metrics. This connects to the Performance Efficiency pillar principles of
+            <em>"Architecture selection"</em> and <em>"Compute &amp; Hardware"</em> from the Week 2 lecture.
+        </p>
+
+        <h2>Objectives</h2>
+        <ul class="objectives-list">
+            <li>Understand EC2 instance type families and their use cases</li>
+            <li>Launch a free-tier eligible EC2 instance</li>
+            <li>Explore CloudWatch monitoring metrics for the instance</li>
+            <li>Understand how right-sizing instances optimizes performance efficiency</li>
+        </ul>
+
+        <h2>Prerequisites</h2>
+        <div class="prereq-box">
+            <ul>
+                <li>An AWS account (free tier is sufficient)</li>
+                <li>Signed in to the AWS Management Console</li>
+                <li>Note: This lab launches an EC2 instance &mdash; remember to terminate it at the end to stay within free tier</li>
+            </ul>
+        </div>
+
+        <h2>Step-by-Step Instructions</h2>
+
+        <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+                <strong>Navigate to EC2 in the AWS Console.</strong><br>
+                Use the search bar at the top and type <code>EC2</code>. Click on the EC2 service to open it. In the left sidebar, click <strong>Instance Types</strong>.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+                <strong>Explore different instance families.</strong><br>
+                Browse the instance types list by filtering or scrolling. Key families to understand:
+                <ul style="margin-top: 8px; margin-left: 20px;">
+                    <li><strong>t3/t2</strong> (General Purpose, Burstable) &mdash; good for web servers, small databases, dev environments</li>
+                    <li><strong>m5/m6i</strong> (General Purpose, Fixed) &mdash; balanced compute, memory, networking for application servers</li>
+                    <li><strong>c5/c6i</strong> (Compute Optimized) &mdash; best for batch processing, gaming servers, scientific modeling</li>
+                    <li><strong>r5/r6i</strong> (Memory Optimized) &mdash; ideal for in-memory databases, real-time big data analytics</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+                <strong>Filter for free tier eligible instances.</strong><br>
+                Use the filter: add a filter for <strong>"Free tier eligible"</strong> = <strong>"Yes"</strong> to see which instance types qualify for the free tier.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">4</div>
+            <div class="step-content">
+                <strong>Navigate to Launch Instance.</strong><br>
+                Go to EC2 &rarr; click <strong>"Launch Instance"</strong> (top right of the EC2 dashboard).
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">5</div>
+            <div class="step-content">
+                <strong>Name your instance.</strong><br>
+                Enter the name: <code>performance-lab-instance</code>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">6</div>
+            <div class="step-content">
+                <strong>Select the AMI.</strong><br>
+                Under AMI, select <strong>"Amazon Linux 2023 AMI"</strong> (should be marked "Free tier eligible").
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">7</div>
+            <div class="step-content">
+                <strong>Choose the instance type.</strong><br>
+                Under Instance type, select <strong>t2.micro</strong> (Free tier eligible). If t2.micro is not available in your region, select <strong>t3.micro</strong>.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">8</div>
+            <div class="step-content">
+                <strong>Configure key pair.</strong><br>
+                Under Key pair, select <strong>"Proceed without a key pair"</strong> (we won't be SSH-ing into this instance).
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">9</div>
+            <div class="step-content">
+                <strong>Configure network settings.</strong><br>
+                Keep the default VPC and ensure <strong>"Auto-assign public IP"</strong> is set to <strong>Enable</strong>. Click <strong>"Edit"</strong> on the security group &rarr; Create a new security group &rarr; allow SSH (port 22) from <strong>"My IP"</strong> only.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">10</div>
+            <div class="step-content">
+                <strong>Launch the instance.</strong><br>
+                Leave all other settings as defaults &rarr; click <strong>"Launch instance"</strong>.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">11</div>
+            <div class="step-content">
+                <strong>Wait for the instance to start.</strong><br>
+                Click <strong>"View all instances"</strong> &rarr; wait for the instance state to change to <strong>"Running"</strong> (may take 1&ndash;2 minutes &mdash; refresh the page).
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">12</div>
+            <div class="step-content">
+                <strong>Review instance details.</strong><br>
+                Click on your instance ID to open the detail page. Review: <strong>Instance type</strong>, <strong>Availability Zone</strong>, <strong>Public IPv4 address</strong>, and <strong>Status checks</strong> (2/2 checks passed).
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">13</div>
+            <div class="step-content">
+                <strong>Explore monitoring metrics.</strong><br>
+                Click the <strong>"Monitoring"</strong> tab &rarr; explore the CloudWatch metrics: <code>CPUUtilization</code>, <code>NetworkIn</code>, <code>NetworkOut</code>, <code>DiskReadOps</code>, etc. (Metrics may take 5 minutes to populate.)
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">14</div>
+            <div class="step-content">
+                <strong>Understand monitoring intervals.</strong><br>
+                Note: these are basic monitoring metrics at <strong>5-minute intervals</strong>. Detailed monitoring (1-minute intervals) is available for an additional cost.
+            </div>
+        </div>
+
+        <div class="warning-box">
+            <strong>&#9888; Important:</strong> Remember to terminate this instance when you're done! EC2 instances running 24/7 will consume your 750 free tier hours. Terminating immediately after the lab keeps your usage minimal.
+        </div>
+
+        <h2>Completion Screenshot</h2>
+        <div class="screenshot-box">
+            <strong>&#128247; What to capture:</strong>
+            <p>
+                Take a screenshot of the <strong>EC2 instance detail page</strong> showing:
+            </p>
+            <ul style="margin-top: 8px; margin-left: 20px;">
+                <li>Instance state = <strong>Running</strong></li>
+                <li>Instance type = <strong>t2.micro</strong> (or t3.micro)</li>
+                <li>The <strong>Monitoring</strong> tab with at least one metric graph visible</li>
+            </ul>
+            <p style="margin-top: 12px;"><strong>Important:</strong> Your screenshot must include your AWS account name/ID visible in the top right corner of the AWS Console to verify completion.</p>
+        </div>
+
+        <h2>Cleanup</h2>
+        <div class="cleanup-box">
+            <strong>&#128465; Cleanup Steps:</strong>
+            <ol>
+                <li>Navigate to EC2 &rarr; Instances</li>
+                <li>Select <strong>"performance-lab-instance"</strong> &rarr; Instance state &rarr; <strong>Terminate instance</strong> &rarr; confirm</li>
+                <li>Wait for the instance to show <strong>"Terminated"</strong> state</li>
+                <li>Navigate to EC2 &rarr; Security Groups &rarr; find the security group created for this lab (it will have "launch-wizard" in its name or the name you chose) &rarr; Actions &rarr; <strong>Delete security group</strong> &rarr; confirm</li>
+            </ol>
+        </div>
+
+        <div class="warning-box" style="margin-top: 16px;">
+            <strong>&#9888; Important:</strong> Always verify your instance reaches <strong>"Terminated"</strong> state. A "Stopped" instance still reserves resources. Only "Terminated" fully releases all resources.
+        </div>
+
+        <h2>Key Takeaways</h2>
+        <ul class="takeaways-list">
+            <li>EC2 instance families are purpose-built for different workloads &mdash; choosing the right one is key to performance efficiency</li>
+            <li>The t2/t3 burstable instances are cost-effective for variable workloads but may throttle under sustained load</li>
+            <li>CloudWatch metrics help you monitor whether your instance is right-sized (under-utilized = wasting money, over-utilized = poor performance)</li>
+            <li>Right-sizing is an ongoing process: start small, monitor, and adjust based on actual usage patterns</li>
+        </ul>
+
+        <h2>Additional Resources</h2>
+        <div class="resources-box">
+            <strong>&#128218; Further Reading:</strong>
+            <ul>
+                <li><a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/concepts.html" target="_blank">Amazon EC2 User Guide</a> &mdash; Comprehensive EC2 documentation</li>
+                <li><a href="https://aws.amazon.com/ec2/instance-types/" target="_blank">EC2 Instance Types</a> &mdash; Complete instance family comparison</li>
+                <li><a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/burstable-performance-instances.html" target="_blank">Burstable Performance Instances</a> &mdash; Understanding T2/T3 instance credits</li>
+                <li><a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/monitoring-system-instance-status-check.html" target="_blank">EC2 Monitoring and Status Checks</a> &mdash; Health monitoring with CloudWatch</li>
+                <li><a href="https://aws.amazon.com/ec2/pricing/" target="_blank">EC2 Pricing</a> &mdash; Understanding compute costs and free tier</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="footer-logos">
+            <span class="footer-logo build">The Build Fellowship</span>
+            <span class="footer-logo openavenues">OpenAvenues</span>
+        </div>
+        <div class="footer-right">
+            <span class="footer-copyright">&copy; The Build Fellowship 2026</span>
+            <div class="footer-date">February 2026</div>
+        </div>
+    </div>
+</body>
+</html>

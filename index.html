@@ -111,7 +111,7 @@
 
         .cards-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 30px;
             margin-top: 20px;
         }
@@ -248,10 +248,30 @@
                 <div class="card-description">Introduction to the Project, general discussions and local setup</div>
             </a>
 
+            <a href="week2.html" class="card">
+                <div class="card-icon">🏗️</div>
+                <div class="card-title">Week 2</div>
+                <div class="card-description">AWS Well-Architected Framework</div>
+            </a>
+        </div>
+
+        <h2 class="section-title" style="margin-top: 60px;">Instructions/Tutorials</h2>
+
+        <div class="cards-container">
             <a href="local-environment-setup.html" class="card">
                 <div class="card-icon">⚙️</div>
                 <div class="card-title">Local Environment Setup</div>
                 <div class="card-description">Setup instructions for Terraform and AWS CLI</div>
+            </a>
+        </div>
+
+        <h2 class="section-title" style="margin-top: 60px;">Labs/Assignments</h2>
+
+        <div class="cards-container">
+            <a href="labs/index.html" class="card">
+                <div class="card-icon">🔬</div>
+                <div class="card-title">Week 2 Labs</div>
+                <div class="card-description">Hands-on labs for the AWS Well-Architected Framework pillars</div>
             </a>
         </div>
     </div>

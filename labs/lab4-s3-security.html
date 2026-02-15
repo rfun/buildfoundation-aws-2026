@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 4: Securing an S3 Bucket with Encryption and Access Controls - The Build Fellowship</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="lab-styles.css">
+    <style>
+        :root {
+            --pillar-color: #e53935;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="index.html" class="back-link">Back to Labs</a>
+        <div class="pillar-badge">Security</div>
+        <h1 class="page-title">Lab 4: Securing an S3 Bucket with Encryption and Access Controls</h1>
+        <div class="lab-meta">
+            <span>&#9201; ~25 minutes</span>
+            <span>&#9989; Free Tier</span>
+            <span>&#128218; AWS Console Only</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <h2>Overview</h2>
+        <p class="overview-text">
+            Amazon S3 is one of the most commonly used AWS services, making it a critical target for security configuration.
+            In this lab, you'll create an S3 bucket with multiple layers of security: encryption at rest, versioning,
+            public access blocking, and an HTTPS-only bucket policy. This connects to the Security pillar principles
+            <em>"Protect data in transit and at rest"</em> and <em>"Apply security at all layers"</em> from the Week 2 lecture.
+        </p>
+
+        <h2>Objectives</h2>
+        <ul class="objectives-list">
+            <li>Create an S3 bucket with security best practices enabled from the start</li>
+            <li>Configure server-side encryption (SSE-S3) for data at rest</li>
+            <li>Enable versioning as a defense-in-depth measure</li>
+            <li>Apply a bucket policy that enforces HTTPS-only access (data in transit)</li>
+        </ul>
+
+        <h2>Prerequisites</h2>
+        <div class="prereq-box">
+            <ul>
+                <li>An AWS account (free tier is sufficient)</li>
+                <li>Signed in to the AWS Management Console</li>
+            </ul>
+        </div>
+
+        <h2>Step-by-Step Instructions</h2>
+
+        <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+                <strong>Navigate to S3 and create a bucket.</strong><br>
+                In the AWS Console, use the search bar at the top and type <code>S3</code>. Click on the S3 service to open it. Click <strong>Create bucket</strong>. For the bucket name, enter <code>yourname-security-lab-2026</code> (replace "yourname" with your actual name &mdash; bucket names must be globally unique).
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+                <strong>Verify "Block all public access" is enabled.</strong><br>
+                Under the <strong>Block Public Access settings for this bucket</strong> section, confirm that <strong>"Block <em>all</em> public access"</strong> is checked. This should be enabled by default &mdash; keep it enabled.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+                <strong>Configure default encryption.</strong><br>
+                Under <strong>Default encryption</strong>, select <strong>"Server-side encryption with Amazon S3 managed keys (SSE-S3)"</strong> and enable <strong>"Bucket Key"</strong>.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">4</div>
+            <div class="step-content">
+                <strong>Enable Bucket Versioning.</strong><br>
+                Under <strong>Bucket Versioning</strong>, select <strong>"Enable"</strong>. Versioning adds a defense-in-depth layer by preserving previous versions of objects, protecting against accidental deletion or overwrite.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">5</div>
+            <div class="step-content">
+                <strong>Create the bucket.</strong><br>
+                Click <strong>Create bucket</strong>. You should see a success message and your new bucket in the S3 bucket list.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">6</div>
+            <div class="step-content">
+                <strong>Upload a test file.</strong><br>
+                Click into your new bucket. Click <strong>Upload</strong>, then <strong>Add files</strong>. Add a small text file (create a <code>.txt</code> file with some sample text on your computer first). Click <strong>Upload</strong> to complete the upload.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">7</div>
+            <div class="step-content">
+                <strong>Verify encryption on the uploaded file.</strong><br>
+                Click on the uploaded file. Scroll down to the <strong>Server-side encryption settings</strong> section. Verify it shows <strong>"Amazon S3 managed keys (SSE-S3)"</strong> &mdash; this confirms your object was automatically encrypted at rest.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">8</div>
+            <div class="step-content">
+                <strong>Add an HTTPS-only bucket policy.</strong><br>
+                Go to the <strong>Permissions</strong> tab of your bucket. Scroll to <strong>Bucket policy</strong> and click <strong>Edit</strong>. Paste the following policy (replace <code>BUCKET-NAME</code> with your actual bucket name):
+                <pre>{
+  "Version": "2012-10-17",
+  "Statement": [{
+    "Sid": "DenyNonHTTPS",
+    "Effect": "Deny",
+    "Principal": "*",
+    "Action": "s3:*",
+    "Resource": [
+      "arn:aws:s3:::BUCKET-NAME",
+      "arn:aws:s3:::BUCKET-NAME/*"
+    ],
+    "Condition": {
+      "Bool": {
+        "aws:SecureTransport": "false"
+      }
+    }
+  }]
+}</pre>
+                Click <strong>Save changes</strong>.
+            </div>
+        </div>
+
+        <div class="warning-box">
+            <strong>Warning:</strong> Make sure to replace <code>BUCKET-NAME</code> in the policy with your actual bucket name, including in both Resource ARN lines. The policy will fail to save if the ARN doesn't match.
+        </div>
+
+        <div class="step">
+            <div class="step-number">9</div>
+            <div class="step-content">
+                <strong>Review the Permissions tab.</strong><br>
+                Confirm that <strong>Block public access</strong> shows <strong>"On"</strong> and the bucket policy is saved. Your bucket now has multiple layers of security: encryption at rest (SSE-S3), versioning, public access blocking, and encryption in transit (HTTPS-only policy).
+            </div>
+        </div>
+
+        <h2>Completion Screenshot</h2>
+        <div class="screenshot-box">
+            <strong>&#128247; What to capture:</strong>
+            <p>
+                Take a screenshot of the <strong>Bucket Properties</strong> tab showing:
+            </p>
+            <ul style="margin-top: 8px; margin-left: 20px;">
+                <li><strong>Default encryption</strong> = SSE-S3 enabled</li>
+                <li><strong>Bucket Versioning</strong> = Enabled</li>
+            </ul>
+            <p>
+                Also capture the <strong>Permissions</strong> tab showing <strong>Block Public Access = On</strong>.
+            </p>
+            <p style="margin-top: 12px;"><strong>Important:</strong> Your screenshot must include your AWS account name/ID visible in the top right corner of the AWS Console to verify completion.</p>
+        </div>
+
+        <h2>Cleanup</h2>
+        <div class="cleanup-box">
+            <strong>&#128465; Cleanup Steps:</strong>
+            <ol>
+                <li>Go to <strong>S3</strong> &rarr; select your bucket &rarr; click <strong>Empty</strong> &rarr; confirm by typing <strong>"permanently delete"</strong></li>
+                <li>After emptying, select the bucket again &rarr; click <strong>Delete</strong> &rarr; confirm by typing the bucket name</li>
+            </ol>
+            <div class="note-box">
+                <strong>Note:</strong> You must empty the bucket before deleting it. If versioning created extra versions, the Empty action will remove all versions.
+            </div>
+        </div>
+
+        <h2>Key Takeaways</h2>
+        <ul class="takeaways-list">
+            <li>"Security at all layers" means combining encryption, access controls, versioning, and policies together</li>
+            <li>SSE-S3 encrypts data at rest automatically &mdash; every object is encrypted with no extra effort</li>
+            <li>Blocking public access is the first and most important S3 security control</li>
+            <li>The HTTPS-only bucket policy enforces encryption in transit, denying any unencrypted connections</li>
+        </ul>
+
+        <h2>Additional Resources</h2>
+        <div class="resources-box">
+            <strong>&#128218; Further Reading:</strong>
+            <ul>
+                <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html" target="_blank">Amazon S3 User Guide</a> &mdash; Complete S3 documentation</li>
+                <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/security-best-practices.html" target="_blank">S3 Security Best Practices</a> &mdash; Protecting your S3 data</li>
+                <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/serv-side-encryption.html" target="_blank">S3 Server-Side Encryption</a> &mdash; Understanding encryption options</li>
+                <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-control-block-public-access.html" target="_blank">Blocking Public Access to S3</a> &mdash; Preventing data leaks</li>
+                <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucket-policies.html" target="_blank">S3 Bucket Policies</a> &mdash; Advanced access control</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="footer-logos">
+            <span class="footer-logo build">The Build Fellowship</span>
+            <span class="footer-logo openavenues">OpenAvenues</span>
+        </div>
+        <div class="footer-right">
+            <span class="footer-copyright">&copy; The Build Fellowship 2026</span>
+            <div class="footer-date">February 2026</div>
+        </div>
+    </div>
+</body>
+</html>

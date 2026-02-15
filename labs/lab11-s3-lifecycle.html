@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 11: Configuring S3 Lifecycle Policies for Efficient Data Management - The Build Fellowship</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="lab-styles.css">
+    <style>
+        :root {
+            --pillar-color: #8e24aa;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="index.html" class="back-link">Back to Labs</a>
+        <div class="pillar-badge">Sustainability</div>
+        <h1 class="page-title">Lab 11: Configuring S3 Lifecycle Policies for Efficient Data Management</h1>
+        <div class="lab-meta">
+            <span>&#9201; ~15 minutes</span>
+            <span>&#9989; Free Tier</span>
+            <span>&#128218; AWS Console Only</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <h2>Overview</h2>
+        <p class="overview-text">
+            Sustainability in the cloud means reducing unnecessary resource consumption. One of the most impactful
+            practices is managing data lifecycle &mdash; automatically moving data to cheaper, more energy-efficient
+            storage classes as it ages, and deleting it when no longer needed. In this lab, you'll create an S3
+            bucket, explore storage classes, and configure a lifecycle policy that automates data transitions. This
+            connects to the Sustainability pillar principles of <em>Data Storage</em> and <em>Utilization &amp;
+            Scaling</em> from the Week 2 lecture.
+        </p>
+
+        <h2>Objectives</h2>
+        <ul class="objectives-list">
+            <li>Understand S3 storage classes and their energy/cost tradeoffs</li>
+            <li>Create a lifecycle rule that automates data transitions across storage tiers</li>
+            <li>Configure automatic expiration of old data to reduce storage footprint</li>
+            <li>Connect data lifecycle management to sustainability and environmental impact</li>
+        </ul>
+
+        <h2>Prerequisites</h2>
+        <div class="prereq-box">
+            <ul>
+                <li>An AWS account (free tier is sufficient)</li>
+                <li>Signed in to the AWS Management Console</li>
+            </ul>
+        </div>
+
+        <h2>Step-by-Step Instructions</h2>
+
+        <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+                <strong>Navigate to S3 and create a bucket.</strong><br>
+                In the AWS Console, search for <code>S3</code> and open the service. Click <strong>Create bucket</strong>. For the bucket name, enter <code>yourname-sustainability-lab-2026</code> (replace "yourname" with your actual name). Leave all other settings as defaults and click <strong>Create bucket</strong>.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+                <strong>Upload test files to the bucket.</strong><br>
+                Click into your new bucket and click <strong>Upload</strong>. Add 3&ndash;4 small test files (text files, small images, etc. &mdash; anything under 1MB total). Click <strong>Upload</strong> to complete.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+                <strong>Explore storage classes.</strong><br>
+                Click on one of your uploaded files and scroll down to the <strong>Properties</strong> section. Note that the Storage class is <strong>Standard</strong> by default. Understanding storage classes is key:
+                <ul style="margin-top: 8px; margin-left: 20px;">
+                    <li><strong>S3 Standard</strong> &mdash; Frequently accessed data, highest availability, highest cost</li>
+                    <li><strong>S3 Standard-IA</strong> (Infrequent Access) &mdash; Lower cost for data accessed less often, retrieval fees apply</li>
+                    <li><strong>S3 Glacier Instant Retrieval</strong> &mdash; Archive data that needs millisecond access, much cheaper</li>
+                    <li><strong>S3 Glacier Flexible Retrieval</strong> &mdash; Archive data accessed 1&ndash;2 times per year, minutes-to-hours retrieval</li>
+                    <li><strong>S3 Glacier Deep Archive</strong> &mdash; Lowest cost, data accessed once or twice a year, 12&ndash;48 hour retrieval</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">4</div>
+            <div class="step-content">
+                <strong>Go to the Management tab.</strong><br>
+                Navigate back to your bucket and click on the <strong>Management</strong> tab. This is where you configure lifecycle rules.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">5</div>
+            <div class="step-content">
+                <strong>Create a lifecycle rule.</strong><br>
+                Click <strong>Create lifecycle rule</strong>.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">6</div>
+            <div class="step-content">
+                <strong>Name the rule.</strong><br>
+                Enter the lifecycle rule name: <code>optimize-storage-costs</code>.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">7</div>
+            <div class="step-content">
+                <strong>Set the rule scope.</strong><br>
+                Choose <strong>Apply to all objects in the bucket</strong>. Check the acknowledgement checkbox to confirm you want this rule to apply to all objects.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">8</div>
+            <div class="step-content">
+                <strong>Select lifecycle rule actions.</strong><br>
+                Under <strong>Lifecycle rule actions</strong>, check the following:
+                <ul style="margin-top: 8px; margin-left: 20px;">
+                    <li><strong>Transition current versions of objects between storage classes</strong></li>
+                    <li><strong>Expire current versions of objects</strong></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">9</div>
+            <div class="step-content">
+                <strong>Configure transitions.</strong><br>
+                Under the transitions section, add the following:
+                <ul style="margin-top: 8px; margin-left: 20px;">
+                    <li>Add transition: <strong>Standard-IA</strong> after <strong>30 days</strong></li>
+                    <li>Add transition: <strong>Glacier Flexible Retrieval</strong> after <strong>90 days</strong></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">10</div>
+            <div class="step-content">
+                <strong>Configure expiration.</strong><br>
+                Set <strong>Expire current versions of objects</strong> after <strong>365 days</strong>. Also check <strong>Delete expired object delete markers</strong>.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">11</div>
+            <div class="step-content">
+                <strong>Create the rule and review.</strong><br>
+                Click <strong>Create rule</strong>. Review the rule summary on the Management tab to confirm the transitions and expiration are configured correctly.
+            </div>
+        </div>
+
+        <div class="note-box">
+            <strong>Note:</strong> These transitions won't happen immediately &mdash; they take effect after the specified number of days. For this lab, we're configuring the policy to see how it works. In a real environment, data would automatically move through the tiers: Standard &rarr; Standard-IA (30 days) &rarr; Glacier (90 days) &rarr; Deleted (365 days).
+        </div>
+
+        <div class="note-box">
+            <strong>Sustainability Impact:</strong> How does this help sustainability? Each storage tier uses progressively less energy for storage. Glacier stores data on high-density magnetic media in optimized facilities. By automatically tiering data, you reduce the energy footprint of your storage. And by expiring data you no longer need, you eliminate storage consumption entirely &mdash; the greenest byte is the one you don't store.
+        </div>
+
+        <h2>Completion Screenshot</h2>
+        <div class="screenshot-box">
+            <strong>&#128247; What to capture:</strong>
+            <p>
+                Take a screenshot of the <strong>S3 Management tab</strong> showing the lifecycle rule <strong>"optimize-storage-costs"</strong> with:
+            </p>
+            <ul style="margin-top: 8px; margin-left: 20px;">
+                <li>Transition actions visible (Standard-IA at 30 days, Glacier at 90 days)</li>
+                <li>Expiration action visible (365 days)</li>
+                <li>The rule summary on the Management tab</li>
+            </ul>
+            <p style="margin-top: 12px;"><strong>Important:</strong> Your screenshot must include your AWS account name/ID visible in the top right corner of the AWS Console to verify completion.</p>
+        </div>
+
+        <h2>Cleanup</h2>
+        <div class="cleanup-box">
+            <strong>&#128465; Cleanup Steps:</strong>
+            <ol>
+                <li>Go to the bucket's <strong>Management</strong> tab &rarr; select the lifecycle rule &rarr; <strong>Delete</strong></li>
+                <li>Go to the bucket &rarr; select all objects &rarr; <strong>Delete</strong> &rarr; confirm</li>
+                <li>Go back to S3 &rarr; select the bucket &rarr; <strong>Delete</strong> &rarr; confirm by typing the bucket name</li>
+            </ol>
+        </div>
+
+        <h2>Key Takeaways</h2>
+        <ul class="takeaways-list">
+            <li>Lifecycle policies automate data management &mdash; reducing manual effort and ensuring data moves to efficient storage tiers</li>
+            <li>Each S3 storage class represents a tradeoff between access speed, cost, and energy consumption</li>
+            <li>Automatic expiration prevents data hoarding &mdash; deleting data you no longer need is the most sustainable action</li>
+            <li>Sustainability in the cloud is about using only the resources you need, for only as long as you need them</li>
+        </ul>
+
+        <h2>Additional Resources</h2>
+        <div class="resources-box">
+            <strong>&#128218; Further Reading:</strong>
+            <ul>
+                <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lifecycle-mgmt.html" target="_blank">S3 Lifecycle Configuration</a> &mdash; Automating storage class transitions</li>
+                <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage-class-intro.html" target="_blank">S3 Storage Classes</a> &mdash; Complete comparison and use cases</li>
+                <li><a href="https://docs.aws.amazon.com/amazonglacier/latest/dev/introduction.html" target="_blank">Amazon S3 Glacier</a> &mdash; Long-term archival storage</li>
+                <li><a href="https://docs.aws.amazon.com/wellarchitected/latest/sustainability-pillar/sustainability-pillar.html" target="_blank">Sustainability Pillar Whitepaper</a> &mdash; Building environmentally conscious architectures</li>
+                <li><a href="https://aws.amazon.com/blogs/storage/optimizing-amazon-s3-costs/" target="_blank">Optimizing S3 Costs</a> &mdash; Strategies for efficient storage management</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="footer-logos">
+            <span class="footer-logo build">The Build Fellowship</span>
+            <span class="footer-logo openavenues">OpenAvenues</span>
+        </div>
+        <div class="footer-right">
+            <span class="footer-copyright">&copy; The Build Fellowship 2026</span>
+            <div class="footer-date">February 2026</div>
+        </div>
+    </div>
+</body>
+</html>

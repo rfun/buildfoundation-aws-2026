@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 5: S3 Versioning and Object Recovery - The Build Fellowship</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="lab-styles.css">
+    <style>
+        :root {
+            --pillar-color: #1e88e5;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="index.html" class="back-link">Back to Labs</a>
+        <div class="pillar-badge">Reliability</div>
+        <h1 class="page-title">Lab 5: S3 Versioning and Object Recovery</h1>
+        <div class="lab-meta">
+            <span>&#9201; ~15 minutes</span>
+            <span>&#9989; Free Tier</span>
+            <span>&#128218; AWS Console Only</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <h2>Overview</h2>
+        <p class="overview-text">
+            One of the key principles of Reliability is being able to recover from failures. S3 Versioning keeps
+            multiple versions of every object, acting as a built-in safety net against accidental deletions and
+            overwrites. In this lab, you'll enable versioning, create multiple versions of a file, simulate a
+            deletion, and recover the file. This connects to the Reliability pillar principles of
+            <em>observability and failure management</em> from the Week 2 lecture.
+        </p>
+
+        <h2>Objectives</h2>
+        <ul class="objectives-list">
+            <li>Enable S3 versioning to protect data from accidental changes</li>
+            <li>Understand how S3 stores multiple versions of the same object</li>
+            <li>Practice deleting and recovering objects using version management</li>
+            <li>Connect versioning to the Reliability principle of automated recovery</li>
+        </ul>
+
+        <h2>Prerequisites</h2>
+        <div class="prereq-box">
+            <ul>
+                <li>An AWS account (free tier is sufficient)</li>
+                <li>Signed in to the AWS Management Console</li>
+                <li>A small text file ready to upload (or create one during the lab)</li>
+            </ul>
+        </div>
+
+        <h2>Step-by-Step Instructions</h2>
+
+        <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+                <strong>Create an S3 bucket with versioning enabled.</strong><br>
+                Navigate to <strong>S3</strong> in the AWS Console &rarr; click <strong>Create bucket</strong> &rarr; name it <code>yourname-reliability-lab-2026</code> (replace <em>yourname</em> with your actual name). Under <strong>Bucket Versioning</strong>, select <strong>Enable</strong> &rarr; click <strong>Create bucket</strong>.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+                <strong>Create your test file.</strong><br>
+                On your computer, create a simple text file named <code>notes.txt</code> with the content: <code>Version 1 - original content</code>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+                <strong>Upload the file to your bucket.</strong><br>
+                Open your bucket in the S3 console and upload <code>notes.txt</code>.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">4</div>
+            <div class="step-content">
+                <strong>Upload a second version of the file.</strong><br>
+                Edit your local <code>notes.txt</code> file &mdash; change the content to <code>Version 2 - updated content</code> &mdash; and upload it again with the same name to the same bucket.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">5</div>
+            <div class="step-content">
+                <strong>View the version history.</strong><br>
+                In the S3 console, toggle the <strong>"Show versions"</strong> switch to <strong>ON</strong>. You should now see two versions of <code>notes.txt</code>, each with a different Version ID and timestamp.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">6</div>
+            <div class="step-content">
+                <strong>Simulate a deletion.</strong><br>
+                Toggle <strong>"Show versions"</strong> OFF. Now delete <code>notes.txt</code> by selecting it and clicking <strong>Delete</strong> &rarr; confirm the deletion.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">7</div>
+            <div class="step-content">
+                <strong>Observe the result.</strong><br>
+                Notice the file appears to be gone from the bucket &mdash; it looks like it has been permanently deleted.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">8</div>
+            <div class="step-content">
+                <strong>Reveal the delete marker.</strong><br>
+                Toggle <strong>"Show versions"</strong> ON again. You'll now see: the two original versions <strong>AND</strong> a new <strong>Delete marker</strong> at the top. The delete marker is what makes the file appear deleted.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">9</div>
+            <div class="step-content">
+                <strong>Recover the file.</strong><br>
+                Select <strong>ONLY</strong> the Delete marker &rarr; click <strong>Delete</strong> &rarr; confirm. This removes the delete marker and restores the file.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">10</div>
+            <div class="step-content">
+                <strong>Verify the recovery.</strong><br>
+                Toggle <strong>"Show versions"</strong> OFF &mdash; your file is back! Download it to verify the content is the most recent version.
+            </div>
+        </div>
+
+        <div class="note-box">
+            <strong>Note:</strong> S3 Versioning works like an "undo" button for your files. Delete markers are
+            lightweight pointers that hide objects without actually removing the data. Removing a delete marker
+            "un-deletes" the file.
+        </div>
+
+        <h2>Completion Screenshot</h2>
+        <div class="screenshot-box">
+            <strong>&#128247; What to capture:</strong>
+            <p>
+                Take a screenshot of the S3 console with <strong>"Show versions"</strong> toggled ON showing:
+            </p>
+            <ul style="margin-top: 8px; margin-left: 20px;">
+                <li>The file name (<code>notes.txt</code>)</li>
+                <li>At least <strong>two Version IDs</strong></li>
+                <li>The <strong>timestamps</strong> for each version</li>
+                <li>The <strong>Version ID column</strong> clearly visible</li>
+            </ul>
+            <p style="margin-top: 12px;"><strong>Important:</strong> Your screenshot must include your AWS account name/ID visible in the top right corner of the AWS Console to verify completion.</p>
+        </div>
+
+        <h2>Cleanup</h2>
+        <div class="cleanup-box">
+            <strong>&#128465; Cleanup Steps:</strong>
+            <ol>
+                <li>Toggle <strong>"Show versions"</strong> ON in the bucket</li>
+                <li>Select <strong>ALL</strong> versions of all objects (including any delete markers)</li>
+                <li>Click <strong>Delete</strong> &rarr; confirm by typing <strong>"permanently delete"</strong></li>
+                <li>Once the bucket is empty, go back to <strong>S3</strong> &rarr; select the bucket &rarr; <strong>Delete</strong> &rarr; confirm with the bucket name</li>
+            </ol>
+        </div>
+
+        <div class="warning-box">
+            <strong>Warning:</strong> You must delete all individual versions when versioning is enabled. Simply
+            "emptying" the bucket with Show versions OFF will only add delete markers, not truly remove the data.
+        </div>
+
+        <h2>Key Takeaways</h2>
+        <ul class="takeaways-list">
+            <li>S3 Versioning provides automatic protection against accidental deletions &mdash; a core Reliability practice</li>
+            <li>Delete markers are reversible &mdash; deleted objects can be recovered by removing the marker</li>
+            <li>Multiple versions let you roll back to any previous state of a file</li>
+            <li>This pattern mirrors the Reliability principle: plan for failure and automate recovery</li>
+        </ul>
+
+        <h2>Additional Resources</h2>
+        <div class="resources-box">
+            <strong>&#128218; Further Reading:</strong>
+            <ul>
+                <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/Versioning.html" target="_blank">Using Versioning in S3 Buckets</a> &mdash; Complete versioning guide</li>
+                <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/DeletingObjectVersions.html" target="_blank">Deleting Object Versions</a> &mdash; Managing delete markers and versions</li>
+                <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/lifecycle-configuration-examples.html" target="_blank">S3 Lifecycle Configuration</a> &mdash; Automating version management</li>
+                <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/DataDurability.html" target="_blank">S3 Data Protection and Durability</a> &mdash; Understanding S3's reliability features</li>
+                <li><a href="https://aws.amazon.com/blogs/storage/protecting-data-with-amazon-s3-versioning/" target="_blank">Protecting Data with S3 Versioning</a> &mdash; AWS blog with real-world examples</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="footer-logos">
+            <span class="footer-logo build">The Build Fellowship</span>
+            <span class="footer-logo openavenues">OpenAvenues</span>
+        </div>
+        <div class="footer-right">
+            <span class="footer-copyright">&copy; The Build Fellowship 2026</span>
+            <div class="footer-date">February 2026</div>
+        </div>
+    </div>
+</body>
+</html>
