@@ -1,0 +1,781 @@
+/* ===========================================
+   CSS VARIABLES - Edit these to change theme
+   =========================================== */
+:root {
+    /* Brand Colors */
+    --primary-blue: #2d2d7a;
+    --primary-purple: #c4a8ff;
+    --light-purple: #d4b8ff;
+    --lavender: #c9b3f5;
+    --lavender-bg: #c9b3f5;
+    --dark-blue: #1e1e5a;
+    --accent-orange: #f5a623;
+    --accent-teal: #4db6ac;
+
+    /* Text Colors */
+    --text-white: #ffffff;
+    --text-dark: #2d2d7a;
+    --text-gray: #666666;
+
+    /* Font Families */
+    --font-display: 'Playfair Display', Georgia, serif;
+    --font-heading: 'Poppins', 'Inter', sans-serif;
+    --font-body: 'Inter', -apple-system, sans-serif;
+}
+
+/* ===========================================
+   BASE STYLES
+   =========================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    font-family: var(--font-body);
+    background: #1a1a2e;
+    color: var(--text-white);
+    line-height: 1.5;
+}
+
+/* ===========================================
+   PRESENTATION CONTAINER
+   =========================================== */
+.presentation {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.slide {
+    width: 100%;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    display: none;
+}
+
+.slide.active {
+    display: flex;
+    flex-direction: column;
+}
+
+.slide::before {
+    content: none;
+}
+
+/* ===========================================
+   FOOTER (appears on most slides)
+   =========================================== */
+.footer {
+    position: absolute;
+    bottom: 80px;
+    left: 40px;
+    right: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+}
+
+.footer-logos {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.footer-logo {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.footer-logo.build {
+    font-style: italic;
+}
+
+.footer-logo.openavenues {
+    color: #7c4dff;
+    font-family: var(--font-heading);
+    font-weight: 600;
+}
+
+.footer-right {
+    text-align: right;
+}
+
+.footer-copyright {
+    font-size: 11px;
+    opacity: 0.8;
+}
+
+.footer-date {
+    font-size: 11px;
+    opacity: 0.8;
+    margin-top: 2px;
+}
+
+/* ===========================================
+   SLIDE TYPE: Title (Gradient Background)
+   =========================================== */
+.slide-title {
+    background: linear-gradient(135deg, #4a6cf7 0%, #7c4dff 50%, #b47cff 100%);
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 60px;
+}
+
+.slide-title .the-label {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 400;
+    margin-bottom: -10px;
+}
+
+.slide-title .main-title {
+    font-family: var(--font-display);
+    font-size: 96px;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.slide-title .subtitle {
+    font-family: var(--font-body);
+    font-size: 16px;
+    letter-spacing: 3px;
+    margin-top: 30px;
+    text-transform: uppercase;
+}
+
+/* ===========================================
+   SLIDE TYPE: Section Header (Light Purple)
+   =========================================== */
+.slide-section-light {
+    background: var(--lavender-bg);
+    padding: 60px 80px;
+    justify-content: center;
+}
+
+.slide-section-light .brand-header {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 24px;
+    color: var(--dark-blue);
+    margin-bottom: 20px;
+}
+
+.slide-section-light .section-title {
+    font-family: var(--font-heading);
+    font-size: 80px;
+    font-weight: 700;
+    color: var(--text-white);
+}
+
+.slide-section-light .section-date {
+    position: absolute;
+    bottom: 40px;
+    left: 60px;
+    font-size: 14px;
+    color: var(--dark-blue);
+}
+
+/* ===========================================
+   SLIDE TYPE: Section Header (Dark Blue)
+   =========================================== */
+.slide-section-dark {
+    background: var(--primary-blue);
+    padding: 60px 80px;
+    justify-content: center;
+}
+
+.slide-section-dark .section-title {
+    font-family: var(--font-heading);
+    font-size: 80px;
+    font-weight: 700;
+    color: var(--light-purple);
+    line-height: 1.2;
+}
+
+/* ===========================================
+   SLIDE TYPE: Agenda
+   =========================================== */
+.slide-agenda {
+    background: var(--primary-blue);
+    padding: 60px 80px;
+    flex-direction: row;
+    align-items: center;
+}
+
+.slide-agenda .agenda-title {
+    font-family: var(--font-heading);
+    font-size: 72px;
+    font-weight: 700;
+    color: var(--light-purple);
+    width: 35%;
+}
+
+.slide-agenda .agenda-list {
+    list-style: none;
+    width: 65%;
+}
+
+.slide-agenda .agenda-list li {
+    font-size: 24px;
+    color: var(--light-purple);
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.slide-agenda .agenda-list li::before {
+    content: '';
+    width: 12px;
+    height: 12px;
+    background: var(--light-purple);
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* ===========================================
+   SLIDE TYPE: Content (White Background)
+   =========================================== */
+.slide-content {
+    background: #ffffff;
+    padding: 60px 80px;
+    justify-content: center;
+}
+
+.slide-content .content-title {
+    font-family: var(--font-heading);
+    font-size: 40px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 10px;
+}
+
+.slide-content .content-subtitle {
+    font-family: var(--font-heading);
+    font-size: 18px;
+    font-weight: 600;
+    font-style: italic;
+    color: var(--text-dark);
+    margin-bottom: 30px;
+}
+
+.slide-content .content-description {
+    font-size: 18px;
+    color: var(--text-dark);
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+.slide-content .content-reading,
+.slide-section-dark .content-reading,
+.slide-callout .content-reading {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(0,0,0,0.1);
+    font-size: 13px;
+}
+
+.slide-section-dark .content-reading {
+    border-top-color: rgba(255,255,255,0.2);
+}
+
+.content-reading .reading-label {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    opacity: 0.7;
+}
+
+.slide-content .content-reading .reading-label,
+.slide-callout .content-reading .reading-label {
+    color: var(--text-dark);
+}
+
+.content-reading a {
+    font-size: 13px;
+    text-decoration: none;
+    margin-right: 20px;
+    transition: opacity 0.2s;
+}
+
+.content-reading a:hover {
+    text-decoration: underline;
+    opacity: 0.8;
+}
+
+.slide-content .content-reading a,
+.slide-callout .content-reading a {
+    color: #5a4fcf;
+}
+
+.slide-section-dark .content-reading a {
+    color: var(--light-purple);
+}
+
+.slide-content .content-list {
+    list-style: none;
+    margin-top: 20px;
+}
+
+.slide-content .content-list li {
+    font-size: 20px;
+    color: var(--text-dark);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    line-height: 1.5;
+}
+
+.slide-content .content-list li::before {
+    content: '';
+    width: 10px;
+    height: 10px;
+    background: var(--text-dark);
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 6px;
+}
+
+/* ===========================================
+   SLIDE TYPE: Two Column Layout
+   =========================================== */
+.slide-two-column {
+    background: #ffffff;
+    padding: 60px 80px;
+    justify-content: center;
+}
+
+.slide-two-column .column-container {
+    display: flex;
+    gap: 60px;
+    margin-top: 20px;
+}
+
+.slide-two-column .column {
+    flex: 1;
+}
+
+.slide-two-column .column-title {
+    font-family: var(--font-heading);
+    font-size: 52px;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.slide-two-column .week-item {
+    margin-bottom: 25px;
+}
+
+.slide-two-column .week-label {
+    font-family: var(--font-heading);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-dark);
+    text-decoration: underline;
+    margin-bottom: 5px;
+}
+
+.slide-two-column .week-desc {
+    font-size: 18px;
+    color: var(--text-dark);
+    line-height: 1.5;
+}
+
+/* ===========================================
+   SLIDE TYPE: Image Background
+   =========================================== */
+.slide-image-bg {
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: #1a1a2e;
+}
+
+.slide-image-bg .overlay-text {
+    position: absolute;
+    background: rgba(0,0,0,0.7);
+    padding: 20px;
+    color: white;
+}
+
+/* ===========================================
+   SLIDE TYPE: Quote/Callout Box
+   =========================================== */
+.slide-callout {
+    background: var(--lavender-bg);
+    padding: 60px 80px;
+    justify-content: center;
+    align-items: center;
+}
+
+.callout-box {
+    background: var(--accent-orange);
+    padding: 40px 60px;
+    border-radius: 8px;
+    max-width: 80%;
+}
+
+.callout-box .callout-title {
+    font-family: var(--font-heading);
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--text-white);
+    margin-bottom: 20px;
+}
+
+.callout-box .callout-text {
+    font-size: 18px;
+    color: var(--text-white);
+    line-height: 1.5;
+}
+
+/* ===========================================
+   SLIDE TYPE: Table/Checklist
+   =========================================== */
+.slide-table {
+    background: #5a7fdc;
+    padding: 60px 80px;
+    justify-content: center;
+}
+
+.slide-table .table-title {
+    font-family: var(--font-heading);
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--dark-blue);
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.table-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 2px;
+    background: #4a6fd0;
+}
+
+.table-row {
+    display: contents;
+}
+
+.table-cell {
+    background: #5a7fdc;
+    padding: 12px 15px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.table-cell.header {
+    font-weight: 600;
+    color: var(--dark-blue);
+}
+
+.check-icon {
+    width: 20px;
+    height: 20px;
+    background: var(--accent-orange);
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 12px;
+}
+
+/* ===========================================
+   SLIDE TYPE: Cards Layout
+   =========================================== */
+.slide-cards {
+    background: #5a7fdc;
+    padding: 60px 80px;
+    justify-content: center;
+}
+
+.slide-cards .cards-title {
+    font-family: var(--font-heading);
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--dark-blue);
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.cards-title span {
+    color: var(--accent-orange);
+}
+
+.cards-container {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 200px;
+    text-align: center;
+}
+
+.card-icon {
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+    font-size: 48px;
+}
+
+.card-title {
+    font-family: var(--font-heading);
+    font-size: 14px;
+    font-weight: 700;
+    font-style: italic;
+    color: var(--text-dark);
+    margin-bottom: 10px;
+}
+
+.card-text {
+    font-size: 12px;
+    color: var(--text-gray);
+    line-height: 1.4;
+}
+
+/* ===========================================
+   SLIDE TYPE: Benefits/Features
+   =========================================== */
+.slide-benefits {
+    background: var(--primary-blue);
+    padding: 60px 80px;
+    justify-content: center;
+}
+
+.benefit-row {
+    background: #6b6b8d;
+    margin-bottom: 15px;
+    padding: 20px 30px;
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.benefit-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.benefit-content {
+    flex: 1;
+}
+
+.benefit-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.benefit-title .highlight {
+    color: #4caf50;
+}
+
+.benefit-title .highlight-orange {
+    color: var(--accent-orange);
+}
+
+.benefit-title .highlight-blue {
+    color: #64b5f6;
+}
+
+.benefit-text {
+    font-size: 14px;
+    color: #ccc;
+}
+
+/* ===========================================
+   SLIDE NAVIGATION BUTTONS
+   =========================================== */
+.slide-nav {
+    position: fixed;
+    bottom: 30px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
+    z-index: 1000;
+    pointer-events: none;
+}
+
+.slide-nav button {
+    pointer-events: auto;
+    background: rgba(45, 45, 122, 0.85);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    padding: 12px 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-size: 16px;
+    font-weight: 500;
+    backdrop-filter: blur(10px);
+    transition: all 0.2s ease;
+}
+
+.slide-nav button:hover {
+    background: rgba(30, 30, 90, 0.95);
+    border-color: var(--accent-orange);
+}
+
+.slide-nav button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.slide-nav button:disabled:hover {
+    background: rgba(45, 45, 122, 0.85);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.slide-counter {
+    pointer-events: auto;
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.8);
+    background: rgba(0, 0, 0, 0.5);
+    padding: 8px 16px;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+}
+
+/* ===========================================
+   BACK TO HOME LINK
+   =========================================== */
+.back-home {
+    position: fixed;
+    top: 30px;
+    left: 40px;
+    z-index: 1001;
+    pointer-events: auto;
+}
+
+.back-home a {
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    background: rgba(45, 45, 122, 0.85);
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+.back-home a:hover {
+    background: rgba(30, 30, 90, 0.95);
+    border-color: var(--accent-orange);
+}
+
+.back-home a::before {
+    content: "\2190 ";
+}
+
+/* ===========================================
+   SPEAKER NOTES PANEL
+   =========================================== */
+.speaker-notes {
+    position: fixed;
+    bottom: 80px;
+    left: 40px;
+    right: 40px;
+    background: rgba(45, 45, 122, 0.95);
+    padding: 20px 30px;
+    border-radius: 8px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 999;
+    display: none;
+}
+
+.speaker-notes.visible {
+    display: block;
+}
+
+.speaker-notes h3 {
+    font-family: var(--font-heading);
+    font-size: 14px;
+    color: var(--accent-orange);
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.speaker-notes p {
+    font-size: 13px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.85);
+    white-space: pre-wrap;
+}
+
+/* ===========================================
+   PRINT STYLES
+   =========================================== */
+@media print {
+    html, body {
+        overflow: visible;
+        height: auto;
+    }
+
+    .slide {
+        position: relative;
+        display: flex !important;
+        page-break-after: always;
+        box-shadow: none;
+        height: 100vh;
+    }
+
+    .slide-nav {
+        display: none;
+    }
+
+    .back-home {
+        display: none;
+    }
+
+    .footer {
+        display: none;
+    }
+
+    .speaker-notes {
+        display: none;
+    }
+}

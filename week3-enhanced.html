@@ -1,0 +1,1404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 3: Base Cloud Concepts</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="slides.css">
+
+    <style>
+        /* ===========================================
+           ENHANCED STYLES — week3-enhanced.html
+           =========================================== */
+
+        /* Hide original nav (overridden by enhanced nav) */
+        .slide-nav { display: none !important; }
+
+        /* --- Enhanced Navigation Bar --- */
+        .enhanced-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(30, 30, 90, 0.95);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .progress-bar {
+            height: 3px;
+            background: rgba(255,255,255,0.08);
+            width: 100%;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #7c4dff, #b47cff);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .nav-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            padding: 10px 40px;
+        }
+
+        .nav-controls button {
+            background: rgba(124, 77, 255, 0.25);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.15);
+            padding: 8px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: var(--font-body);
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .nav-controls button:hover {
+            background: rgba(124, 77, 255, 0.45);
+            border-color: rgba(255,255,255,0.3);
+        }
+
+        .nav-controls button:disabled {
+            opacity: 0.25;
+            cursor: not-allowed;
+        }
+
+        .nav-controls button:disabled:hover {
+            background: rgba(124, 77, 255, 0.25);
+            border-color: rgba(255,255,255,0.15);
+        }
+
+        .nav-controls .slide-counter {
+            font-family: var(--font-body);
+            font-size: 14px;
+            color: rgba(255,255,255,0.7);
+            min-width: 60px;
+            text-align: center;
+            background: none;
+            padding: 0;
+            border-radius: 0;
+            backdrop-filter: none;
+        }
+
+        .keyboard-hint {
+            font-size: 11px;
+            color: rgba(255,255,255,0.3);
+            font-family: var(--font-body);
+            letter-spacing: 1px;
+        }
+
+        /* --- Slide Number Overlay --- */
+        .slide-number-overlay {
+            position: fixed;
+            bottom: 56px;
+            right: 20px;
+            font-family: var(--font-body);
+            font-size: 11px;
+            color: rgba(255,255,255,0.3);
+            z-index: 999;
+            pointer-events: none;
+        }
+
+        /* --- Image Scrim Overlay --- */
+        .slide-image-bg::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.18);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* --- Thumbnail Strip --- */
+        .thumbnail-strip {
+            position: fixed;
+            bottom: 50px;
+            left: 0;
+            right: 0;
+            background: rgba(26, 26, 46, 0.96);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(255,255,255,0.08);
+            z-index: 998;
+            display: none;
+            overflow-x: auto;
+            padding: 10px 16px;
+        }
+
+        .thumbnail-strip.visible {
+            display: flex;
+        }
+
+        .thumbnail-strip-inner {
+            display: flex;
+            gap: 6px;
+            min-width: max-content;
+        }
+
+        .thumbnail-item {
+            width: 110px;
+            height: 62px;
+            border-radius: 4px;
+            border: 2px solid transparent;
+            background: rgba(255,255,255,0.08);
+            cursor: pointer;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-body);
+            color: rgba(255,255,255,0.5);
+            text-align: center;
+            padding: 4px;
+            transition: all 0.15s;
+            overflow: hidden;
+        }
+
+        .thumbnail-item:hover {
+            border-color: rgba(124, 77, 255, 0.5);
+            background: rgba(255,255,255,0.12);
+        }
+
+        .thumbnail-item.active {
+            border-color: #7c4dff;
+            background: rgba(124, 77, 255, 0.2);
+        }
+
+        .thumbnail-item .thumb-number {
+            font-weight: 700;
+            font-size: 16px;
+            color: rgba(255,255,255,0.7);
+            line-height: 1;
+        }
+
+        .thumbnail-item .thumb-title {
+            font-size: 8px;
+            line-height: 1.2;
+            margin-top: 3px;
+            opacity: 0.6;
+            max-height: 18px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            max-width: 100px;
+        }
+
+        /* --- TOC Slide --- */
+        .slide-toc {
+            background: var(--primary-blue);
+            padding: 60px 80px;
+            justify-content: center;
+        }
+
+        .slide-toc .toc-title {
+            font-family: var(--font-heading);
+            font-size: 56px;
+            font-weight: 700;
+            color: var(--light-purple);
+            margin-bottom: 40px;
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-list li {
+            font-family: var(--font-heading);
+            font-size: 22px;
+            color: var(--light-purple);
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            cursor: pointer;
+            transition: color 0.2s, padding-left 0.2s;
+        }
+
+        .toc-list li:first-child {
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .toc-list li:hover {
+            color: #ffffff;
+            padding-left: 8px;
+        }
+
+        .toc-list li .toc-number {
+            font-size: 13px;
+            opacity: 0.4;
+            min-width: 36px;
+            font-weight: 600;
+        }
+
+        /* --- Two-Column Definition Grid (Slide 6 VPC) --- */
+        .definition-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px 50px;
+            margin-top: 24px;
+        }
+
+        .definition-item h3 {
+            font-family: var(--font-heading);
+            font-size: 17px;
+            font-weight: 700;
+            color: #5a4fcf;
+            margin-bottom: 6px;
+        }
+
+        .definition-item p {
+            font-size: 15px;
+            color: var(--text-dark);
+            line-height: 1.55;
+        }
+
+        /* --- Data Transfer Table (Slide 9) --- */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+            font-size: 15px;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 10px 16px;
+            text-align: left;
+            color: var(--text-dark);
+            border-bottom: 1px solid #e8e4f0;
+        }
+
+        .data-table th {
+            font-weight: 700;
+            background: #f5f3ff;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .data-table td:last-child {
+            text-align: right;
+            font-weight: 600;
+        }
+
+        .data-table .note-row td {
+            font-size: 13px;
+            color: var(--text-gray);
+            padding: 8px 16px;
+            line-height: 1.5;
+            border-bottom: none;
+        }
+
+        .content-callout {
+            background: var(--accent-orange);
+            color: white;
+            padding: 12px 22px;
+            border-radius: 8px;
+            font-family: var(--font-heading);
+            font-size: 17px;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 16px;
+        }
+
+        /* --- Content With Image (mixed slides) --- */
+        .content-with-image {
+            display: flex;
+            gap: 40px;
+            align-items: flex-start;
+            margin-top: 16px;
+        }
+
+        .content-text-col {
+            flex: 1;
+        }
+
+        .content-image-col {
+            flex: 0 0 45%;
+            max-width: 45%;
+        }
+
+        .content-image-col img {
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        }
+
+        /* --- Two Section Layout (DynamoDB) --- */
+        .two-section-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 20px;
+        }
+
+        .section-block h3 {
+            font-family: var(--font-heading);
+            font-size: 17px;
+            font-weight: 700;
+            color: #5a4fcf;
+            margin-bottom: 14px;
+        }
+
+        .section-block ul {
+            list-style: none;
+        }
+
+        .section-block ul li {
+            font-size: 15px;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            line-height: 1.5;
+        }
+
+        .section-block ul li::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--text-dark);
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-top: 7px;
+        }
+
+        /* --- Pricing Tiers (EC2 Pricing) --- */
+        .pricing-tiers {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .pricing-tier {
+            display: flex;
+            align-items: flex-start;
+            gap: 28px;
+            padding: 20px 28px;
+            background: #f5f3ff;
+            border-radius: 10px;
+            border-left: 4px solid #7c4dff;
+        }
+
+        .tier-name {
+            font-family: var(--font-heading);
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-dark);
+            min-width: 150px;
+        }
+
+        .tier-details {
+            list-style: none;
+        }
+
+        .tier-details li {
+            font-size: 15px;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tier-details li::before {
+            content: '\2022';
+            color: #7c4dff;
+            font-weight: bold;
+        }
+
+        /* --- Lambda Pricing Calculations --- */
+        .calc-section {
+            margin-top: 14px;
+        }
+
+        .calc-section h3 {
+            font-family: var(--font-heading);
+            font-size: 13px;
+            font-weight: 600;
+            color: #5a4fcf;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .calc-line {
+            font-size: 13px;
+            color: var(--text-dark);
+            line-height: 1.9;
+            font-family: 'Inter', monospace;
+        }
+
+        .calc-line.bold {
+            font-weight: 700;
+        }
+
+        .calc-result {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-dark);
+            padding: 12px 18px;
+            background: #f5f3ff;
+            border-radius: 8px;
+            border-left: 4px solid #7c4dff;
+            margin-top: 14px;
+            font-family: var(--font-heading);
+        }
+
+        /* Nested sub-bullets for converted slides */
+        .content-list .sub-bullet {
+            padding-left: 24px;
+            font-size: 16px;
+            opacity: 0.85;
+        }
+
+        .content-list .sub-bullet::before {
+            width: 6px;
+            height: 6px;
+            background: #999;
+        }
+    </style>
+</head>
+<body>
+    <!-- Back to Home Link -->
+    <div class="back-home">
+        <a href="index.html">Back to Home</a>
+    </div>
+
+    <div class="presentation">
+
+        <!-- ==================== Slide 1: Title Logo (logo-only, keep as image) ==================== -->
+        <div class="slide slide-image-bg active" data-slide="Slide 1"
+             role="img" aria-label="The Build Fellowship — title slide with gradient logo and buildfellowship.com"
+             style="background-image: url('../Week 3/Slide1.jpeg');">
+        </div>
+
+        <!-- ==================== Slide 2: Table of Contents (auto-generated) ==================== -->
+        <div class="slide slide-toc" data-slide="Table of Contents" role="navigation" aria-label="Table of Contents">
+            <div class="toc-title">Contents</div>
+            <ul class="toc-list" id="tocList">
+                <li onclick="goToSlide(4)"><span class="toc-number">01</span> AWS Cloud Networking</li>
+                <li onclick="goToSlide(10)"><span class="toc-number">02</span> AWS Databases</li>
+                <li onclick="goToSlide(17)"><span class="toc-number">03</span> AWS Compute</li>
+                <li onclick="goToSlide(27)"><span class="toc-number">04</span> AWS Storage</li>
+            </ul>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build">The Build Fellowship</span>
+                    <span class="footer-logo openavenues" style="color: #c4a8ff;">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date">February 2026</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== Slide 3: Section Light — Base Cloud Concepts ==================== -->
+        <div class="slide slide-section-light" data-slide="Slide 2" role="region" aria-label="Section: Base Cloud Concepts"
+             style="justify-content: flex-start; padding-top: 80px;">
+            <div class="section-title" style="font-size: 130px; line-height: 1.0;">Base Cloud Concepts</div>
+            <div style="position: absolute; bottom: 60px; left: 80px; font-family: var(--font-heading); font-size: 36px; font-weight: 700; color: white;">Week 3</div>
+        </div>
+
+        <!-- ==================== Slide 4: Agenda ==================== -->
+        <div class="slide slide-agenda" data-slide="Slide 3">
+            <div class="agenda-title">Agenda</div>
+            <ul class="agenda-list">
+                <li>Lab Review</li>
+                <li>AWS Cloud Networking</li>
+                <li>AWS Databases</li>
+                <li>AWS Compute</li>
+                <li>AWS Storage</li>
+            </ul>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build">The Build Fellowship</span>
+                    <span class="footer-logo openavenues" style="color: #c4a8ff;">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date">February 2026</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== Slide 5: Section Dark — AWS Cloud Networking ==================== -->
+        <div class="slide slide-section-dark" data-slide="Slide 5" role="region" aria-label="Section: AWS Cloud Networking">
+            <div class="section-title">AWS Cloud Networking</div>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build">The Build Fellowship</span>
+                    <span class="footer-logo openavenues" style="color: #c4a8ff;">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date">February 2026</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== Slide 6: CONVERTED — VPC (text-heavy → slide-content) ==================== -->
+        <div class="slide slide-content" data-slide="Slide 6">
+            <div class="content-title" style="font-size: 36px;">AWS Cloud Networking — Virtual Private Cloud</div>
+            <div class="definition-grid">
+                <div class="definition-item">
+                    <h3>What is a VPC?</h3>
+                    <p>A logically isolated section of the AWS Cloud spanning a whole region including multiple availability zones.</p>
+                </div>
+                <div class="definition-item">
+                    <h3>Default VPC &amp; Subnet</h3>
+                    <p>Each AWS Account has a default VPC with a default Public Subnet in each AZ of the region.</p>
+                </div>
+                <div class="definition-item">
+                    <h3>Subnets</h3>
+                    <p>A range of IP Addresses in your VPC. Resides in a single AZ. Sort of like a partition on a hard drive.</p>
+                </div>
+                <div class="definition-item">
+                    <h3>Gateways</h3>
+                    <p>Horizontally Scaled, Redundant, Highly available VPC components that allow communication between VPC and the internet.</p>
+                </div>
+                <div class="definition-item">
+                    <h3>Security Groups</h3>
+                    <p>Controls traffic that is allowed to enter and leave the VPC. Associated with resources within a VPC.</p>
+                </div>
+                <div class="definition-item">
+                    <h3>Pricing</h3>
+                    <p>VPC by itself is free; its components such as NAT gateways, IP Addresses, etc. may cost.</p>
+                </div>
+            </div>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== Slide 7: DIAGRAM — VPC Architecture (keep as image) ==================== -->
+        <div class="slide slide-image-bg" data-slide="Slide 7"
+             role="img" aria-label="AWS VPC architecture diagram showing us-east-1 region with Cloud VPC, public and private subnets across two availability zones, internet gateway, and security group boundaries"
+             style="background-image: url('../Week 3/Slide7.jpeg');">
+        </div>
+
+        <!-- ==================== Slide 8: Content — Networking Costs (already HTML) ==================== -->
+        <div class="slide slide-content" data-slide="Slide 8">
+            <div class="content-title" style="font-size: 36px;">AWS Cloud Networking — Costs</div>
+            <div class="content-subtitle">VPC, Subnets, Routing tables</div>
+            <ul class="content-list">
+                <li>NAT Gateway – Needed for external access</li>
+                <li>$0.045 per gateway per hour</li>
+                <li>$0.045 per GB Data processed</li>
+                <li>Static IP Address</li>
+                <li>Hourly charge for in-use Public IPv4 Address: $0.005/hr</li>
+                <li>Hourly charge for idle Public IPv4 Address: $0.005/hr</li>
+            </ul>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== Slide 9: CONVERTED — Data Transfer Costs (text-heavy → table) ==================== -->
+        <div class="slide slide-content" data-slide="Slide 9">
+            <div class="content-title" style="font-size: 36px;">AWS Cloud Networking — Costs</div>
+            <div style="display: flex; gap: 40px; align-items: flex-start; margin-top: 8px;">
+                <div style="flex: 0 0 auto;">
+                    <div class="content-callout">Don't forget —<br>Data Transfer Costs!</div>
+                </div>
+                <div style="flex: 1;">
+                    <table class="data-table">
+                        <thead>
+                            <tr><th>Tier</th><th>Price</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>All data transfer in</td><td>$0.00 per GB</td></tr>
+                            <tr class="note-row"><td colspan="2"><strong>Data Transfer OUT From Amazon EC2 To Internet</strong><br>AWS customers receive 100 GB of data transfer out to the internet free each month, aggregated across all AWS Services and Regions (except China and GovCloud). The 100 GB free tier is global and does not apply separately or individually to AWS Regions.</td></tr>
+                            <tr><td>First 10 TB / Month</td><td>$0.09 per GB</td></tr>
+                            <tr><td>Next 40 TB / Month</td><td>$0.085 per GB</td></tr>
+                            <tr><td>Next 100 TB / Month</td><td>$0.07 per GB</td></tr>
+                            <tr><td>Greater than 150 TB / Month</td><td>$0.05 per GB</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== Reading: AWS Cloud Networking (keep as-is) ==================== -->
+        <div class="slide slide-content" data-slide="Reading: Networking">
+            <div class="content-title" style="font-size:30px;margin-bottom:6px;">Additional Reading</div>
+            <div class="content-subtitle">AWS Cloud Networking</div>
+            <div style="margin-top:24px;">
+                <p style="font-family:var(--font-heading);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--text-dark);opacity:0.5;margin-bottom:10px;">Useful Links</p>
+                <a href="https://app.cloudcraft.co/view/4afc0880-fc20-41ec-b366-fafafb235795?key=6c615d73-3247-4ef8-a729-805e90ed608d" target="_blank" style="display:flex;align-items:center;gap:16px;padding:16px 22px;background:#f5f3ff;border-radius:8px;border-left:4px solid #7c4dff;text-decoration:none;margin-bottom:10px;">
+                    <span style="font-size:20px;">&#x1F5FA;&#xFE0F;</span>
+                    <span style="font-family:var(--font-heading);font-size:16px;color:#5a4fcf;font-weight:500;line-height:1.4;">Architecture diagram — Basic AWS Cloud Network &#8599;</span>
+                </a>
+                <a href="https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-vpc.html" target="_blank" style="display:flex;align-items:center;gap:16px;padding:16px 22px;background:#f5f3ff;border-radius:8px;border-left:4px solid #7c4dff;text-decoration:none;margin-bottom:10px;">
+                    <span style="font-size:20px;">&#x1F310;</span>
+                    <span style="font-family:var(--font-heading);font-size:16px;color:#5a4fcf;font-weight:500;line-height:1.4;">AWS VPC User Guide — Official Docs &#8599;</span>
+                </a>
+                <a href="https://docs.aws.amazon.com/vpc/latest/userguide/vpc-example-private-subnets-nat.html" target="_blank" style="display:flex;align-items:center;gap:16px;padding:16px 22px;background:#f5f3ff;border-radius:8px;border-left:4px solid #7c4dff;text-decoration:none;margin-bottom:10px;">
+                    <span style="font-size:20px;">&#x1F527;</span>
+                    <span style="font-family:var(--font-heading);font-size:16px;color:#5a4fcf;font-weight:500;line-height:1.4;">VPC with Private Subnets &amp; NAT Gateway — Reference Architecture &#8599;</span>
+                </a>
+                <a href="https://tutorialsdojo.com/amazon-vpc/" target="_blank" style="display:flex;align-items:center;gap:16px;padding:16px 22px;background:#f5f3ff;border-radius:8px;border-left:4px solid #7c4dff;text-decoration:none;margin-bottom:10px;">
+                    <span style="font-size:20px;">&#x1F4CB;</span>
+                    <span style="font-family:var(--font-heading);font-size:16px;color:#5a4fcf;font-weight:500;line-height:1.4;">Amazon VPC Cheat Sheet — Tutorials Dojo &#8599;</span>
+                </a>
+                <a href="https://www.freecodecamp.org/news/amazon-virtual-private-cloud-course/" target="_blank" style="display:flex;align-items:center;gap:16px;padding:16px 22px;background:#f5f3ff;border-radius:8px;border-left:4px solid #7c4dff;text-decoration:none;margin-bottom:10px;">
+                    <span style="font-size:20px;">&#x1F3A5;</span>
+                    <span style="font-family:var(--font-heading);font-size:16px;color:#5a4fcf;font-weight:500;line-height:1.4;">Amazon VPC Full Course — freeCodeCamp &#8599;</span>
+                </a>
+            </div>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== Slide 11: Section Dark — AWS Databases ==================== -->
+        <div class="slide slide-section-dark" data-slide="Slide 11" role="region" aria-label="Section: AWS Databases">
+            <div class="section-title">AWS Databases</div>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build">The Build Fellowship</span>
+                    <span class="footer-logo openavenues" style="color: #c4a8ff;">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date">February 2026</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== Slide 12: CONVERTED — DB Overview (mixed → slide-content) ==================== -->
+        <div class="slide slide-content" data-slide="Slide 12">
+            <div class="content-title">AWS Databases</div>
+            <div class="content-subtitle">Choose your DB wisely</div>
+            <div class="content-description">AWS offers a wide array of options. Between fully managed vs fully configurable, SQL vs NoSQL, persistent vs temporary, etc. Each has its unique advantages and associated costs.</div>
+            <div class="content-description" style="font-weight: 600;">Most widely used: AWS RDS, AWS Aurora, AWS DynamoDB</div>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== Slide 13: DIAGRAM — RDS Features Icons (keep as image) ==================== -->
+        <div class="slide slide-image-bg" data-slide="Slide 13"
+             role="img" aria-label="AWS RDS features overview: No infrastructure management, Cost-effective, Application compatibility, Instant provisioning, Scale up/down — shown as icon cards"
+             style="background-image: url('../Week 3/Slide13.jpeg');">
+        </div>
+
+        <!-- ==================== Slide 14: CONVERTED — RDS Details (mixed → slide-content) ==================== -->
+        <div class="slide slide-content" data-slide="Slide 14">
+            <div class="content-title">AWS Databases</div>
+            <div class="content-subtitle">AWS Relational Database Service (RDS)</div>
+            <ul class="content-list">
+                <li>Multi-engine support</li>
+                <li class="sub-bullet" style="padding-left:24px;font-size:17px;opacity:0.85;">Aurora, MySQL, MariaDB, PostgreSQL, Oracle, SQL Server</li>
+                <li>Automated provisioning, Scaling, Patching, Backup/Restore</li>
+                <li>High availability with RDS Multi-AZ, Auto-Failover</li>
+                <li class="sub-bullet" style="padding-left:24px;font-size:17px;opacity:0.85;">99.95% SLA for Multi-AZ deployments</li>
+                <li>Security</li>
+                <li>Monitoring</li>
+            </ul>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== Slide 15: CONVERTED — Aurora (mixed → slide-content with image) ==================== -->
+        <div class="slide slide-content" data-slide="Slide 15">
+            <div class="content-title">AWS Databases</div>
+            <div class="content-subtitle">AWS Aurora</div>
+            <div class="content-with-image">
+                <div class="content-text-col">
+                    <ul class="content-list">
+                        <li>High Performance and Scalability</li>
+                        <li>Compatibility with MySQL and PostgreSQL</li>
+                        <li>Automated Backups and Point in Time recovery</li>
+                        <li>Multi AZ Deployment — Using a distributed storage architecture</li>
+                    </ul>
+                </div>
+                <div class="content-image-col">
+                    <img src="../Week 3/Slide15.jpeg" alt="AWS Aurora multi-AZ architecture diagram showing Application connecting to Read/Write and Read-only endpoints across 3 availability zones with shared storage">
+                </div>
+            </div>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== Slide 16: CONVERTED — DynamoDB (text-heavy → slide-content) ==================== -->
+        <div class="slide slide-content" data-slide="Slide 16">
+            <div class="content-title">AWS Databases</div>
+            <div class="content-subtitle">AWS DynamoDB</div>
+            <div class="two-section-layout">
+                <div class="section-block">
+                    <h3>Advantages</h3>
+                    <ul>
+                        <li>NoSQL Database Service — Basically a bunch of JSON files</li>
+                        <li>Supports document and key-value store models</li>
+                        <li>Automatic data replication</li>
+                        <li>Data backups to S3</li>
+                        <li>Highly scalable</li>
+                        <li>Only pay for what you use vs RDS where a set amount must be provisioned</li>
+                        <li>Fast, very fast!</li>
+                    </ul>
+                </div>
+                <div class="section-block">
+                    <h3>Limits</h3>
+                    <ul>
+                        <li>64 KB limit on row size</li>
+                        <li>Consistency is expensive</li>
+                        <li>No relational models, no joins</li>
+                        <li>Indexing can get expensive</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== Reading: AWS Databases (keep as-is) ==================== -->
+        <div class="slide slide-content" data-slide="Reading: Databases">
+            <div class="content-title" style="font-size:30px;margin-bottom:6px;">Additional Reading</div>
+            <div class="content-subtitle">AWS Databases</div>
+            <div style="margin-top:24px;">
+                <p style="font-family:var(--font-heading);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--text-dark);opacity:0.5;margin-bottom:10px;">Further Reading</p>
+                <a href="https://www.percona.com/blog/when-should-i-use-amazon-aurora-and-when-should-i-use-rds-mysql" target="_blank" style="display:flex;align-items:center;gap:16px;padding:16px 22px;background:#f5f3ff;border-radius:8px;border-left:4px solid #7c4dff;text-decoration:none;margin-bottom:10px;">
+                    <span style="font-size:20px;">&#x1F4D6;</span>
+                    <span style="font-family:var(--font-heading);font-size:16px;color:#5a4fcf;font-weight:500;line-height:1.4;">Difference between MySQL and Aurora &#8599;</span>
+                </a>
+                <a href="https://docs.aws.amazon.com/AmazonRDS/latest/gettingstartedguide/what-is-rds.html" target="_blank" style="display:flex;align-items:center;gap:16px;padding:16px 22px;background:#f5f3ff;border-radius:8px;border-left:4px solid #7c4dff;text-decoration:none;margin-bottom:10px;">
+                    <span style="font-size:20px;">&#x1F5C4;&#xFE0F;</span>
+                    <span style="font-family:var(--font-heading);font-size:16px;color:#5a4fcf;font-weight:500;line-height:1.4;">Getting Started with Amazon RDS — AWS Docs &#8599;</span>
+                </a>
+                <a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GettingStartedDynamoDB.html" target="_blank" style="display:flex;align-items:center;gap:16px;padding:16px 22px;background:#f5f3ff;border-radius:8px;border-left:4px solid #7c4dff;text-decoration:none;margin-bottom:10px;">
+                    <span style="font-size:20px;">&#x1F4E6;</span>
+                    <span style="font-family:var(--font-heading);font-size:16px;color:#5a4fcf;font-weight:500;line-height:1.4;">Getting Started with Amazon DynamoDB — AWS Docs &#8599;</span>
+                </a>
+                <a href="https://tutorialsdojo.com/amazon-aurora-vs-amazon-rds/" target="_blank" style="display:flex;align-items:center;gap:16px;padding:16px 22px;background:#f5f3ff;border-radius:8px;border-left:4px solid #7c4dff;text-decoration:none;margin-bottom:10px;">
+                    <span style="font-size:20px;">&#x26A1;</span>
+                    <span style="font-family:var(--font-heading);font-size:16px;color:#5a4fcf;font-weight:500;line-height:1.4;">Amazon Aurora vs Amazon RDS — Tutorials Dojo &#8599;</span>
+                </a>
+                <a href="https://digitalcloud.training/amazon-rds-vs-dynamodb/" target="_blank" style="display:flex;align-items:center;gap:16px;padding:16px 22px;background:#f5f3ff;border-radius:8px;border-left:4px solid #7c4dff;text-decoration:none;margin-bottom:10px;">
+                    <span style="font-size:20px;">&#x1F4CA;</span>
+                    <span style="font-family:var(--font-heading);font-size:16px;color:#5a4fcf;font-weight:500;line-height:1.4;">Amazon RDS vs DynamoDB — Digital Cloud Training &#8599;</span>
+                </a>
+            </div>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== Slide 18: Section Dark — AWS Compute ==================== -->
+        <div class="slide slide-section-dark" data-slide="Slide 18" role="region" aria-label="Section: AWS Compute">
+            <div class="section-title">AWS Compute</div>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build">The Build Fellowship</span>
+                    <span class="footer-logo openavenues" style="color: #c4a8ff;">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date">February 2026</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== Slide 19: DIAGRAM — Compute Overview (keep as image) ==================== -->
+        <div class="slide slide-image-bg" data-slide="Slide 19"
+             role="img" aria-label="AWS Compute services overview: EC2, Containers (ECS/EKS), Serverless (Fargate/Lambda), On-premises/Edge, Cost optimization, and Elastic Load Balancing — with icons and sub-service lists"
+             style="background-image: url('../Week 3/Slide19.jpeg');">
+        </div>
+
+        <!-- ==================== Slide 20: CONVERTED — EC2 (text-heavy → slide-content) ==================== -->
+        <div class="slide slide-content" data-slide="Slide 20">
+            <div class="content-title">AWS Compute — EC2</div>
+            <div class="content-description" style="font-size: 19px; line-height: 1.7; max-width: 900px;">Amazon Elastic Compute Cloud (EC2) is a web service that provides resizable compute capacity in the cloud. In simpler terms, EC2 allows you to rent virtual servers (called instances) from Amazon's cloud infrastructure, which you can use to run your applications or services. You can choose the instance type based on your needs, whether it's for general-purpose computing, memory-intensive tasks, or high-performance computing.</div>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== Slide 21: DIAGRAM — EC2 Benefits (keep as image) ==================== -->
+        <div class="slide slide-image-bg" data-slide="Slide 21"
+             role="img" aria-label="Benefits of AWS EC2: Complete Control, Secure, Works in conjunction with other AWS Components, Flexible Services for Cloud Hosting, Low-cost, Dependable, Uncomplicated to begin with, Web-Scale Computing with Elasticity"
+             style="background-image: url('../Week 3/Slide21.jpeg');">
+        </div>
+
+        <!-- ==================== Slide 22: DIAGRAM — EC2 + EBS (keep as image) ==================== -->
+        <div class="slide slide-image-bg" data-slide="Slide 22"
+             role="img" aria-label="AWS Compute EC2 architecture diagram: EC2 instance connected to a 6 GB EBS root volume (/dev/sda1) with partitions for bpp, root, swap, home, usr, var"
+             style="background-image: url('../Week 3/Slide22.jpeg');">
+        </div>
+
+        <!-- ==================== Slide 23: CONVERTED — EC2 Pricing (text-heavy → slide-content) ==================== -->
+        <div class="slide slide-content" data-slide="Slide 23">
+            <div class="content-title" style="font-size: 36px;">AWS Compute — EC2 Pricing</div>
+            <div class="pricing-tiers">
+                <div class="pricing-tier">
+                    <div class="tier-name">On-Demand</div>
+                    <ul class="tier-details">
+                        <li>Pay by the Hour</li>
+                        <li>No long-term commitments</li>
+                        <li>Most expensive</li>
+                    </ul>
+                </div>
+                <div class="pricing-tier">
+                    <div class="tier-name">Saving Plans</div>
+                    <ul class="tier-details">
+                        <li>Discounts of up to 72%</li>
+                        <li>Committing use for 1-year / 3-year term</li>
+                        <li>Steady availability</li>
+                    </ul>
+                </div>
+                <div class="pricing-tier">
+                    <div class="tier-name">Spot</div>
+                    <ul class="tier-details">
+                        <li>Save up to 90% by taking advantage of unused EC2 capacity</li>
+                        <li>Only for fault tolerant or stateless workloads</li>
+                        <li>Plan for interruptions and be flexible</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== Slide 24: Content — Lambda (already HTML) ==================== -->
+        <div class="slide slide-content" data-slide="Slide 24">
+            <div class="content-title">AWS Compute — Lambda</div>
+            <div class="content-subtitle">No need for managing servers or infrastructure</div>
+            <div class="content-description">Each execution is independent of others including resources. Scale from a dozen to hundreds of thousands per second.</div>
+            <ul class="content-list">
+                <li>Serverless</li>
+                <li>Automatic Scaling</li>
+                <li>Millisecond resolution pricing</li>
+                <li>Pay as You Go</li>
+                <li>Node.js, Python, Java, Ruby, .NET</li>
+                <li>Wide support for Runtimes</li>
+            </ul>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== Slide 25: DIAGRAM — Lambda Pricing Calculator (keep as image) ==================== -->
+        <div class="slide slide-image-bg" data-slide="Slide 25"
+             role="img" aria-label="AWS Lambda pricing calculator screenshot showing: Architecture x86, 100 requests per second, 50ms duration, 128 MB memory, 512 MB ephemeral storage. Free Tier includes 1M free requests/month and 400,000 GB-seconds of compute time."
+             style="background-image: url('../Week 3/Slide25.jpeg');">
+        </div>
+
+        <!-- ==================== Slide 26: CONVERTED — Lambda Pricing Calcs (text-heavy → slide-content) ==================== -->
+        <div class="slide slide-content" data-slide="Slide 26" style="padding-top: 40px; padding-bottom: 100px;">
+            <div class="content-title" style="font-size: 32px;">AWS Compute — Lambda Pricing</div>
+            <div class="calc-section">
+                <h3>Unit Conversions</h3>
+                <div class="calc-line">Requests: 100/sec &times; 60 &times; 60 &times; 730 = <strong>262,800,000 per month</strong></div>
+                <div class="calc-line">Memory: 128 MB &times; 0.0009765625 = <strong>0.125 GB</strong></div>
+                <div class="calc-line">Ephemeral storage: 512 MB &times; 0.0009765625 = <strong>0.5 GB</strong></div>
+            </div>
+            <div class="calc-section">
+                <h3>Compute Charges</h3>
+                <div class="calc-line">262.8M requests &times; 50ms &times; 0.001 = 13,140,000 total compute seconds</div>
+                <div class="calc-line">0.125 GB &times; 13,140,000s = 1,642,500 GB-s</div>
+                <div class="calc-line">1,642,500 &minus; 400,000 (free tier) = 1,242,500 billable GB-s</div>
+                <div class="calc-line bold">1,242,500 GB-s &times; $0.0000166667 = $20.71 USD / month</div>
+            </div>
+            <div class="calc-section">
+                <h3>Request Charges</h3>
+                <div class="calc-line">262,800,000 &minus; 1,000,000 (free tier) = 261,800,000 billable requests</div>
+                <div class="calc-line bold">261,800,000 &times; $0.0000002 = $52.36 USD / month</div>
+            </div>
+            <div class="calc-section">
+                <h3>Ephemeral Storage</h3>
+                <div class="calc-line">0.5 GB &minus; 0.5 GB (no additional charge) = $0.00 / month</div>
+            </div>
+            <div class="calc-result">Lambda Cost (with Free Tier): $20.71 + $52.36 = <strong>$73.07 USD / month</strong></div>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== Reading: AWS Compute (keep as-is) ==================== -->
+        <div class="slide slide-content" data-slide="Reading: Compute">
+            <div class="content-title" style="font-size:30px;margin-bottom:6px;">Additional Reading</div>
+            <div class="content-subtitle">AWS Compute</div>
+            <div style="margin-top:24px;">
+                <p style="font-family:var(--font-heading);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--text-dark);opacity:0.5;margin-bottom:10px;">Further Reading</p>
+                <a href="https://www.geeksforgeeks.org/amazon-web-services-introduction-to-amazon-eks/" target="_blank" style="display:flex;align-items:center;gap:16px;padding:16px 22px;background:#f5f3ff;border-radius:8px;border-left:4px solid #7c4dff;text-decoration:none;margin-bottom:10px;">
+                    <span style="font-size:20px;">&#x2699;&#xFE0F;</span>
+                    <span style="font-family:var(--font-heading);font-size:16px;color:#5a4fcf;font-weight:500;line-height:1.4;">AWS EKS — Amazon Elastic Kubernetes Service &#8599;</span>
+                </a>
+                <a href="https://medium.com/boltops/gentle-introduction-to-how-aws-ecs-works-with-example-tutorial-cea3d27ce63d" target="_blank" style="display:flex;align-items:center;gap:16px;padding:16px 22px;background:#f5f3ff;border-radius:8px;border-left:4px solid #7c4dff;text-decoration:none;margin-bottom:10px;">
+                    <span style="font-size:20px;">&#x1F433;</span>
+                    <span style="font-family:var(--font-heading);font-size:16px;color:#5a4fcf;font-weight:500;line-height:1.4;">AWS ECS — How it works (Tutorial) &#8599;</span>
+                </a>
+                <a href="https://aws.amazon.com/fargate/" target="_blank" style="display:flex;align-items:center;gap:16px;padding:16px 22px;background:#f5f3ff;border-radius:8px;border-left:4px solid #7c4dff;text-decoration:none;margin-bottom:10px;">
+                    <span style="font-size:20px;">&#x2601;&#xFE0F;</span>
+                    <span style="font-family:var(--font-heading);font-size:16px;color:#5a4fcf;font-weight:500;line-height:1.4;">AWS Fargate &#8599;</span>
+                </a>
+                <a href="https://aws.amazon.com/lambda/pricing/" target="_blank" style="display:flex;align-items:center;gap:16px;padding:16px 22px;background:#f5f3ff;border-radius:8px;border-left:4px solid #7c4dff;text-decoration:none;margin-bottom:10px;">
+                    <span style="font-size:20px;">&lambda;</span>
+                    <span style="font-family:var(--font-heading);font-size:16px;color:#5a4fcf;font-weight:500;line-height:1.4;">AWS Lambda Pricing &#8599;</span>
+                </a>
+                <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/tutorial-launch-my-first-ec2-instance.html" target="_blank" style="display:flex;align-items:center;gap:16px;padding:16px 22px;background:#f5f3ff;border-radius:8px;border-left:4px solid #7c4dff;text-decoration:none;margin-bottom:10px;">
+                    <span style="font-size:20px;">&#x1F5A5;&#xFE0F;</span>
+                    <span style="font-family:var(--font-heading);font-size:16px;color:#5a4fcf;font-weight:500;line-height:1.4;">Launch Your First Amazon EC2 Instance — AWS Tutorial &#8599;</span>
+                </a>
+                <a href="https://docs.aws.amazon.com/lambda/latest/dg/getting-started.html" target="_blank" style="display:flex;align-items:center;gap:16px;padding:16px 22px;background:#f5f3ff;border-radius:8px;border-left:4px solid #7c4dff;text-decoration:none;margin-bottom:10px;">
+                    <span style="font-size:20px;">&lambda;</span>
+                    <span style="font-family:var(--font-heading);font-size:16px;color:#5a4fcf;font-weight:500;line-height:1.4;">Create Your First Lambda Function — AWS Getting Started &#8599;</span>
+                </a>
+                <a href="https://docs.aws.amazon.com/AmazonECS/latest/developerguide/getting-started-fargate.html" target="_blank" style="display:flex;align-items:center;gap:16px;padding:16px 22px;background:#f5f3ff;border-radius:8px;border-left:4px solid #7c4dff;text-decoration:none;margin-bottom:10px;">
+                    <span style="font-size:20px;">&#x1F433;</span>
+                    <span style="font-family:var(--font-heading);font-size:16px;color:#5a4fcf;font-weight:500;line-height:1.4;">Get Started with Amazon ECS on Fargate — AWS Guide &#8599;</span>
+                </a>
+                <a href="https://docs.aws.amazon.com/eks/latest/userguide/getting-started-eksctl.html" target="_blank" style="display:flex;align-items:center;gap:16px;padding:16px 22px;background:#f5f3ff;border-radius:8px;border-left:4px solid #7c4dff;text-decoration:none;margin-bottom:10px;">
+                    <span style="font-size:20px;">&#x2638;&#xFE0F;</span>
+                    <span style="font-family:var(--font-heading);font-size:16px;color:#5a4fcf;font-weight:500;line-height:1.4;">Get Started with Amazon EKS (eksctl) — AWS Guide &#8599;</span>
+                </a>
+            </div>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== Slide 28: Section Dark — AWS Storage ==================== -->
+        <div class="slide slide-section-dark" data-slide="Slide 28" role="region" aria-label="Section: AWS Storage">
+            <div class="section-title">AWS Storage</div>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build">The Build Fellowship</span>
+                    <span class="footer-logo openavenues" style="color: #c4a8ff;">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date">February 2026</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== Slide 29: Content — S3 (already HTML, cleaned up) ==================== -->
+        <div class="slide slide-content" data-slide="Slide 29">
+            <div class="content-title">AWS Storage — S3</div>
+            <div class="content-subtitle">Can store any sort of files up to a maximum size of 5 TB.</div>
+            <div class="content-description">Various storage classes help reduce overall costs:</div>
+            <ul class="content-list">
+                <li>General Purpose</li>
+                <li>Infrequent Access — millisecond retrieval</li>
+                <li>S3 Glacier Instant / Deep — Higher penalty for frequent access; deep can take up to 12 hours</li>
+                <li>Object storage</li>
+                <li>Pay as you Go — with options</li>
+            </ul>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== Slide 30: Content — EBS (already HTML) ==================== -->
+        <div class="slide slide-content" data-slide="Slide 30">
+            <div class="content-title">AWS Storage — Elastic Block Store</div>
+            <ul class="content-list">
+                <li>Scale Fast</li>
+                <li>High Performance including replication within AZ</li>
+                <li>Optimizable Cost depending on performance needed</li>
+                <li>Allows encryption</li>
+                <li>Allows backups as EBS snapshots — Snapshot storage also costs</li>
+                <li>Can only be attached to one instance at a time</li>
+            </ul>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== Slide 31: Content — EFS (already HTML) ==================== -->
+        <div class="slide slide-content" data-slide="Slide 31">
+            <div class="content-title">AWS Storage — Elastic File System</div>
+            <ul class="content-list">
+                <li>File level not block level</li>
+                <li>Unlimited scalability with automatic resizing as more storage is needed</li>
+                <li>Optimizable Cost depending on performance needed. Can scale higher than EBS</li>
+                <li>Has multi-AZ redundancy</li>
+                <li>Can be attached to multiple instances at the same time</li>
+            </ul>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== Reading: AWS Storage (keep as-is) ==================== -->
+        <div class="slide slide-content" data-slide="Reading: Storage">
+            <div class="content-title" style="font-size:30px;margin-bottom:6px;">Additional Reading</div>
+            <div class="content-subtitle">AWS Storage</div>
+            <div style="margin-top:24px;">
+                <p style="font-family:var(--font-heading);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--text-dark);opacity:0.5;margin-bottom:10px;">Further Reading</p>
+                <a href="https://www.datacamp.com/tutorial/aws-s3-efs-tutorial" target="_blank" style="display:flex;align-items:center;gap:16px;padding:16px 22px;background:#f5f3ff;border-radius:8px;border-left:4px solid #7c4dff;text-decoration:none;margin-bottom:10px;">
+                    <span style="font-size:20px;">&#x1FAA3;</span>
+                    <span style="font-family:var(--font-heading);font-size:16px;color:#5a4fcf;font-weight:500;line-height:1.4;">AWS Storage Tutorial: S3 and EFS — DataCamp &#8599;</span>
+                </a>
+                <a href="https://tutorialsdojo.com/amazon-s3-vs-ebs-vs-efs/" target="_blank" style="display:flex;align-items:center;gap:16px;padding:16px 22px;background:#f5f3ff;border-radius:8px;border-left:4px solid #7c4dff;text-decoration:none;margin-bottom:10px;">
+                    <span style="font-size:20px;">&#x1F4CA;</span>
+                    <span style="font-family:var(--font-heading);font-size:16px;color:#5a4fcf;font-weight:500;line-height:1.4;">Amazon S3 vs EBS vs EFS — Tutorials Dojo &#8599;</span>
+                </a>
+                <a href="https://neal-davis.medium.com/demystifying-aws-storage-s3-ebs-and-efs-e5b2257981c8" target="_blank" style="display:flex;align-items:center;gap:16px;padding:16px 22px;background:#f5f3ff;border-radius:8px;border-left:4px solid #7c4dff;text-decoration:none;margin-bottom:10px;">
+                    <span style="font-size:20px;">&#x1F4D6;</span>
+                    <span style="font-family:var(--font-heading);font-size:16px;color:#5a4fcf;font-weight:500;line-height:1.4;">Demystifying AWS Storage: S3, EBS, and EFS — Medium &#8599;</span>
+                </a>
+                <a href="https://www.justaftermidnight247.com/insights/ebs-efs-and-s3-when-to-use-awss-three-storage-solutions/" target="_blank" style="display:flex;align-items:center;gap:16px;padding:16px 22px;background:#f5f3ff;border-radius:8px;border-left:4px solid #7c4dff;text-decoration:none;margin-bottom:10px;">
+                    <span style="font-size:20px;">&#x1F4A1;</span>
+                    <span style="font-family:var(--font-heading);font-size:16px;color:#5a4fcf;font-weight:500;line-height:1.4;">EBS vs EFS vs S3: When to Use Each — Just After Midnight &#8599;</span>
+                </a>
+            </div>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== Slide 32: Section Dark — Coming next week ==================== -->
+        <div class="slide slide-section-dark" data-slide="Slide 32" role="region" aria-label="Section: Coming next week - Quiz">
+            <div class="section-title">Coming next week&hellip;Quiz!</div>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build">The Build Fellowship</span>
+                    <span class="footer-logo openavenues" style="color: #c4a8ff;">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date">February 2026</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== Slide 33: Closing Logo (logo-only, keep as image) ==================== -->
+        <div class="slide slide-image-bg" data-slide="Slide 33"
+             role="img" aria-label="The Build Fellowship and OpenAvenues Foundation — closing branding slide"
+             style="background-image: url('../Week 3/Slide33.jpeg');">
+        </div>
+
+    </div><!-- end .presentation -->
+
+    <!-- ==================== Enhanced Navigation Bar ==================== -->
+    <div class="enhanced-nav">
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="nav-controls">
+            <button id="prevBtn" aria-label="Previous slide">&#8592; Back</button>
+            <span class="slide-counter" id="slideCounter">1 / 34</span>
+            <button id="nextBtn" aria-label="Next slide">Next &#8594;</button>
+            <span class="keyboard-hint">&#8592; &#8594; Space &middot; t thumbnails</span>
+        </div>
+    </div>
+
+    <!-- ==================== Thumbnail Strip ==================== -->
+    <div class="thumbnail-strip" id="thumbnailStrip">
+        <div class="thumbnail-strip-inner" id="thumbnailStripInner">
+            <!-- Generated by JavaScript -->
+        </div>
+    </div>
+
+    <!-- ==================== Slide Number Overlay ==================== -->
+    <div class="slide-number-overlay" id="slideNumberOverlay">1</div>
+
+    <!-- ==================== Speaker Notes Panel ==================== -->
+    <div class="speaker-notes" id="speakerNotes">
+        <h3>Speaker Notes</h3>
+        <p id="notesContent"></p>
+    </div>
+
+    <script>
+        /* ===========================================
+           ENHANCED PRESENTATION ENGINE
+           =========================================== */
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        // Speaker notes keyed by data-slide attribute value
+        const speakerNotes = {
+            "Slide 5": "Poll Here: \n\n\nWhich of the following terms do you understand?",
+            "Slide 6": "A default VPC is configured and ready for you to use. \n\n\nA default subnet\u00a0in each Availability Zone in the Region, an attached internet gateway, a route in the main route table that sends all traffic to the internet gateway, and DNS settings that automatically assign public DNS hostnames",
+            "Slide 7": "https://app.cloudcraft.co/blueprint/4afc0880-fc20-41ec-b366-fafafb235795",
+            "Slide 8": "Most costs depends on the AWS region, but don\u2019t differ too much",
+            "Slide 15": "Article in Links for this weeks reading to highlight the difference between RDS and Aurora : https://www.percona.com/blog/when-should-i-use-amazon-aurora-and-when-should-i-use-rds-mysql/"
+        };
+
+        // Slide title map for thumbnail labels
+        function getSlideTitle(slide) {
+            const ds = slide.getAttribute('data-slide') || '';
+            // Try to find a title element
+            const title = slide.querySelector('.content-title, .section-title, .agenda-title, .toc-title');
+            if (title) {
+                let text = title.textContent.trim();
+                if (text.length > 24) text = text.substring(0, 22) + '\u2026';
+                return text;
+            }
+            if (ds.startsWith('Reading:')) return ds;
+            return ds;
+        }
+
+        function showSlide(index) {
+            slides.forEach(s => s.classList.remove('active'));
+            slides[index].classList.add('active');
+            currentSlide = index;
+
+            // Update counter
+            document.getElementById('slideCounter').textContent = (index + 1) + ' / ' + totalSlides;
+
+            // Update progress bar
+            const pct = totalSlides > 1 ? (index / (totalSlides - 1)) * 100 : 0;
+            document.getElementById('progressFill').style.width = pct + '%';
+
+            // Update button states
+            document.getElementById('prevBtn').disabled = (index === 0);
+            document.getElementById('nextBtn').disabled = (index === totalSlides - 1);
+
+            // Update slide number overlay
+            document.getElementById('slideNumberOverlay').textContent = (index + 1);
+
+            // Update speaker notes
+            updateSpeakerNotes(index);
+
+            // Update thumbnail highlight
+            updateThumbnailHighlight(index);
+        }
+
+        function goToSlide(index) {
+            if (index >= 0 && index < totalSlides) {
+                showSlide(index);
+            }
+        }
+
+        function changeSlide(direction) {
+            const newIndex = currentSlide + direction;
+            if (newIndex >= 0 && newIndex < totalSlides) {
+                showSlide(newIndex);
+            }
+        }
+
+        function updateSpeakerNotes(index) {
+            const notesContent = document.getElementById('notesContent');
+            const slideEl = slides[index];
+            const dataSlide = slideEl.getAttribute('data-slide') || '';
+            if (notesContent && speakerNotes[dataSlide]) {
+                notesContent.textContent = speakerNotes[dataSlide];
+            } else if (notesContent) {
+                notesContent.textContent = 'No notes for this slide.';
+            }
+        }
+
+        function toggleNotes() {
+            const notes = document.getElementById('speakerNotes');
+            if (notes) notes.classList.toggle('visible');
+        }
+
+        // --- Thumbnail Strip ---
+        function buildThumbnails() {
+            const strip = document.getElementById('thumbnailStripInner');
+            if (!strip) return;
+            strip.innerHTML = '';
+            slides.forEach(function(slide, i) {
+                const item = document.createElement('div');
+                item.className = 'thumbnail-item' + (i === 0 ? ' active' : '');
+                item.innerHTML = '<span class="thumb-number">' + (i + 1) + '</span>' +
+                                 '<span class="thumb-title">' + getSlideTitle(slide) + '</span>';
+                item.addEventListener('click', function() { goToSlide(i); });
+                strip.appendChild(item);
+            });
+        }
+
+        function updateThumbnailHighlight(index) {
+            var items = document.querySelectorAll('.thumbnail-item');
+            items.forEach(function(item, i) {
+                item.classList.toggle('active', i === index);
+            });
+            // Scroll active thumbnail into view
+            if (items[index]) {
+                items[index].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+            }
+        }
+
+        function toggleThumbnails() {
+            var strip = document.getElementById('thumbnailStrip');
+            if (strip) strip.classList.toggle('visible');
+        }
+
+        // --- Keyboard Navigation ---
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+                e.preventDefault();
+                changeSlide(1);
+            }
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                e.preventDefault();
+                changeSlide(-1);
+            }
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                showSlide(0);
+            }
+            if (e.key === 't' || e.key === 'T') {
+                e.preventDefault();
+                toggleThumbnails();
+            }
+            if (e.key === 'n' || e.key === 'N') {
+                e.preventDefault();
+                toggleNotes();
+            }
+        });
+
+        // --- Navigation button click handlers ---
+        document.getElementById('prevBtn').addEventListener('click', function() { changeSlide(-1); });
+        document.getElementById('nextBtn').addEventListener('click', function() { changeSlide(1); });
+
+        // --- Initialize ---
+        buildThumbnails();
+        showSlide(0);
+    </script>
+</body>
+</html>
