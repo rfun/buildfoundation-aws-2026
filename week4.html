@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 4: Infrastructure As Code (IaC)</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="slides.css">
+
+    <style>
+        /* ===========================================
+           ENHANCED STYLES — week4.html
+           =========================================== */
+
+        /* Hide original nav (overridden by enhanced nav) */
+        .slide-nav { display: none !important; }
+
+        /* --- Enhanced Navigation Bar --- */
+        .enhanced-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(30, 30, 90, 0.95);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .progress-bar {
+            height: 3px;
+            background: rgba(255,255,255,0.08);
+            width: 100%;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #7c4dff, #b47cff);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .nav-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            padding: 10px 40px;
+        }
+
+        .nav-controls button {
+            background: rgba(124, 77, 255, 0.25);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.15);
+            padding: 8px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: var(--font-body);
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .nav-controls button:hover {
+            background: rgba(124, 77, 255, 0.45);
+            border-color: rgba(255,255,255,0.3);
+        }
+
+        .nav-controls button:disabled {
+            opacity: 0.25;
+            cursor: not-allowed;
+        }
+
+        .nav-controls button:disabled:hover {
+            background: rgba(124, 77, 255, 0.25);
+            border-color: rgba(255,255,255,0.15);
+        }
+
+        .nav-controls .slide-counter {
+            font-family: var(--font-body);
+            font-size: 14px;
+            color: rgba(255,255,255,0.7);
+            min-width: 60px;
+            text-align: center;
+            background: none;
+            padding: 0;
+            border-radius: 0;
+            backdrop-filter: none;
+        }
+
+        .keyboard-hint {
+            font-size: 11px;
+            color: rgba(255,255,255,0.3);
+            font-family: var(--font-body);
+            letter-spacing: 1px;
+        }
+
+        /* --- Slide Number Overlay --- */
+        .slide-number-overlay {
+            position: fixed;
+            bottom: 56px;
+            right: 20px;
+            font-family: var(--font-body);
+            font-size: 11px;
+            color: rgba(255,255,255,0.3);
+            z-index: 999;
+            pointer-events: none;
+        }
+
+        /* --- Image Scrim Overlay --- */
+        .slide-image-bg::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.18);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* --- Thumbnail Strip --- */
+        .thumbnail-strip {
+            position: fixed;
+            bottom: 50px;
+            left: 0;
+            right: 0;
+            background: rgba(26, 26, 46, 0.96);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(255,255,255,0.08);
+            z-index: 998;
+            display: none;
+            overflow-x: auto;
+            padding: 10px 16px;
+        }
+
+        .thumbnail-strip.visible {
+            display: flex;
+        }
+
+        .thumbnail-strip-inner {
+            display: flex;
+            gap: 6px;
+            min-width: max-content;
+        }
+
+        .thumbnail-item {
+            width: 110px;
+            height: 62px;
+            border-radius: 4px;
+            border: 2px solid transparent;
+            background: rgba(255,255,255,0.08);
+            cursor: pointer;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-body);
+            color: rgba(255,255,255,0.5);
+            text-align: center;
+            padding: 4px;
+            transition: all 0.15s;
+            overflow: hidden;
+        }
+
+        .thumbnail-item:hover {
+            border-color: rgba(124, 77, 255, 0.5);
+            background: rgba(255,255,255,0.12);
+        }
+
+        .thumbnail-item.active {
+            border-color: #7c4dff;
+            background: rgba(124, 77, 255, 0.2);
+        }
+
+        .thumbnail-item .thumb-number {
+            font-weight: 700;
+            font-size: 16px;
+            color: rgba(255,255,255,0.7);
+            line-height: 1;
+        }
+
+        .thumbnail-item .thumb-title {
+            font-size: 8px;
+            line-height: 1.2;
+            margin-top: 3px;
+            opacity: 0.6;
+            max-height: 18px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            max-width: 100px;
+        }
+
+        /* --- Two Section Layout (Methods/Limitations) --- */
+        .two-section-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 20px;
+        }
+
+        .section-block h3 {
+            font-family: var(--font-heading);
+            font-size: 17px;
+            font-weight: 700;
+            color: #5a4fcf;
+            margin-bottom: 14px;
+        }
+
+        .section-block ul {
+            list-style: none;
+        }
+
+        .section-block ul li {
+            font-size: 15px;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            line-height: 1.5;
+        }
+
+        .section-block ul li::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--text-dark);
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-top: 7px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Back to Home Link -->
+    <div class="back-home">
+        <a href="index.html">Back to Home</a>
+    </div>
+
+    <div class="presentation">
+
+        <!-- ==================== Slide 1: Title Logo (logo-only, keep as image) ==================== -->
+        <div class="slide slide-image-bg active" data-slide="Slide 1"
+             role="img" aria-label="The Build Fellowship — title slide with gradient logo and buildfellowship.com"
+             style="background-image: url('../Week 4/Slide1.jpeg');">
+        </div>
+
+        <!-- ==================== Slide 2: Section Light — Infrastructure As Code (IaC) ==================== -->
+        <div class="slide slide-section-light" data-slide="Slide 2" role="region" aria-label="Section: Infrastructure As Code (IaC)"
+             style="justify-content: flex-start; padding-top: 80px;">
+            <div class="brand-header">The Build Fellowship</div>
+            <div class="section-title" style="font-size: 110px; line-height: 1.0;">Infrastructure As Code (IaC)</div>
+            <div style="position: absolute; bottom: 60px; left: 80px; font-family: var(--font-heading); font-size: 36px; font-weight: 700; color: white;">Week 4</div>
+            <div class="section-date">July 2025</div>
+        </div>
+
+        <!-- ==================== Slide 3: Agenda ==================== -->
+        <div class="slide slide-agenda" data-slide="Slide 3">
+            <div class="agenda-title">Agenda</div>
+            <ul class="agenda-list">
+                <li>Quiz</li>
+                <li>IaC</li>
+                <li>Terraform</li>
+                <li>Demo</li>
+            </ul>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build">The Build Fellowship</span>
+                    <span class="footer-logo openavenues" style="color: #c4a8ff;">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date">February 2026</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== Slide 4: Content — Traditional Infrastructure Deployment ==================== -->
+        <div class="slide slide-content" data-slide="Slide 4">
+            <div class="content-title" style="font-size: 36px;">Traditional Infrastructure Deployment</div>
+            <div class="two-section-layout">
+                <div class="section-block">
+                    <h3>Methods</h3>
+                    <ul>
+                        <li>Graphical User Interface (GUI)</li>
+                        <li>Scripts &ndash; Platform specific</li>
+                    </ul>
+                </div>
+                <div class="section-block">
+                    <h3>Limitations</h3>
+                    <ul>
+                        <li>Manual and time-consuming process</li>
+                        <li>Error-prone</li>
+                        <li>Inconsistency</li>
+                        <li>Configuration drift</li>
+                        <li>Difficulty to keep multiple environments in sync</li>
+                        <li>Scalability</li>
+                        <li>Difficult to document</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== Slide 5: Infrastructure as Code (diagram — keep as image) ==================== -->
+        <div class="slide slide-image-bg" data-slide="Slide 5"
+             role="img" aria-label="Infrastructure as Code — definition, benefits, and multi-cloud environment diagram showing AWS, GCP, Azure with Dev, SIT, UAT, and Prod environments"
+             style="background-image: url('../Week 4/Slide5.jpeg');">
+        </div>
+
+        <!-- ==================== Slide 6: Infrastructure as Code - Terraform (diagram — keep as image) ==================== -->
+        <div class="slide slide-image-bg" data-slide="Slide 6"
+             role="img" aria-label="Infrastructure as Code - Terraform — definition, benefits, and file structure diagram showing main.tf, provider.tf, variables.tf, output.tf, terraform.tfvars, terraform.tfstate with multi-cloud support"
+             style="background-image: url('../Week 4/Slide6.jpeg');">
+        </div>
+
+        <!-- ==================== Reading: Infrastructure as Code ==================== -->
+        <div class="slide slide-content" data-slide="Reading: IaC">
+            <div class="content-title" style="font-size:30px;margin-bottom:6px;">Additional Reading</div>
+            <div class="content-subtitle">Infrastructure as Code</div>
+            <div style="margin-top:24px;">
+                <p style="font-family:var(--font-heading);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--text-dark);opacity:0.5;margin-bottom:10px;">Useful Links</p>
+                <a href="https://developer.hashicorp.com/terraform/tutorials/aws-get-started" target="_blank" style="display:flex;align-items:center;gap:16px;padding:16px 22px;background:#f5f3ff;border-radius:8px;border-left:4px solid #7c4dff;text-decoration:none;margin-bottom:10px;">
+                    <span style="font-size:20px;">&#x1F680;</span>
+                    <span style="font-family:var(--font-heading);font-size:16px;color:#5a4fcf;font-weight:500;line-height:1.4;">Terraform AWS Get Started Tutorial &mdash; Official HashiCorp Guide &#8599;</span>
+                </a>
+                <a href="https://aws.amazon.com/what-is/iac/" target="_blank" style="display:flex;align-items:center;gap:16px;padding:16px 22px;background:#f5f3ff;border-radius:8px;border-left:4px solid #7c4dff;text-decoration:none;margin-bottom:10px;">
+                    <span style="font-size:20px;">&#x2601;&#xFE0F;</span>
+                    <span style="font-family:var(--font-heading);font-size:16px;color:#5a4fcf;font-weight:500;line-height:1.4;">What is Infrastructure as Code? &mdash; AWS &#8599;</span>
+                </a>
+                <a href="https://developer.hashicorp.com/terraform/language" target="_blank" style="display:flex;align-items:center;gap:16px;padding:16px 22px;background:#f5f3ff;border-radius:8px;border-left:4px solid #7c4dff;text-decoration:none;margin-bottom:10px;">
+                    <span style="font-size:20px;">&#x1F4D6;</span>
+                    <span style="font-family:var(--font-heading);font-size:16px;color:#5a4fcf;font-weight:500;line-height:1.4;">Terraform Language Documentation &mdash; HCL Syntax Reference &#8599;</span>
+                </a>
+                <a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs" target="_blank" style="display:flex;align-items:center;gap:16px;padding:16px 22px;background:#f5f3ff;border-radius:8px;border-left:4px solid #7c4dff;text-decoration:none;margin-bottom:10px;">
+                    <span style="font-size:20px;">&#x1F4CB;</span>
+                    <span style="font-family:var(--font-heading);font-size:16px;color:#5a4fcf;font-weight:500;line-height:1.4;">Terraform AWS Provider Documentation &mdash; Resource Reference &#8599;</span>
+                </a>
+                <a href="https://spacelift.io/blog/terraform-best-practices" target="_blank" style="display:flex;align-items:center;gap:16px;padding:16px 22px;background:#f5f3ff;border-radius:8px;border-left:4px solid #7c4dff;text-decoration:none;margin-bottom:10px;">
+                    <span style="font-size:20px;">&#x2705;</span>
+                    <span style="font-family:var(--font-heading);font-size:16px;color:#5a4fcf;font-weight:500;line-height:1.4;">Terraform Best Practices &mdash; Spacelift &#8599;</span>
+                </a>
+                <a href="https://www.youtube.com/watch?v=SLB_c_ayRMo" target="_blank" style="display:flex;align-items:center;gap:16px;padding:16px 22px;background:#f5f3ff;border-radius:8px;border-left:4px solid #7c4dff;text-decoration:none;margin-bottom:10px;">
+                    <span style="font-size:20px;">&#x1F3A5;</span>
+                    <span style="font-family:var(--font-heading);font-size:16px;color:#5a4fcf;font-weight:500;line-height:1.4;">Terraform Course for Beginners &mdash; freeCodeCamp (2.5 hrs) &#8599;</span>
+                </a>
+            </div>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== Slide 8: Closing Logo (logo-only, keep as image) ==================== -->
+        <div class="slide slide-image-bg" data-slide="Slide 7"
+             role="img" aria-label="The Build Fellowship and OpenAvenues Foundation — closing branding slide"
+             style="background-image: url('../Week 4/Slide7.jpeg');">
+        </div>
+
+    </div><!-- end .presentation -->
+
+    <!-- ==================== Enhanced Navigation Bar ==================== -->
+    <div class="enhanced-nav">
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="nav-controls">
+            <button id="prevBtn" aria-label="Previous slide">&#8592; Back</button>
+            <span class="slide-counter" id="slideCounter">1 / 8</span>
+            <button id="nextBtn" aria-label="Next slide">Next &#8594;</button>
+            <span class="keyboard-hint">&#8592; &#8594; Space &middot; t thumbnails</span>
+        </div>
+    </div>
+
+    <!-- ==================== Thumbnail Strip ==================== -->
+    <div class="thumbnail-strip" id="thumbnailStrip">
+        <div class="thumbnail-strip-inner" id="thumbnailStripInner">
+            <!-- Generated by JavaScript -->
+        </div>
+    </div>
+
+    <!-- ==================== Slide Number Overlay ==================== -->
+    <div class="slide-number-overlay" id="slideNumberOverlay">1</div>
+
+    <!-- ==================== Speaker Notes Panel ==================== -->
+    <div class="speaker-notes" id="speakerNotes">
+        <h3>Speaker Notes</h3>
+        <p id="notesContent"></p>
+    </div>
+
+    <script>
+        /* ===========================================
+           ENHANCED PRESENTATION ENGINE
+           =========================================== */
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        // Speaker notes keyed by data-slide attribute value
+        const speakerNotes = {
+            "Slide 4": "Traditional methods rely on manual processes via GUI consoles or platform-specific scripts. These approaches don't scale well and lead to configuration drift across environments.",
+            "Slide 5": "IaC allows you to define your infrastructure in code files, which can be version controlled, reviewed, and reused. One set of code with different variable files can deploy to Dev, SIT, UAT, and Prod consistently.",
+            "Slide 6": "Terraform by HashiCorp is the most popular IaC tool. It uses HCL (HashiCorp Configuration Language) and supports multiple cloud providers through its provider plugin system."
+        };
+
+        // Slide title map for thumbnail labels
+        function getSlideTitle(slide) {
+            const ds = slide.getAttribute('data-slide') || '';
+            const title = slide.querySelector('.content-title, .section-title, .agenda-title');
+            if (title) {
+                let text = title.textContent.trim();
+                if (text.length > 24) text = text.substring(0, 22) + '\u2026';
+                return text;
+            }
+            return ds;
+        }
+
+        function showSlide(index) {
+            slides.forEach(s => s.classList.remove('active'));
+            slides[index].classList.add('active');
+            currentSlide = index;
+
+            // Update counter
+            document.getElementById('slideCounter').textContent = (index + 1) + ' / ' + totalSlides;
+
+            // Update progress bar
+            const pct = totalSlides > 1 ? (index / (totalSlides - 1)) * 100 : 0;
+            document.getElementById('progressFill').style.width = pct + '%';
+
+            // Update button states
+            document.getElementById('prevBtn').disabled = (index === 0);
+            document.getElementById('nextBtn').disabled = (index === totalSlides - 1);
+
+            // Update slide number overlay
+            document.getElementById('slideNumberOverlay').textContent = (index + 1);
+
+            // Update speaker notes
+            updateSpeakerNotes(index);
+
+            // Update thumbnail highlight
+            updateThumbnailHighlight(index);
+        }
+
+        function goToSlide(index) {
+            if (index >= 0 && index < totalSlides) {
+                showSlide(index);
+            }
+        }
+
+        function changeSlide(direction) {
+            const newIndex = currentSlide + direction;
+            if (newIndex >= 0 && newIndex < totalSlides) {
+                showSlide(newIndex);
+            }
+        }
+
+        function updateSpeakerNotes(index) {
+            const notesContent = document.getElementById('notesContent');
+            const slideEl = slides[index];
+            const dataSlide = slideEl.getAttribute('data-slide') || '';
+            if (notesContent && speakerNotes[dataSlide]) {
+                notesContent.textContent = speakerNotes[dataSlide];
+            } else if (notesContent) {
+                notesContent.textContent = 'No notes for this slide.';
+            }
+        }
+
+        function toggleNotes() {
+            const notes = document.getElementById('speakerNotes');
+            if (notes) notes.classList.toggle('visible');
+        }
+
+        // --- Thumbnail Strip ---
+        function buildThumbnails() {
+            const strip = document.getElementById('thumbnailStripInner');
+            if (!strip) return;
+            strip.innerHTML = '';
+            slides.forEach(function(slide, i) {
+                const item = document.createElement('div');
+                item.className = 'thumbnail-item' + (i === 0 ? ' active' : '');
+                item.innerHTML = '<span class="thumb-number">' + (i + 1) + '</span>' +
+                                 '<span class="thumb-title">' + getSlideTitle(slide) + '</span>';
+                item.addEventListener('click', function() { goToSlide(i); });
+                strip.appendChild(item);
+            });
+        }
+
+        function updateThumbnailHighlight(index) {
+            var items = document.querySelectorAll('.thumbnail-item');
+            items.forEach(function(item, i) {
+                item.classList.toggle('active', i === index);
+            });
+            if (items[index]) {
+                items[index].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+            }
+        }
+
+        function toggleThumbnails() {
+            var strip = document.getElementById('thumbnailStrip');
+            if (strip) strip.classList.toggle('visible');
+        }
+
+        // --- Keyboard Navigation ---
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+                e.preventDefault();
+                changeSlide(1);
+            }
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                e.preventDefault();
+                changeSlide(-1);
+            }
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                showSlide(0);
+            }
+            if (e.key === 't' || e.key === 'T') {
+                e.preventDefault();
+                toggleThumbnails();
+            }
+            if (e.key === 'n' || e.key === 'N') {
+                e.preventDefault();
+                toggleNotes();
+            }
+        });
+
+        // --- Navigation button click handlers ---
+        document.getElementById('prevBtn').addEventListener('click', function() { changeSlide(-1); });
+        document.getElementById('nextBtn').addEventListener('click', function() { changeSlide(1); });
+
+        // --- Initialize ---
+        buildThumbnails();
+        showSlide(0);
+    </script>
+</body>
+</html>

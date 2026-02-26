@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 4 Assignment: Terraform Infrastructure Deployment - The Build Fellowship</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="labs/lab-styles.css">
+    <style>
+        :root {
+            --pillar-color: #7c4dff;
+        }
+
+        .step-content a {
+            color: #1976d2;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .step-content a:hover {
+            text-decoration: underline;
+            color: #0d47a1;
+        }
+
+        .sub-steps {
+            list-style: none;
+            margin-top: 12px;
+        }
+        .sub-steps li {
+            font-size: 15px;
+            margin-bottom: 10px;
+            padding-left: 28px;
+            position: relative;
+            line-height: 1.6;
+        }
+        .sub-steps li::before {
+            position: absolute;
+            left: 0;
+            font-weight: 700;
+            color: var(--pillar-color);
+        }
+        .sub-steps li:nth-child(1)::before { content: "a."; }
+        .sub-steps li:nth-child(2)::before { content: "b."; }
+        .sub-steps li:nth-child(3)::before { content: "c."; }
+        .sub-steps li:nth-child(4)::before { content: "d."; }
+
+        .budget-screenshot {
+            margin-top: 16px;
+            text-align: center;
+        }
+        .budget-screenshot img {
+            max-width: 340px;
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            border: 1px solid #e0e0e0;
+        }
+        .budget-screenshot .caption {
+            font-size: 13px;
+            color: var(--text-gray);
+            margin-top: 8px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="index.html" class="back-link">Back to Home</a>
+        <div class="pillar-badge">Week 4</div>
+        <h1 class="page-title">Week 4 Assignment: Terraform Infrastructure Deployment</h1>
+        <div class="lab-meta">
+            <span>&#9201; ~60 minutes</span>
+            <span>&#9989; Free Tier</span>
+            <span>&#128218; Terraform + AWS Console</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <h2>Overview</h2>
+        <p class="overview-text">
+            In this assignment, you will use Terraform to deploy a basic cloud infrastructure on AWS.
+            This exercise reinforces the Infrastructure as Code (IaC) concepts covered in the Week 4 lecture
+            and gives you hands-on experience with Terraform's core workflow: <code>init</code>, <code>plan</code>,
+            <code>apply</code>, and <code>destroy</code>.
+        </p>
+
+        <h2>Objectives</h2>
+        <ul class="objectives-list">
+            <li>Install and configure Terraform on your local machine</li>
+            <li>Write Terraform configuration to provision AWS resources</li>
+            <li>Deploy a VPC with public and private subnets, an EC2 instance, EBS volume, and S3 bucket</li>
+            <li>Practice safe teardown of infrastructure using <code>terraform destroy</code></li>
+        </ul>
+
+        <h2>Prerequisites</h2>
+        <div class="prereq-box">
+            <ul>
+                <li>An AWS account (free tier is sufficient)</li>
+                <li>AWS CLI configured with your credentials</li>
+                <li>Terraform installed (see Step 1 below)</li>
+                <li>A code editor (VS Code recommended)</li>
+            </ul>
+        </div>
+
+        <h2>Step-by-Step Instructions</h2>
+
+        <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+                <strong>Install Terraform (if you haven't already).</strong><br>
+                Follow the official installation guide for your operating system at
+                <a href="https://developer.hashicorp.com/terraform/install" target="_blank">developer.hashicorp.com/terraform/install</a>.
+                Verify your installation by running <code>terraform --version</code> in your terminal.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+                <strong>Set up a new project in Terraform.</strong><br>
+                Create a new directory for your project and initialize it with <code>terraform init</code>.
+                You'll need at minimum a <code>main.tf</code> file with your AWS provider configuration and resource definitions.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+                <strong>(Optional but Recommended) Protect yourself from unintended charges.</strong><br>
+                Watch this video before setting anything up on AWS to avoid any unintended charges:
+                <a href="https://www.youtube.com/watch?v=pZLG8McSugQ" target="_blank">Avoiding AWS Charges (YouTube)</a>.
+                <br><br>
+                For additional protection, set up a <strong>zero-spend budget</strong>: go to <strong>Billing and Cost Management</strong>
+                from the menu on the top right (where your AWS account name is shown), then click <strong>Budgets</strong> in the left menu
+                and <strong>Create budget</strong>. Select the zero-spend budget template.
+                <div class="budget-screenshot">
+                    <img src="../Week 4/aws-billing-menu.png" alt="AWS Console menu showing Billing and Cost Management option" onerror="this.style.display='none'; this.nextElementSibling.style.display='none';">
+                    <div class="caption">Navigate to Billing and Cost Management from the top-right account menu</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="note-box">
+            <strong>&#9888; Important:</strong> The zero-spend budget will alert you if any charges begin to accrue.
+            This is a safety net &mdash; all resources in this assignment are free-tier eligible when configured correctly.
+        </div>
+
+        <div class="step">
+            <div class="step-number">4</div>
+            <div class="step-content">
+                <strong>Deploy a cloud infrastructure with the following components using Terraform:</strong>
+                <ul class="sub-steps">
+                    <li><strong>Two Subnets</strong> &ndash; One named Public and one named Private. You can use
+                        <a href="https://mxtoolbox.com/subnetcalculator.aspx" target="_blank">mxtoolbox.com/subnetcalculator</a>
+                        to figure out available IPs in the VPC.</li>
+                    <li><strong>One EC2 Instance</strong> &ndash; <code>t2.micro</code> deployed in the private subnet created above.</li>
+                    <li><strong>One EBS Volume</strong> &ndash; 8 GB. Attach it to the above EC2 instance.</li>
+                    <li><strong>One S3 Bucket</strong> &ndash; Ensure that the ACL is set to <code>private</code> to prevent any public access to your bucket.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">5</div>
+            <div class="step-content">
+                <strong>For Windows Users:</strong><br>
+                Here is a tutorial that might be helpful as most docs on Terraform's website are based around Mac/Linux:
+                <a href="https://www.youtube.com/watch?v=ODiSoZFxVRk" target="_blank">Terraform on Windows Tutorial (YouTube)</a>.
+            </div>
+        </div>
+
+        <h2>Submission</h2>
+
+        <div class="step">
+            <div class="step-number">6</div>
+            <div class="step-content">
+                <strong>Upload your Terraform code to your homework directory.</strong><br>
+                Just the main file will be fine. <strong>Please remove any access credentials</strong> (AWS access keys, secret keys)
+                that you might have put in that file before uploading.
+            </div>
+        </div>
+
+        <div class="warning-box">
+            <strong>&#128680; Security Reminder:</strong> Never commit AWS credentials (access keys, secret keys) to any repository or shared directory.
+            Use environment variables or the AWS CLI credential file instead.
+        </div>
+
+        <div class="step">
+            <div class="step-number">7</div>
+            <div class="step-content">
+                <strong>Upload a screenshot of your EC2 instance running in your AWS account.</strong><br>
+                Ensure that the screenshot includes your <strong>unique account name</strong> on the top right of the screen
+                so we can verify it's your account.
+            </div>
+        </div>
+
+        <div class="screenshot-box">
+            <strong>&#128248; Completion Screenshot</strong>
+            <p>Your screenshot should show:</p>
+            <ul>
+                <li>The EC2 Instances page with your <code>t2.micro</code> instance in a <strong>Running</strong> state</li>
+                <li>Your AWS account name visible in the top-right corner of the console</li>
+            </ul>
+        </div>
+
+        <h2>Cleanup</h2>
+
+        <div class="step">
+            <div class="step-number">8</div>
+            <div class="step-content">
+                <strong>Delete all your created Terraform resources.</strong><br>
+                Run <code>terraform destroy</code> in your project directory and confirm the destruction when prompted.
+                This will remove all the resources you created and ensure you don't incur any ongoing charges.
+            </div>
+        </div>
+
+        <div class="cleanup-box">
+            <strong>&#128465; Cleanup Checklist</strong>
+            <ol>
+                <li>Run <code>terraform destroy</code> and type <code>yes</code> to confirm</li>
+                <li>Verify in the AWS Console that all resources (EC2, EBS, S3, Subnets) have been removed</li>
+                <li>Check your AWS Billing dashboard to confirm no unexpected charges</li>
+            </ol>
+        </div>
+
+        <h2>Resources</h2>
+
+        <div class="resources-box">
+            <strong>&#128218; Assignment Resources</strong>
+            <ul>
+                <li><a href="https://developer.hashicorp.com/terraform/tutorials/aws-get-started" target="_blank">Terraform AWS Get Started Tutorial</a> &mdash; Official HashiCorp guide for your first Terraform project</li>
+                <li><a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs" target="_blank">Terraform AWS Provider Documentation</a> &mdash; Reference for all AWS resources (EC2, S3, VPC, etc.)</li>
+                <li><a href="https://mxtoolbox.com/subnetcalculator.aspx" target="_blank">Subnet Calculator</a> &mdash; Calculate IP ranges for your VPC subnets</li>
+                <li><a href="https://www.youtube.com/watch?v=pZLG8McSugQ" target="_blank">Avoiding AWS Charges (Video)</a> &mdash; Tips to prevent unintended billing</li>
+                <li><a href="https://www.youtube.com/watch?v=ODiSoZFxVRk" target="_blank">Terraform on Windows (Video)</a> &mdash; Windows-specific setup guide</li>
+            </ul>
+        </div>
+
+        <h2>Additional Reading</h2>
+
+        <div class="resources-box">
+            <strong>&#128214; Infrastructure as Code &mdash; Concepts</strong>
+            <ul>
+                <li><a href="https://aws.amazon.com/what-is/iac/" target="_blank">What is Infrastructure as Code?</a> &mdash; AWS overview of IaC concepts, benefits, and use cases</li>
+                <li><a href="https://developer.hashicorp.com/terraform/intro" target="_blank">Introduction to Terraform</a> &mdash; Official intro covering what Terraform is and how it works</li>
+                <li><a href="https://spacelift.io/blog/terraform-best-practices" target="_blank">Terraform Best Practices</a> &mdash; Project structure, naming conventions, and state management tips</li>
+            </ul>
+        </div>
+
+        <div class="resources-box" style="margin-top: 16px;">
+            <strong>&#128187; Terraform &mdash; Deep Dives</strong>
+            <ul>
+                <li><a href="https://developer.hashicorp.com/terraform/language" target="_blank">Terraform Language Documentation</a> &mdash; HCL syntax reference for resources, variables, outputs, and modules</li>
+                <li><a href="https://developer.hashicorp.com/terraform/language/state" target="_blank">Terraform State Management</a> &mdash; How Terraform tracks your infrastructure and why state matters</li>
+                <li><a href="https://developer.hashicorp.com/terraform/language/modules" target="_blank">Terraform Modules</a> &mdash; Reusable infrastructure components for cleaner, DRY code</li>
+            </ul>
+        </div>
+
+        <div class="resources-box" style="margin-top: 16px;">
+            <strong>&#127909; Video Tutorials</strong>
+            <ul>
+                <li><a href="https://www.youtube.com/watch?v=SLB_c_ayRMo" target="_blank">Terraform Course for Beginners</a> &mdash; freeCodeCamp full course (2.5 hours)</li>
+                <li><a href="https://www.youtube.com/watch?v=7xngnjfIlK4" target="_blank">Terraform in 100 Seconds + Tutorial</a> &mdash; Fireship quick overview followed by hands-on demo</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="footer-logos">
+            <span class="footer-logo build">The Build Fellowship</span>
+            <span class="footer-logo openavenues">OpenAvenues</span>
+        </div>
+        <div class="footer-right">
+            <span class="footer-copyright">&copy; The Build Fellowship 2026</span>
+            <div class="footer-date">February 2026</div>
+        </div>
+    </div>
+</body>
+</html>
