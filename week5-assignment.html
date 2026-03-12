@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 5 Assignment: Security, Availability &amp; Reliability - The Build Fellowship</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="labs/lab-styles.css">
+    <style>
+        :root {
+            --pillar-color: #7c4dff;
+        }
+
+        .step-content a {
+            color: #1976d2;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .step-content a:hover {
+            text-decoration: underline;
+            color: #0d47a1;
+        }
+
+        .sub-steps {
+            list-style: none;
+            margin-top: 12px;
+        }
+        .sub-steps li {
+            font-size: 15px;
+            margin-bottom: 10px;
+            padding-left: 28px;
+            position: relative;
+            line-height: 1.6;
+        }
+        .sub-steps li::before {
+            position: absolute;
+            left: 0;
+            font-weight: 700;
+            color: var(--pillar-color);
+        }
+        .sub-steps li:nth-child(1)::before { content: "a."; }
+        .sub-steps li:nth-child(2)::before { content: "b."; }
+        .sub-steps li:nth-child(3)::before { content: "c."; }
+        .sub-steps li:nth-child(4)::before { content: "d."; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="index.html" class="back-link">Back to Home</a>
+        <div class="pillar-badge">Week 5</div>
+        <h1 class="page-title">Week 5 Assignment: Security, Availability &amp; Reliability</h1>
+        <div class="lab-meta">
+            <span>&#9201; ~90 minutes</span>
+            <span>&#9989; Free Tier</span>
+            <span>&#128218; Terraform + AWS Console</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <h2>Overview</h2>
+        <p class="overview-text">
+            In this assignment, you will update your existing Terraform code from Week 4 to add security hardening,
+            high availability through auto scaling, and reliability via automated backups. These enhancements
+            directly apply the Cloud Security, High Availability, and Reliability concepts covered in the Week 5 lecture.
+        </p>
+
+        <h2>Objectives</h2>
+        <ul class="objectives-list">
+            <li>Harden your infrastructure with proper Security Groups and Network ACLs</li>
+            <li>Configure EC2 Auto Scaling Groups for high availability</li>
+            <li>Set up an AWS Backup plan for EBS volume reliability</li>
+            <li>Verify your changes work end-to-end and clean up all resources</li>
+        </ul>
+
+        <h2>Prerequisites</h2>
+        <div class="prereq-box">
+            <ul>
+                <li>Completed Week 4 Assignment (working Terraform code with VPC, EC2, EBS, S3)</li>
+                <li>AWS CLI configured with your credentials</li>
+                <li>Terraform installed and initialized</li>
+                <li>Your public IP address (find it at <a href="https://whatismyipaddress.com/" target="_blank">whatismyipaddress.com</a>)</li>
+            </ul>
+        </div>
+
+        <h2>Step-by-Step Instructions</h2>
+
+        <h3 style="margin-top: 30px; color: var(--pillar-color);">Part 1: Improved Security</h3>
+
+        <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+                <strong>Update your Security Groups and Network ACLs.</strong><br>
+                Modify your existing Terraform code so that your subnets are properly protected:
+                <ul class="sub-steps">
+                    <li>Your <strong>Security Groups</strong> should only allow SSH (port 22) access from <strong>your specific IP address</strong> &mdash;
+                        not from <code>0.0.0.0/0</code>. Use a CIDR block like <code>YOUR_IP/32</code>.</li>
+                    <li>Configure <strong>Network ACLs</strong> on your subnets to restrict traffic appropriately.
+                        The private subnet should not allow direct inbound traffic from the internet.</li>
+                    <li>Ensure all other unnecessary ports are closed. Only open what is strictly needed.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="note-box">
+            <strong>&#128161; Tip:</strong> You can find your public IP by visiting
+            <a href="https://whatismyipaddress.com/" target="_blank">whatismyipaddress.com</a>.
+            Use this IP in your Security Group ingress rule: <code>cidr_blocks = ["YOUR_IP/32"]</code>
+        </div>
+
+        <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+                <strong>Test your SSH connection.</strong><br>
+                After applying your Terraform changes, SSH into your EC2 instance to verify the Security Group
+                is correctly configured. Take a <strong>screenshot of a successful SSH connection</strong> to include in your submission.
+            </div>
+        </div>
+
+        <div class="screenshot-box">
+            <strong>&#128248; SSH Screenshot</strong>
+            <p>Your screenshot should show:</p>
+            <ul>
+                <li>A successful SSH session connected to your EC2 instance</li>
+                <li>The instance hostname or IP visible in the terminal prompt</li>
+            </ul>
+        </div>
+
+        <h3 style="margin-top: 30px; color: var(--pillar-color);">Part 2: Improved Availability</h3>
+
+        <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+                <strong>Configure Auto Scaling Groups for your EC2 instance.</strong><br>
+                Add the following resources to your Terraform code:
+                <ul class="sub-steps">
+                    <li>Create a <strong>Launch Template</strong> (or Launch Configuration) based on your existing EC2 instance configuration
+                        (AMI, instance type, security groups, key pair).</li>
+                    <li>Create an <strong>Auto Scaling Group</strong> with:
+                        <br>&bull; <strong>Minimum</strong> instances: <code>1</code>
+                        <br>&bull; <strong>Maximum</strong> instances: <code>4</code>
+                        <br>&bull; <strong>Desired</strong> capacity: <code>1</code></li>
+                    <li>Add a <strong>Target Tracking Scaling Policy</strong> that scales based on <strong>CPU utilization above 50%</strong>
+                        using <code>ASGAverageCPUUtilization</code> as the predefined metric.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="note-box">
+            <strong>&#128218; Reference:</strong> See the Terraform docs for
+            <a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/autoscaling_group" target="_blank">aws_autoscaling_group</a>
+            and
+            <a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/autoscaling_policy" target="_blank">aws_autoscaling_policy</a>.
+        </div>
+
+        <h3 style="margin-top: 30px; color: var(--pillar-color);">Part 3: Improved Reliability</h3>
+
+        <div class="step">
+            <div class="step-number">4</div>
+            <div class="step-content">
+                <strong>Set up an AWS Backup plan for your EBS volume.</strong><br>
+                Add the following Terraform resources:
+                <ul class="sub-steps">
+                    <li>An <strong>AWS Backup Vault</strong> to store your backups.</li>
+                    <li>An <strong>AWS Backup Plan</strong> with a backup rule (e.g., daily backups with a retention period).</li>
+                    <li>An <strong>AWS Backup Selection</strong> that targets your EBS volume.</li>
+                    <li>An <strong>IAM Role</strong> for AWS Backup with the <code>AWSBackupServiceRolePolicyForBackup</code> managed policy attached.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="note-box">
+            <strong>&#9888; Important:</strong> You can test deploying the backup plan to verify it works, but make sure you
+            <strong>destroy the backup resources after testing</strong> to avoid any charges. AWS Backup is not covered under the free tier.
+        </div>
+
+        <h2>Submission</h2>
+
+        <div class="step">
+            <div class="step-number">5</div>
+            <div class="step-content">
+                <strong>Upload your updated Terraform code to your homework directory as "Week 5 Assignment".</strong><br>
+                Include all <code>.tf</code> files. <strong>Please remove any access credentials</strong> (AWS access keys, secret keys)
+                before uploading.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">6</div>
+            <div class="step-content">
+                <strong>Upload a screenshot of your successful SSH connection</strong> (from Step 2).
+            </div>
+        </div>
+
+        <div class="warning-box">
+            <strong>&#128680; Security Reminder:</strong> Never commit AWS credentials (access keys, secret keys) to any repository or shared directory.
+            Use environment variables or the AWS CLI credential file instead.
+        </div>
+
+        <h2>Cleanup</h2>
+
+        <div class="step">
+            <div class="step-number">7</div>
+            <div class="step-content">
+                <strong>Destroy all your created Terraform resources.</strong><br>
+                Run <code>terraform destroy</code> in your project directory and confirm the destruction when prompted.
+                This will remove all the resources you created and ensure you don't incur any ongoing charges.
+            </div>
+        </div>
+
+        <div class="cleanup-box">
+            <strong>&#128465; Cleanup Checklist</strong>
+            <ol>
+                <li>Run <code>terraform destroy</code> and type <code>yes</code> to confirm</li>
+                <li>Verify in the AWS Console that all resources have been removed (EC2, ASG, EBS, S3, Backup Vault)</li>
+                <li>Check your AWS Billing dashboard to confirm no unexpected charges</li>
+            </ol>
+        </div>
+
+        <h2>Resources</h2>
+
+        <div class="resources-box">
+            <strong>&#128218; Assignment Resources</strong>
+            <ul>
+                <li><a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group" target="_blank">Terraform: aws_security_group</a> &mdash; Security Group resource reference</li>
+                <li><a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/network_acl" target="_blank">Terraform: aws_network_acl</a> &mdash; Network ACL resource reference</li>
+                <li><a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/autoscaling_group" target="_blank">Terraform: aws_autoscaling_group</a> &mdash; Auto Scaling Group resource reference</li>
+                <li><a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/autoscaling_policy" target="_blank">Terraform: aws_autoscaling_policy</a> &mdash; Scaling Policy resource reference</li>
+                <li><a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/backup_plan" target="_blank">Terraform: aws_backup_plan</a> &mdash; AWS Backup Plan resource reference</li>
+                <li><a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/backup_selection" target="_blank">Terraform: aws_backup_selection</a> &mdash; AWS Backup Selection resource reference</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="footer-logos">
+            <span class="footer-logo build">The Build Fellowship</span>
+            <span class="footer-logo openavenues">OpenAvenues</span>
+        </div>
+        <div class="footer-right">
+            <span class="footer-copyright">&copy; The Build Fellowship 2026</span>
+            <div class="footer-date">February 2026</div>
+        </div>
+    </div>
+</body>
+</html>

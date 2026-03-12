@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 5: Cloud Security, High Availability &amp; Reliability</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="slides.css">
+
+    <style>
+        /* ===========================================
+           ENHANCED STYLES — week5-enhanced.html
+           =========================================== */
+
+        /* Hide original nav (overridden by enhanced nav) */
+        .slide-nav { display: none !important; }
+
+        /* --- Enhanced Navigation Bar --- */
+        .enhanced-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(30, 30, 90, 0.95);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .progress-bar {
+            height: 3px;
+            background: rgba(255,255,255,0.08);
+            width: 100%;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #7c4dff, #b47cff);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .nav-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            padding: 10px 40px;
+        }
+
+        .nav-controls button {
+            background: rgba(124, 77, 255, 0.25);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.15);
+            padding: 8px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: var(--font-body);
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .nav-controls button:hover {
+            background: rgba(124, 77, 255, 0.45);
+            border-color: rgba(255,255,255,0.3);
+        }
+
+        .nav-controls button:disabled {
+            opacity: 0.25;
+            cursor: not-allowed;
+        }
+
+        .nav-controls button:disabled:hover {
+            background: rgba(124, 77, 255, 0.25);
+            border-color: rgba(255,255,255,0.15);
+        }
+
+        .nav-controls .slide-counter {
+            font-family: var(--font-body);
+            font-size: 14px;
+            color: rgba(255,255,255,0.7);
+            min-width: 60px;
+            text-align: center;
+            background: none;
+            padding: 0;
+            border-radius: 0;
+            backdrop-filter: none;
+        }
+
+        .keyboard-hint {
+            font-size: 11px;
+            color: rgba(255,255,255,0.3);
+            font-family: var(--font-body);
+            letter-spacing: 1px;
+        }
+
+        /* --- Slide Number Overlay --- */
+        .slide-number-overlay {
+            position: fixed;
+            bottom: 56px;
+            right: 20px;
+            font-family: var(--font-body);
+            font-size: 11px;
+            color: rgba(255,255,255,0.3);
+            z-index: 999;
+            pointer-events: none;
+        }
+
+        /* --- Image Scrim Overlay --- */
+        .slide-image-bg::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.18);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* --- Thumbnail Strip --- */
+        .thumbnail-strip {
+            position: fixed;
+            bottom: 50px;
+            left: 0;
+            right: 0;
+            background: rgba(26, 26, 46, 0.96);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(255,255,255,0.08);
+            z-index: 998;
+            display: none;
+            overflow-x: auto;
+            padding: 10px 16px;
+        }
+
+        .thumbnail-strip.visible {
+            display: flex;
+        }
+
+        .thumbnail-strip-inner {
+            display: flex;
+            gap: 6px;
+            min-width: max-content;
+        }
+
+        .thumbnail-item {
+            width: 110px;
+            height: 62px;
+            border-radius: 4px;
+            border: 2px solid transparent;
+            background: rgba(255,255,255,0.08);
+            cursor: pointer;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-body);
+            color: rgba(255,255,255,0.5);
+            text-align: center;
+            padding: 4px;
+            transition: all 0.15s;
+            overflow: hidden;
+        }
+
+        .thumbnail-item:hover {
+            border-color: rgba(124, 77, 255, 0.5);
+            background: rgba(255,255,255,0.12);
+        }
+
+        .thumbnail-item.active {
+            border-color: #7c4dff;
+            background: rgba(124, 77, 255, 0.2);
+        }
+
+        .thumbnail-item .thumb-number {
+            font-weight: 700;
+            font-size: 16px;
+            color: rgba(255,255,255,0.7);
+            line-height: 1;
+        }
+
+        .thumbnail-item .thumb-title {
+            font-size: 8px;
+            line-height: 1.2;
+            margin-top: 3px;
+            opacity: 0.6;
+            max-height: 18px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            max-width: 100px;
+        }
+
+        /* --- Two-Column Card Layout for Security slide --- */
+        .breach-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 20px;
+        }
+
+        .breach-card {
+            background: rgba(90, 79, 207, 0.08);
+            border-radius: 10px;
+            padding: 24px;
+            border-left: 4px solid #5a4fcf;
+        }
+
+        .breach-card h4 {
+            font-family: var(--font-heading);
+            font-size: 16px;
+            font-weight: 700;
+            color: #5a4fcf;
+            margin-bottom: 8px;
+        }
+
+        .breach-card p {
+            font-size: 15px;
+            color: var(--text-dark);
+            line-height: 1.5;
+        }
+
+        /* --- Security Problems Grid --- */
+        .security-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 12px;
+        }
+
+        .security-item {
+            background: rgba(90, 79, 207, 0.06);
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .security-item h4 {
+            font-family: var(--font-heading);
+            font-size: 15px;
+            font-weight: 700;
+            color: #5a4fcf;
+            margin-bottom: 8px;
+        }
+
+        .security-item p, .security-item ul {
+            font-size: 14px;
+            color: var(--text-dark);
+            line-height: 1.5;
+        }
+
+        .security-item ul {
+            list-style: none;
+            margin-top: 4px;
+        }
+
+        .security-item ul li {
+            margin-bottom: 4px;
+            padding-left: 14px;
+            position: relative;
+        }
+
+        .security-item ul li::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--text-dark);
+            border-radius: 50%;
+            position: absolute;
+            left: 0;
+            top: 7px;
+        }
+
+        /* --- Inspector Two-Column --- */
+        .inspector-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 36px;
+            margin-top: 16px;
+        }
+
+        .inspector-section h4 {
+            font-family: var(--font-heading);
+            font-size: 16px;
+            font-weight: 700;
+            color: #5a4fcf;
+            margin-bottom: 10px;
+        }
+
+        .inspector-section p {
+            font-size: 15px;
+            color: var(--text-dark);
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        /* --- TOC Slide --- */
+        .toc-list {
+            list-style: none;
+            margin-top: 30px;
+            max-width: 700px;
+        }
+
+        .toc-list li {
+            font-size: 22px;
+            color: var(--light-purple);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            cursor: pointer;
+            padding: 10px 16px;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .toc-list li:hover {
+            background: rgba(255,255,255,0.06);
+        }
+
+        .toc-list li .toc-number {
+            font-family: var(--font-heading);
+            font-size: 14px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.35);
+            min-width: 50px;
+        }
+
+        .toc-list li .toc-label {
+            font-family: var(--font-heading);
+            font-weight: 600;
+        }
+
+        /* --- Callout converted to content with subtitle header --- */
+        .section-subtitle-header {
+            font-family: var(--font-heading);
+            font-size: 18px;
+            font-weight: 700;
+            color: #5a4fcf;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(90, 79, 207, 0.15);
+        }
+
+        /* --- Reliability definition slide --- */
+        .definition-box {
+            background: rgba(90, 79, 207, 0.06);
+            border-radius: 12px;
+            padding: 40px 48px;
+            margin-top: 20px;
+            border-left: 5px solid #5a4fcf;
+        }
+
+        .definition-box p {
+            font-size: 22px;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        .definition-box strong {
+            color: #5a4fcf;
+        }
+    </style>
+</head>
+<body>
+    <!-- Back to Home Link -->
+    <div class="back-home">
+        <a href="index.html">Back to Home</a>
+    </div>
+
+    <div class="presentation">
+
+        <!-- ==================== Slide 1: Title Logo (logo-only, keep as image) ==================== -->
+        <div class="slide slide-image-bg active" data-slide="Slide 1"
+             role="img" aria-label="The Build Fellowship — title slide with gradient logo and buildfellowship.com"
+             style="background-image: url('Week 5/Slide1.jpeg');">
+        </div>
+
+        <!-- ==================== Slide 2: Section Light — Cloud Security, HA & Reliability ==================== -->
+        <div class="slide slide-section-light" data-slide="Slide 2" role="region" aria-label="Section: Cloud Security, High Availability & Reliability"
+             style="justify-content: flex-start; padding-top: 80px;">
+            <div class="brand-header">The Build Fellowship</div>
+            <div class="section-title" style="font-size: 72px; line-height: 1.1;">Cloud Security, High Availability &amp; Reliability</div>
+            <div style="position: absolute; bottom: 60px; left: 80px; font-family: var(--font-heading); font-size: 36px; font-weight: 700; color: white;">Week 5</div>
+            <div class="section-date">July 2025</div>
+        </div>
+
+        <!-- ==================== TOC: Table of Contents (auto-generated) ==================== -->
+        <div class="slide slide-section-dark" data-slide="Table of Contents" role="navigation" aria-label="Table of Contents">
+            <div class="section-title" style="font-size: 48px; margin-bottom: 10px;">Contents</div>
+            <ul class="toc-list">
+                <li onclick="goToSlide(3)"><span class="toc-number">Slide 4</span><span class="toc-label">Cloud Security</span></li>
+                <li onclick="goToSlide(8)"><span class="toc-number">Slide 9</span><span class="toc-label">High Availability</span></li>
+                <li onclick="goToSlide(16)"><span class="toc-number">Slide 17</span><span class="toc-label">HA &ndash; AZ/Regions</span></li>
+                <li onclick="goToSlide(18)"><span class="toc-number">Slide 19</span><span class="toc-label">HA &ndash; Scalability</span></li>
+                <li onclick="goToSlide(24)"><span class="toc-number">Slide 25</span><span class="toc-label">Reliability</span></li>
+            </ul>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build">The Build Fellowship</span>
+                    <span class="footer-logo openavenues" style="color: #c4a8ff;">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date">February 2026</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== Slide 3: Agenda ==================== -->
+        <div class="slide slide-agenda" data-slide="Slide 3">
+            <div class="agenda-title">Agenda</div>
+            <ul class="agenda-list">
+                <li>Terraform Review</li>
+                <li>Cloud Security</li>
+                <li>High Availability</li>
+                <li>Reliability</li>
+            </ul>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build">The Build Fellowship</span>
+                    <span class="footer-logo openavenues" style="color: #c4a8ff;">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date">February 2026</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== Slide 4: Section Dark — Cloud Security ==================== -->
+        <div class="slide slide-section-dark" data-slide="Slide 4" role="region" aria-label="Section: Cloud Security">
+            <div class="section-title">Cloud Security</div>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build">The Build Fellowship</span>
+                    <span class="footer-logo openavenues" style="color: #c4a8ff;">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date">February 2026</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== Slide 5: Content — AWS Cloud Security – Recent Breaches ==================== -->
+        <div class="slide slide-content" data-slide="Slide 5">
+            <div class="content-title" style="font-size: 36px;">AWS Cloud Security &ndash; Recent Breaches</div>
+            <div class="breach-grid">
+                <div class="breach-card">
+                    <h4>2019 &ndash; Capital One</h4>
+                    <p>Misconfigured Web Application Firewall that allowed the attacker to grab AWS instance metadata including temporary security credentials assigned to the IAM role. Allowed the attacker to access sensitive data in S3 buckets including 100 Million customer records, SSN, emails etc. Cost: $150 million</p>
+                </div>
+                <div class="breach-card">
+                    <h4>2022 &ndash; Pegasus Data Breach</h4>
+                    <p>Misconfigured S3 bucket which exposed 6.5 TB of sensitive data including crew members' personal information and operational details.</p>
+                </div>
+                <div class="breach-card">
+                    <h4>2021 &ndash; Twitch</h4>
+                    <p>Over 125 GB of data was leaked due to a server configuration error which allowed public access to internal systems.</p>
+                </div>
+                <div class="breach-card">
+                    <h4>2025 &ndash; Codefinger Ransomware</h4>
+                    <p>Compromised AWS credentials allowed attackers to use a custom AWS key to encrypt data in users' S3 buckets. Since a custom key was used, it made it impossible for the victims to decrypt their data without the attackers' keys.</p>
+                </div>
+            </div>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== Slide 6: Content — AWS Cloud Security – Common Problems ==================== -->
+        <div class="slide slide-content" data-slide="Slide 6">
+            <div class="content-title" style="font-size: 32px;">AWS Cloud Security &ndash; Common Problems and Suggestions</div>
+            <div class="security-grid">
+                <div class="security-item">
+                    <h4>Encryption</h4>
+                    <ul>
+                        <li>RDS is by default created without encryption</li>
+                        <li>EBS volumes are not encrypted by default</li>
+                        <li>S3 should employ at rest encryption</li>
+                        <li>Use KMS managed keys for encryption</li>
+                    </ul>
+                </div>
+                <div class="security-item">
+                    <h4>Connecting EC2 directly to the internet</h4>
+                    <ul>
+                        <li>Create EC2 instances in a private Subnet, protected by Security groups and ACL rules</li>
+                        <li>If internet access is needed (Nginx), use a WAF and load balancer</li>
+                    </ul>
+                </div>
+                <div class="security-item">
+                    <h4>S3 Buckets &ndash; Public Access</h4>
+                    <ul>
+                        <li>S3 configuration errors or incomplete security settings can allow public access to buckets</li>
+                        <li>Use pre-signed URLs for uploads/downloads, block all public access</li>
+                        <li>Regularly audit permissions</li>
+                    </ul>
+                </div>
+                <div class="security-item">
+                    <h4>Leaving Insecure ports open</h4>
+                    <p>SSH, HTTP, FTP, TelNet ports should generally be shut. Only allow SSH access from trusted IPs.</p>
+                </div>
+                <div class="security-item" style="grid-column: span 2;">
+                    <h4>No MFA for IAM Users</h4>
+                    <p>Ensure strict password policies and MFA standards on any user that has access to the AWS CLI/UI.</p>
+                </div>
+            </div>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== Slide 7: Content — Amazon Inspector ==================== -->
+        <div class="slide slide-content" data-slide="Slide 7">
+            <div class="content-title" style="font-size: 34px;">AWS Cloud Security &ndash; Amazon Inspector</div>
+            <div class="inspector-layout">
+                <div class="inspector-section">
+                    <h4>What does it do?</h4>
+                    <p>Discovers Amazon EC2 instances, containers, and Lambda functions, and scans them for software vulnerabilities and unintended network exposure.</p>
+                    <h4>Pricing</h4>
+                    <p style="font-size: 14px;">EC2 (per instance/per month): SSM &ndash; 1.2528, Agentless &ndash; 1.7496<br>
+                    ECR: $0.09 per image, $0.01 per rescan<br>
+                    Lambda: Standard (only package scans): 0.3$ per lambda/month, Code scanning: 0.9$ per lambda/month</p>
+                </div>
+                <div class="inspector-section">
+                    <h4>Features</h4>
+                    <ul class="content-list" style="margin-top: 0;">
+                        <li>Checks installed software on EC2 instances and container images, packages in Lambda code and compares it with over 50 CVE (Common Vulnerabilities &amp; Exposures). Re-runs the scan if a new CVE is published</li>
+                        <li>Can use AWS System Manager agent (SSM agent) or perform agentless scanning by taking EBS snapshots</li>
+                        <li>Can prioritize and report vulnerabilities to AWS Security Hub and AWS EventBridge</li>
+                        <li>Detects if a reported vulnerability has been patched/remediated and closes the finding automatically</li>
+                        <li>Can provide generative AI powered remediation/code patches for Lambda functions</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== Slide 8: Section Dark — High Availability ==================== -->
+        <div class="slide slide-section-dark" data-slide="Slide 8" role="region" aria-label="Section: High Availability">
+            <div class="section-title">High Availability</div>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build">The Build Fellowship</span>
+                    <span class="footer-logo openavenues" style="color: #c4a8ff;">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date">February 2026</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== Slide 9: HA — Single chain (diagram) ==================== -->
+        <div class="slide slide-image-bg" data-slide="Slide 9"
+             role="img" aria-label="High Availability diagram: single Web Server (90%) → App Server (90%) → DB Server (99%) = 80.2% total availability vs 99.5% desired SLA"
+             style="background-image: url('Week 5/Slide9.jpeg');">
+        </div>
+
+        <!-- ==================== Slide 10: HA — Introducing redundancy (diagram) ==================== -->
+        <div class="slide slide-image-bg" data-slide="Slide 10"
+             role="img" aria-label="High Availability: introducing redundancy with 2 web servers, tier availability 1-(1-0.9)^2 = 0.99, total 88.2%"
+             style="background-image: url('Week 5/Slide10.jpeg');">
+        </div>
+
+        <!-- ==================== Slide 11: HA — Even more redundancy (diagram) ==================== -->
+        <div class="slide slide-image-bg" data-slide="Slide 11"
+             role="img" aria-label="High Availability: 3 web servers, tier availability 1-(1-0.9)^3 = 0.999, total 89.0%"
+             style="background-image: url('Week 5/Slide11.jpeg');">
+        </div>
+
+        <!-- ==================== Slide 12: HA — Expand to other tiers (diagram) ==================== -->
+        <div class="slide slide-image-bg" data-slide="Slide 12"
+             role="img" aria-label="High Availability: expand redundancy to web and app tiers (3 each), total availability 98.8%"
+             style="background-image: url('Week 5/Slide12.jpeg');">
+        </div>
+
+        <!-- ==================== Slide 13: HA — Full redundancy all tiers (diagram) ==================== -->
+        <div class="slide slide-image-bg" data-slide="Slide 13"
+             role="img" aria-label="High Availability: full redundancy across all tiers including DB replication (Master + 2 Replicas), total availability 99.8%"
+             style="background-image: url('Week 5/Slide13.jpeg');">
+        </div>
+
+        <!-- ==================== Slide 14: HA — Learnings (mixed: chart + bullets) ==================== -->
+        <div class="slide slide-image-bg" data-slide="Slide 14"
+             role="img" aria-label="High Availability learnings: Cost vs Value chart showing diminishing returns of redundancy; key insight: stack availability cannot exceed its least-available tier"
+             style="background-image: url('Week 5/Slide14.jpeg');">
+        </div>
+
+        <!-- ==================== Slide 15: Content — HA AZ/Regions - Availability Zone Recap ==================== -->
+        <div class="slide slide-content" data-slide="Slide 15">
+            <div class="content-title" style="font-size: 36px;">High Availability (HA) &ndash; AZ/Regions</div>
+            <div class="section-subtitle-header">Availability Zone &ndash; Recap</div>
+            <ul class="content-list">
+                <li>Built for high reliability so that nothing short of a natural disaster brings one down</li>
+                <li>Located close to one another and connected via low-latency high-bandwidth links to ensure low latency between the facilities</li>
+                <li>Located far enough from each other that a single natural disaster cannot bring all of them down at the same time</li>
+            </ul>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== Slide 16: HA — Multi-AZ architecture (diagram) ==================== -->
+        <div class="slide slide-image-bg" data-slide="Slide 16"
+             role="img" aria-label="Multi-AZ architecture diagram: Elastic Load Balancer distributing across Availability Zone A and B, each with web servers, app servers, and DB (master + replicas with replication)"
+             style="background-image: url('Week 5/Slide16.jpeg');">
+        </div>
+
+        <!-- ==================== Slide 17: HA — Vertical vs Horizontal Scaling (mixed) ==================== -->
+        <div class="slide slide-image-bg" data-slide="Slide 17"
+             role="img" aria-label="Scalability: Vertical Scaling (increase/decrease capacity of existing instances) vs Horizontal Scaling (add more resources like VMs to spread workload)"
+             style="background-image: url('Week 5/Slide17.jpeg');">
+        </div>
+
+        <!-- ==================== Slide 18: HA — EC2 Auto Scaling Group (diagram) ==================== -->
+        <div class="slide slide-image-bg" data-slide="Slide 18"
+             role="img" aria-label="AWS EC2 Auto Scaling concept: Auto Scaling Group with minimum size, desired capacity, and maximum size; scale out as needed"
+             style="background-image: url('Week 5/Slide18.jpeg');">
+        </div>
+
+        <!-- ==================== Slide 19: HA — Full auto-scaling architecture (diagram) ==================== -->
+        <div class="slide slide-image-bg" data-slide="Slide 19"
+             role="img" aria-label="AWS EC2 Auto Scaling full architecture: VPC with ELB, web server fleet and app server fleet auto-scaling with new servers as load increases, connected to primary database"
+             style="background-image: url('Week 5/Slide19.jpeg');">
+        </div>
+
+        <!-- ==================== Slide 20: Content — HA Scalability - EC2 Auto Scaling features ==================== -->
+        <div class="slide slide-content" data-slide="Slide 20">
+            <div class="content-title" style="font-size: 36px;">High Availability (HA) &ndash; Scalability</div>
+            <div class="section-subtitle-header">AWS EC2 Auto Scaling</div>
+            <ul class="content-list">
+                <li>Maintaining current instance level at all time</li>
+                <li>Manual Scaling</li>
+                <li>Scaling based on schedule</li>
+                <li>Scale based on demand</li>
+            </ul>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== Slide 21: HA — Database auto-scaling screenshot (diagram) ==================== -->
+        <div class="slide slide-image-bg" data-slide="Slide 21"
+             role="img" aria-label="HA Scalability for Databases: Aurora Auto Scaling policy configuration showing target metrics (CPU utilization, connections) for Aurora Replicas"
+             style="background-image: url('Week 5/Slide21.jpeg');">
+        </div>
+
+        <!-- ==================== Slide 22: Section Dark — Reliability ==================== -->
+        <div class="slide slide-section-dark" data-slide="Slide 22" role="region" aria-label="Section: Reliability">
+            <div class="section-title">Reliability</div>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build">The Build Fellowship</span>
+                    <span class="footer-logo openavenues" style="color: #c4a8ff;">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date">February 2026</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== Slide 23: Content — Reliability definition ==================== -->
+        <div class="slide slide-content" data-slide="Slide 23">
+            <div class="content-title">Reliability</div>
+            <div class="definition-box">
+                <p><strong>Resiliency</strong> is the ability of a workload to recover from infrastructure or service disruptions, dynamically acquire computing resources to meet demand, and mitigate disruptions, such as misconfigurations or transient network issues.</p>
+            </div>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== Slide 24: Content — Reliability – Backup Options ==================== -->
+        <div class="slide slide-content" data-slide="Slide 24">
+            <div class="content-title">Reliability &ndash; Backup Options</div>
+            <ul class="content-list">
+                <li>Manual Backups &ndash; EBS Snapshot, RDS etc.</li>
+                <li>Automated Backups using Amazon Data Lifecycle Manager for EBS</li>
+                <li>Automated snapshots using RDS backup policy &ndash; Generally limited to 30 days</li>
+                <li>Point in time restore for RDS &ndash; Can have up to 5 minutes of data loss</li>
+                <li>AWS Backup</li>
+            </ul>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== Slide 25: AWS Backup overview (diagram) ==================== -->
+        <div class="slide slide-image-bg" data-slide="Slide 25"
+             role="img" aria-label="AWS Backup service diagram: supports FSx, EBS, EC2, EFS, RDS, Aurora, DynamoDB, Storage Gateway with backup plans, vaults, cross-account backup, monitored by CloudTrail, CloudWatch, and SNS"
+             style="background-image: url('Week 5/Slide25.jpeg');">
+        </div>
+
+        <!-- ==================== Resources: Additional Training ==================== -->
+        <div class="slide slide-content" data-slide="Resources: Training">
+            <div class="content-title" style="font-size:30px;margin-bottom:6px;">Additional Training &amp; Resources</div>
+            <div style="margin-top:16px;">
+                <p style="font-family:var(--font-heading);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--text-dark);opacity:0.5;margin-bottom:8px;">Videos &amp; Case Studies</p>
+                <a href="https://www.youtube.com/watch?v=JIbIYCM48to" target="_blank" style="display:flex;align-items:center;gap:16px;padding:12px 18px;background:#f5f3ff;border-radius:8px;border-left:4px solid #7c4dff;text-decoration:none;margin-bottom:10px;">
+                    <span style="font-size:20px;">&#x1F3A5;</span>
+                    <span style="font-family:var(--font-heading);font-size:16px;color:#5a4fcf;font-weight:500;line-height:1.4;">Top 50+ AWS Services Explained in 10 Minutes &#8599;</span>
+                </a>
+                <a href="https://www.youtube.com/watch?v=kKjm4ehYiMs" target="_blank" style="display:flex;align-items:center;gap:16px;padding:12px 18px;background:#f5f3ff;border-radius:8px;border-left:4px solid #7c4dff;text-decoration:none;margin-bottom:10px;">
+                    <span style="font-size:20px;">&#x1F680;</span>
+                    <span style="font-family:var(--font-heading);font-size:16px;color:#5a4fcf;font-weight:500;line-height:1.4;">AWS re:Invent Talk &mdash; Scaling on AWS &#8599;</span>
+                </a>
+                <a href="https://aws.amazon.com/solutions/case-studies/airbnb-case-study/" target="_blank" style="display:flex;align-items:center;gap:16px;padding:12px 18px;background:#f5f3ff;border-radius:8px;border-left:4px solid #7c4dff;text-decoration:none;margin-bottom:10px;">
+                    <span style="font-size:20px;">&#x1F3E0;</span>
+                    <span style="font-family:var(--font-heading);font-size:16px;color:#5a4fcf;font-weight:500;line-height:1.4;">Airbnb Case Study &mdash; Moving to AWS &#8599;</span>
+                </a>
+                <p style="font-family:var(--font-heading);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--text-dark);opacity:0.5;margin-bottom:8px;margin-top:20px;">Practice Exams &mdash; AWS Cloud Practitioner</p>
+                <a href="https://aws.amazon.com/certification/certified-cloud-practitioner/?c=sec&sec=resources" target="_blank" style="display:flex;align-items:center;gap:16px;padding:12px 18px;background:#f5f3ff;border-radius:8px;border-left:4px solid #f5a623;text-decoration:none;margin-bottom:10px;">
+                    <span style="font-size:20px;">&#x2601;&#xFE0F;</span>
+                    <span style="font-family:var(--font-heading);font-size:16px;color:#5a4fcf;font-weight:500;line-height:1.4;">Official AWS Certified Cloud Practitioner Resources &#8599;</span>
+                </a>
+                <a href="https://awsboy.com/aws-practice-exams/practitioner/" target="_blank" style="display:flex;align-items:center;gap:16px;padding:12px 18px;background:#f5f3ff;border-radius:8px;border-left:4px solid #f5a623;text-decoration:none;margin-bottom:10px;">
+                    <span style="font-size:20px;">&#x1F4DD;</span>
+                    <span style="font-family:var(--font-heading);font-size:16px;color:#5a4fcf;font-weight:500;line-height:1.4;">Free Practice Exams &mdash; AWSBoy (free account required) &#8599;</span>
+                </a>
+                <a href="https://github.com/kananinirav/AWS-Certified-Cloud-Practitioner-Notes/blob/master/practice-exam/exams.md" target="_blank" style="display:flex;align-items:center;gap:16px;padding:12px 18px;background:#f5f3ff;border-radius:8px;border-left:4px solid #f5a623;text-decoration:none;margin-bottom:10px;">
+                    <span style="font-size:20px;">&#x1F4CB;</span>
+                    <span style="font-family:var(--font-heading);font-size:16px;color:#5a4fcf;font-weight:500;line-height:1.4;">Free GitHub Repo &mdash; Cloud Practitioner Practice Questions &#8599;</span>
+                </a>
+            </div>
+            <div class="footer">
+                <div class="footer-logos">
+                    <span class="footer-logo build" style="color: var(--text-dark);">The Build Fellowship</span>
+                    <span class="footer-logo openavenues">OpenAvenues</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-copyright" style="color: var(--text-dark);">&copy; The Build Fellowship 2026</span>
+                    <div class="footer-date" style="color: var(--text-dark);">February 2026</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== Slide 26: Closing Logo (logo-only, keep as image) ==================== -->
+        <div class="slide slide-image-bg" data-slide="Slide 26"
+             role="img" aria-label="The Build Fellowship and OpenAvenues Foundation — closing branding slide"
+             style="background-image: url('Week 5/Slide26.jpeg');">
+        </div>
+
+    </div><!-- end .presentation -->
+
+    <!-- ==================== Enhanced Navigation Bar ==================== -->
+    <div class="enhanced-nav">
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="nav-controls">
+            <button id="prevBtn" aria-label="Previous slide">&#8592; Back</button>
+            <span class="slide-counter" id="slideCounter">1 / 27</span>
+            <button id="nextBtn" aria-label="Next slide">Next &#8594;</button>
+            <span class="keyboard-hint">&#8592; &#8594; Space &middot; t thumbnails</span>
+        </div>
+    </div>
+
+    <!-- ==================== Thumbnail Strip ==================== -->
+    <div class="thumbnail-strip" id="thumbnailStrip">
+        <div class="thumbnail-strip-inner" id="thumbnailStripInner">
+            <!-- Generated by JavaScript -->
+        </div>
+    </div>
+
+    <!-- ==================== Slide Number Overlay ==================== -->
+    <div class="slide-number-overlay" id="slideNumberOverlay">1</div>
+
+    <!-- ==================== Speaker Notes Panel ==================== -->
+    <div class="speaker-notes" id="speakerNotes">
+        <h3>Speaker Notes</h3>
+        <p id="notesContent"></p>
+    </div>
+
+    <script>
+        /* ===========================================
+           ENHANCED PRESENTATION ENGINE
+           =========================================== */
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        // Speaker notes keyed by data-slide attribute value
+        const speakerNotes = {
+            "Slide 4": "Poll Here: Which of the following terms do you understand?",
+            "Slide 5": "WAF prevents application layer attacks such as SQL injection, XSS attacks, etc.",
+            "Slide 7": "10 Lambda functions scanned for all 30 days at $0.30 per function = $3.00",
+            "Slide 11": "Adding more in one layer doesn\u2019t do much for HA",
+            "Slide 24": "Using Amazon Data Lifecycle Manager",
+            "Slide 25": "Using Amazon Data Lifecycle Manager"
+        };
+
+        // Slide title map for thumbnail labels
+        function getSlideTitle(slide) {
+            const ds = slide.getAttribute('data-slide') || '';
+            const title = slide.querySelector('.content-title, .section-title, .agenda-title');
+            if (title) {
+                let text = title.textContent.trim();
+                if (text.length > 24) text = text.substring(0, 22) + '\u2026';
+                return text;
+            }
+            return ds;
+        }
+
+        function showSlide(index) {
+            slides.forEach(s => s.classList.remove('active'));
+            slides[index].classList.add('active');
+            currentSlide = index;
+
+            // Update counter
+            document.getElementById('slideCounter').textContent = (index + 1) + ' / ' + totalSlides;
+
+            // Update progress bar
+            const pct = totalSlides > 1 ? (index / (totalSlides - 1)) * 100 : 0;
+            document.getElementById('progressFill').style.width = pct + '%';
+
+            // Update button states
+            document.getElementById('prevBtn').disabled = (index === 0);
+            document.getElementById('nextBtn').disabled = (index === totalSlides - 1);
+
+            // Update slide number overlay
+            document.getElementById('slideNumberOverlay').textContent = (index + 1);
+
+            // Update speaker notes
+            updateSpeakerNotes(index);
+
+            // Update thumbnail highlight
+            updateThumbnailHighlight(index);
+        }
+
+        function goToSlide(index) {
+            if (index >= 0 && index < totalSlides) {
+                showSlide(index);
+            }
+        }
+
+        function changeSlide(direction) {
+            const newIndex = currentSlide + direction;
+            if (newIndex >= 0 && newIndex < totalSlides) {
+                showSlide(newIndex);
+            }
+        }
+
+        function updateSpeakerNotes(index) {
+            const notesContent = document.getElementById('notesContent');
+            const slideEl = slides[index];
+            const dataSlide = slideEl.getAttribute('data-slide') || '';
+            if (notesContent && speakerNotes[dataSlide]) {
+                notesContent.textContent = speakerNotes[dataSlide];
+            } else if (notesContent) {
+                notesContent.textContent = 'No notes for this slide.';
+            }
+        }
+
+        function toggleNotes() {
+            const notes = document.getElementById('speakerNotes');
+            if (notes) notes.classList.toggle('visible');
+        }
+
+        // --- Thumbnail Strip ---
+        function buildThumbnails() {
+            const strip = document.getElementById('thumbnailStripInner');
+            if (!strip) return;
+            strip.innerHTML = '';
+            slides.forEach(function(slide, i) {
+                const item = document.createElement('div');
+                item.className = 'thumbnail-item' + (i === 0 ? ' active' : '');
+                item.innerHTML = '<span class="thumb-number">' + (i + 1) + '</span>' +
+                                 '<span class="thumb-title">' + getSlideTitle(slide) + '</span>';
+                item.addEventListener('click', function() { goToSlide(i); });
+                strip.appendChild(item);
+            });
+        }
+
+        function updateThumbnailHighlight(index) {
+            var items = document.querySelectorAll('.thumbnail-item');
+            items.forEach(function(item, i) {
+                item.classList.toggle('active', i === index);
+            });
+            if (items[index]) {
+                items[index].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+            }
+        }
+
+        function toggleThumbnails() {
+            var strip = document.getElementById('thumbnailStrip');
+            if (strip) strip.classList.toggle('visible');
+        }
+
+        // --- Keyboard Navigation ---
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+                e.preventDefault();
+                changeSlide(1);
+            }
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                e.preventDefault();
+                changeSlide(-1);
+            }
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                showSlide(0);
+            }
+            if (e.key === 't' || e.key === 'T') {
+                e.preventDefault();
+                toggleThumbnails();
+            }
+            if (e.key === 'n' || e.key === 'N') {
+                e.preventDefault();
+                toggleNotes();
+            }
+        });
+
+        // --- Navigation button click handlers ---
+        document.getElementById('prevBtn').addEventListener('click', function() { changeSlide(-1); });
+        document.getElementById('nextBtn').addEventListener('click', function() { changeSlide(1); });
+
+        // --- Initialize ---
+        buildThumbnails();
+        showSlide(0);
+    </script>
+</body>
+</html>
