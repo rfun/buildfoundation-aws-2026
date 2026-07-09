@@ -1,0 +1,30 @@
+{
+  "weeks": [
+    { "id": 1, "enabled": true },
+    { "id": 2, "enabled": false },
+    { "id": 3, "enabled": false },
+    { "id": 4, "enabled": false },
+    { "id": 5, "enabled": false },
+    { "id": 6, "enabled": false },
+    { "id": 7, "enabled": false },
+    { "id": 8, "enabled": false }
+  ],
+  "labs": {
+    "enabled": false,
+    "pillars": [
+      { "id": "opex",           "enabled": true },
+      { "id": "security",       "enabled": true },
+      { "id": "reliability",    "enabled": true },
+      { "id": "performance",    "enabled": true },
+      { "id": "cost",           "enabled": true },
+      { "id": "sustainability", "enabled": true }
+    ]
+  },
+  "assignments": {
+    "enabled": false,
+    "items": [
+      { "week": 4, "enabled": true },
+      { "week": 5, "enabled": true }
+    ]
+  }
+}
