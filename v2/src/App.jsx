@@ -1,5 +1,5 @@
 import './index.css'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Home from './pages/Home'
 import SlideViewer from './pages/SlideViewer'
@@ -28,6 +28,9 @@ export default function App() {
         <Route path="/labs/:labId" element={<WithNav><LabPage /></WithNav>} />
         <Route path="/assignment/:weekNum" element={<WithNav><AssignmentPage /></WithNav>} />
         <Route path="/setup" element={<WithNav><SetupPage /></WithNav>} />
+
+        {/* Unknown paths (incl. GitHub Pages 404 fallback) → home */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   )

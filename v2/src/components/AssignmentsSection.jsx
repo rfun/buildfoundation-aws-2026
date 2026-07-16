@@ -1,7 +1,10 @@
 import { motion } from 'framer-motion'
 import { useInView } from 'framer-motion'
 import { useRef } from 'react'
+import { Link } from 'react-router-dom'
 import { enabledAssignmentWeeks } from '../courseConfig'
+
+const MotionLink = motion.create(Link)
 
 const allAssignments = [
   {
@@ -27,9 +30,9 @@ function AssignmentCard({ item, index }) {
   const inView = useInView(ref, { once: true, margin: '-60px' })
 
   return (
-    <motion.a
+    <MotionLink
       ref={ref}
-      href={`/assignment/${item.week}`}
+      to={`/assignment/${item.week}`}
       initial={{ opacity: 0, x: index % 2 === 0 ? -30 : 30 }}
       animate={inView ? { opacity: 1, x: 0 } : {}}
       transition={{ duration: 0.7, delay: index * 0.1, ease: [0.25, 0.1, 0.25, 1] }}
@@ -67,7 +70,7 @@ function AssignmentCard({ item, index }) {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
         </svg>
       </div>
-    </motion.a>
+    </MotionLink>
   )
 }
 
