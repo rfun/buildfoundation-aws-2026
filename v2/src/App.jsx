@@ -1,11 +1,39 @@
 import './index.css'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { useLayoutEffect } from 'react'
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Home from './pages/Home'
 import SlideViewer from './pages/SlideViewer'
 import LabPage from './pages/LabPage'
 import AssignmentPage from './pages/AssignmentPage'
 import SetupPage from './pages/SetupPage'
+
+// Manage scroll on navigation:
+//  - with a hash (e.g. /#workshops), scroll to that section — works even when
+//    coming from a sub-route like /labs/:id, where the section isn't on the page yet
+//  - otherwise, reset to the top on route change
+function ScrollManager() {
+  const { pathname, hash } = useLocation()
+  useLayoutEffect(() => {
+    if (hash) {
+      const id = decodeURIComponent(hash.slice(1))
+      // The target section may still be mounting after a cross-page nav — retry briefly.
+      let tries = 0
+      const tryScroll = () => {
+        const el = document.getElementById(id)
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        } else if (tries++ < 10) {
+          requestAnimationFrame(tryScroll)
+        }
+      }
+      requestAnimationFrame(tryScroll)
+      return
+    }
+    window.scrollTo(0, 0)
+  }, [pathname, hash])
+  return null
+}
 
 function WithNav({ children }) {
   return (
@@ -19,6 +47,7 @@ function WithNav({ children }) {
 export default function App() {
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
+      <ScrollManager />
       <Routes>
         {/* Full-screen pages — no navbar */}
         <Route path="/week/:weekNum" element={<SlideViewer />} />

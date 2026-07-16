@@ -39,16 +39,16 @@ export default function Navbar() {
           </div>
         </Link>
 
-        {/* Nav links */}
+        {/* Nav links — client-side links to home sections so they work from any route */}
         <div className="hidden md:flex items-center gap-8">
-          {[['Workshops', '#workshops'], ['Learn', '#learn'], ['Labs', '#labs'], ['Setup', '#setup']].map(([label, href]) => (
-            <a
+          {[['Workshops', 'workshops'], ['Learn', 'learn'], ['Labs', 'labs'], ['Setup', 'setup']].map(([label, id]) => (
+            <Link
               key={label}
-              href={href}
+              to={`/#${id}`}
               className="text-white/70 hover:text-white text-sm font-medium transition-colors duration-200"
             >
               {label}
-            </a>
+            </Link>
           ))}
         </div>
 
