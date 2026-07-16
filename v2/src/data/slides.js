@@ -273,9 +273,18 @@ const slides = {
         },
       },
       {
-        type: 'slide-image-bg',
-        note: null,
-        content: { ariaLabel: 'Operational Excellence pillar overview diagram showing the four areas: Organization, Prepare, Operate, Evolve' },
+        type: 'slide-content',
+        note: 'Overview of the four areas of Operational Excellence before diving into each. These map to the next four slides.',
+        content: {
+          subtitle: 'Operational Excellence Pillar',
+          title: 'Four Areas of Focus',
+          definitionGrid: [
+            { term: 'Organize', definition: 'Give teams a shared understanding of the workload, their roles, and business goals so they can set the right priorities.' },
+            { term: 'Prepare', definition: 'Design workloads for operations and observability — build in telemetry and mitigate deployment risk before you go live.' },
+            { term: 'Operate', definition: 'Measure success by business and customer outcomes: understand operational health and respond to events.' },
+            { term: 'Evolve', definition: 'Continuously improve — regularly analyze operations and failures, experiment, and learn from what breaks.' },
+          ],
+        },
       },
       {
         type: 'slide-content',
@@ -361,14 +370,27 @@ const slides = {
         },
       },
       {
-        type: 'slide-image-bg',
-        note: null,
-        content: { ariaLabel: 'Sustainability pillar — shared responsibility model for environmental impact across the cloud' },
+        type: 'slide-content',
+        note: 'The sustainability shared responsibility model. AWS handles sustainability OF the cloud (the physical infrastructure); the customer is responsible for sustainability IN the cloud. Walk through the six customer-owned areas.',
+        content: {
+          subtitle: 'Sustainability Pillar',
+          title: 'Shared Responsibility for Sustainability',
+          highlight: 'AWS — sustainability OF the cloud: data centers, servers, cooling, water, electricity supply, building materials & waste.',
+          description: 'You are responsible for sustainability IN the cloud:',
+          securityItems: [
+            { heading: 'Data Design & Usage', text: 'Collect and keep only the data you actually need, in the most efficient storage tier, to minimize the resources it consumes.' },
+            { heading: 'Software Application Design', text: 'Architect apps to do the same work with fewer resources — lean patterns, managed services, and asynchronous processing.' },
+            { heading: 'Platform Deployments & Scaling', text: 'Right-size infrastructure and scale to real demand so you are not powering idle capacity.' },
+            { heading: 'Data Storage', text: 'Use lifecycle policies to tier and expire data, shrinking the storage footprint and the energy to maintain it.' },
+            { heading: 'Code Efficiency', text: 'Optimize code to use less CPU, memory, and network — more efficient code directly lowers energy use.' },
+            { heading: 'Utilization & Scaling', text: 'Maximize utilization of what you provision and scale down or switch off idle resources during low demand.' },
+          ],
+        },
       },
       {
         type: 'slide-image-bg',
         note: null,
-        content: { ariaLabel: 'Sustainability design principles and best practices for cloud workloads' },
+        content: { img: 13, ariaLabel: 'Sustainability design principles and best practices for cloud workloads' },
       },
       {
         type: 'slide-section-dark',
@@ -384,12 +406,7 @@ const slides = {
       {
         type: 'slide-image-bg',
         note: null,
-        content: { ariaLabel: 'Reliability pillar: foundations, workload architecture, change management, failure management' },
-      },
-      {
-        type: 'slide-image-bg',
-        note: null,
-        content: { ariaLabel: 'Reliability design principles — recover automatically from failure, test recovery procedures, scale horizontally' },
+        content: { img: 15, ariaLabel: 'Reliability pillar: foundations, workload architecture, change management, failure management' },
       },
       {
         type: 'slide-section-dark',
@@ -452,9 +469,101 @@ const slides = {
         },
       },
       {
-        type: 'slide-image-bg',
-        note: null,
-        content: { ariaLabel: 'Security pillar areas: IAM, detection, infrastructure protection, data protection, incident response' },
+        type: 'slide-content',
+        note: 'Security design principles, part 1 of 3 — Identity & Traceability. These are AWS\'s own Well-Architected principles; the AWS services named map directly to the Security pillar labs (IAM least privilege, CloudTrail).',
+        content: {
+          subtitle: 'Security Pillar · Design Principles (1 of 3)',
+          title: 'Identity & Traceability',
+          sections: [
+            {
+              heading: 'Implement a strong identity foundation',
+              items: [
+                'Grant least privilege — authorize every interaction explicitly',
+                'Enforce separation of duties',
+                'Centralize identity with IAM Identity Center',
+                'Use IAM roles + short-lived credentials; require MFA',
+                'Eliminate long-term static keys; avoid the root user',
+              ],
+            },
+            {
+              heading: 'Maintain traceability',
+              items: [
+                'Monitor, alert, and audit changes in real time',
+                'Integrate logs & metrics to investigate and act automatically',
+                'CloudTrail — a record of every API call',
+                'AWS Config — track configuration drift',
+                'GuardDuty & Security Hub — detect and centralize findings',
+              ],
+            },
+          ],
+        },
+      },
+      {
+        type: 'slide-content',
+        note: 'Security design principles, part 2 of 3 — Defense in Depth & Automation.',
+        content: {
+          subtitle: 'Security Pillar · Design Principles (2 of 3)',
+          title: 'Defense in Depth & Automation',
+          sections: [
+            {
+              heading: 'Apply security at all layers',
+              items: [
+                'Defense in depth — layer multiple controls',
+                'Protect the edge with AWS WAF and Shield',
+                'Isolate workloads in private VPC subnets',
+                'Filter traffic with security groups & network ACLs',
+                'Harden the OS, application, and code',
+              ],
+            },
+            {
+              heading: 'Automate security best practices',
+              items: [
+                'Software-based controls scale securely and cheaply',
+                'Define guardrails as code in version-controlled templates',
+                'CloudFormation / CDK / Terraform for secure architectures',
+                'AWS Config rules flag non-compliant resources',
+                'Security Hub automations remediate findings',
+              ],
+            },
+          ],
+        },
+      },
+      {
+        type: 'slide-content',
+        note: 'Security design principles, part 3 of 3 — Data Protection & Response.',
+        content: {
+          subtitle: 'Security Pillar · Design Principles (3 of 3)',
+          title: 'Data Protection & Response',
+          securityItems: [
+            {
+              heading: 'Protect data in transit & at rest',
+              items: [
+                'Classify data into sensitivity levels',
+                'Encrypt with AWS KMS; enforce TLS via ACM',
+                'Enable default encryption on S3 and EBS',
+                'Discover sensitive data with Amazon Macie',
+              ],
+            },
+            {
+              heading: 'Keep people away from data',
+              items: [
+                'Reduce or eliminate direct human access to data',
+                'Use SSM Session Manager instead of SSH / bastions',
+                'Prefer automation over manual data handling',
+                'Gate elevated access behind audited break-glass',
+              ],
+            },
+            {
+              heading: 'Prepare for security events',
+              items: [
+                'Define incident response policies & processes',
+                'Rehearse with simulations (GameDays)',
+                'Speed detection with GuardDuty & Detective',
+                'Automate containment and recovery',
+              ],
+            },
+          ],
+        },
       },
       {
         type: 'slide-section-dark',
@@ -468,14 +577,79 @@ const slides = {
         },
       },
       {
-        type: 'slide-image-bg',
-        note: null,
-        content: { ariaLabel: 'Cost optimization areas: cloud financial management, expenditure awareness, cost-effective resources, demand/supply management' },
+        type: 'slide-content',
+        note: 'Cost Optimization design principle 1 of 5. AWS whitepaper: build cost management as an organizational capability, like Security or Operational Excellence.',
+        content: {
+          subtitle: 'Cost Optimization · Design Principle 1 of 5',
+          title: 'Implement Cloud Financial Management',
+          description: 'AWS: "Invest in Cloud Financial Management and cost optimization. Build capability through knowledge, programs, resources, and processes to become a cost-efficient organization."',
+          items: [
+            'Treat cost management as a discipline — a FinOps practice with owners',
+            'Build cost awareness across both engineering and finance',
+            'Set budgets and forecasts with AWS Budgets',
+            'Report and dashboard spend with Cost Explorer & the Cost and Usage Report',
+          ],
+        },
       },
       {
-        type: 'slide-image-bg',
-        note: null,
-        content: { ariaLabel: 'Cost optimization design principles and best practices for AWS workloads' },
+        type: 'slide-content',
+        note: 'Cost Optimization design principle 2 of 5.',
+        content: {
+          subtitle: 'Cost Optimization · Design Principle 2 of 5',
+          title: 'Adopt a Consumption Model',
+          description: 'AWS: "Pay only for the computing resources you require, and increase or decrease usage based on business requirements — not elaborate forecasting."',
+          items: [
+            'Stop idle dev/test resources — up to ~75% savings (8h/day vs 24/7)',
+            'Scale to demand with Auto Scaling and serverless (Lambda, Fargate)',
+            'Schedule start/stop for non-production environments',
+            'Match capacity to actual usage instead of peak forecasts',
+          ],
+        },
+      },
+      {
+        type: 'slide-content',
+        note: 'Cost Optimization design principle 3 of 5.',
+        content: {
+          subtitle: 'Cost Optimization · Design Principle 3 of 5',
+          title: 'Measure Overall Efficiency',
+          description: 'AWS: "Measure the business output of the workload and the costs associated with delivering it. Use this to know the gains from increasing output and reducing costs."',
+          items: [
+            'Define a unit metric — cost per transaction, user, or order',
+            'Track cost against business output over time, not in isolation',
+            'Right-size using AWS Compute Optimizer and Cost Explorer',
+            'Optimize for value delivered, not just the lowest bill',
+          ],
+        },
+      },
+      {
+        type: 'slide-content',
+        note: 'Cost Optimization design principle 4 of 5.',
+        content: {
+          subtitle: 'Cost Optimization · Design Principle 4 of 5',
+          title: 'Stop Spending on Undifferentiated Heavy Lifting',
+          description: 'AWS: "AWS does the heavy lifting of data center operations — racking, stacking, and powering servers — and managed services remove the burden of managing operating systems and applications, so you can focus on customers and business projects."',
+          items: [
+            'Prefer managed services (RDS, DynamoDB, Lambda, Fargate) over self-managed',
+            'Offload patching, scaling, and backups to AWS',
+            'Redirect saved engineering effort to customer-facing work',
+            'Cut operational cost, not just infrastructure cost',
+          ],
+        },
+      },
+      {
+        type: 'slide-content',
+        note: 'Cost Optimization design principle 5 of 5.',
+        content: {
+          subtitle: 'Cost Optimization · Design Principle 5 of 5',
+          title: 'Analyze and Attribute Expenditure',
+          description: 'AWS: "The cloud makes it simple to accurately identify the usage and cost of systems, permitting transparent attribution of IT costs to individual workload owners — measuring ROI and letting owners optimize their resources."',
+          items: [
+            'Tag resources with cost allocation tags (team, project, environment)',
+            'Break down spend by owner with Cost Explorer and the CUR',
+            'Enable showback/chargeback per team or product',
+            'Give workload owners the visibility to optimize their own costs',
+          ],
+        },
       },
       {
         type: 'slide-content',
@@ -516,7 +690,7 @@ const slides = {
         note: '1-minute pair-share before labs. Helps them carry the framework into the hands-on work instead of treating it as separate.',
         content: {
           calloutTitle: 'Quick Reflection',
-          calloutText: 'Which pillar feels closest to a role you\'d actually want? Tell a partner why, in one sentence.',
+          calloutText: 'Which pillar feels closest to a role you\'d actually want? Tell the group why, in one sentence.',
         },
       },
       {
@@ -527,7 +701,7 @@ const slides = {
       {
         type: 'slide-image-bg',
         note: null,
-        content: { ariaLabel: 'The Build Fellowship and OpenAvenues Foundation — closing branding slide' },
+        content: { img: 27, ariaLabel: 'The Build Fellowship and OpenAvenues Foundation — closing branding slide' },
       },
     ],
   },
