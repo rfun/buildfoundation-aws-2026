@@ -4,17 +4,53 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Static HTML/CSS educational site for **The Build Fellowship** AWS Foundation Course (2026), built in partnership with OpenAvenues. No build system, no package manager, no server — open any `.html` file directly in a browser to view it. The site is deployed via GitHub Pages.
+Educational site for **The Build Fellowship** AWS Foundation Course (2026), built in partnership with OpenAvenues, deployed via GitHub Pages at `https://rfun.github.io/buildfoundation-aws-2026/`.
 
-## Viewing the Site
+**The live site is the v2 React app** (source in `v2/`), whose production build is committed to the **repo root** (`index.html`, `404.html`, `assets/`, `slides/`, `icons.svg`, `favicon.svg`). The original static HTML/CSS site is archived under **`legacy/`** and remains browsable at `/buildfoundation-aws-2026/legacy/`.
+
+The rest of this file (Architecture, CSS Variables, Content Structure, Adding a New Week/Lab) documents the **legacy static site** — those workflows now apply to files under `legacy/`, not the repo root.
+
+## v2 App (the live site)
+
+React + Vite + Tailwind + react-router SPA. Source lives in `v2/`.
 
 ```bash
-open index.html           # Home page
-open week4.html           # Any week's slides
-open labs/lab1-cloudtrail.html  # Any lab page
+cd v2 && npm install && npm run dev     # local dev at http://localhost:5173/
 ```
 
-No build step required. Changes are visible immediately on browser refresh.
+Key facts:
+- **Routing** (`v2/src/App.jsx`) uses `<BrowserRouter basename={import.meta.env.BASE_URL}>`. All internal navigation must be base-aware — use react-router `<Link to="/...">` (or `motion.create(Link)` for animated cards), **never** a raw `<a href="/...">` (that drops the base path and 404s on GitHub Pages).
+- **Content toggles** live in `v2/course.config.json` (which weeks / labs / assignments are enabled). Read via `v2/src/courseConfig.js`.
+- **Slide data** is in `v2/src/data/slides.js`; slide images resolve to `${import.meta.env.BASE_URL}slides/weekN/SlideN.jpeg`.
+
+### Building & deploying the v2 app
+
+The base path must match the GitHub Pages subpath (`/buildfoundation-aws-2026/`):
+
+```bash
+cd v2 && npx vite build --base=/buildfoundation-aws-2026/
+```
+
+Then sync the build to the repo root and refresh the SPA fallback:
+
+```bash
+# from repo root
+rm -rf assets index.html 404.html icons.svg favicon.svg slides
+cp -R v2/dist/index.html v2/dist/icons.svg v2/dist/favicon.svg v2/dist/assets v2/dist/slides .
+cp v2/dist/index.html 404.html   # site-root 404.html = SPA deep-link/refresh fallback
+```
+
+`404.html` **must** be a copy of `index.html` at the repo root — GitHub Pages serves the *site-root* 404 page for any missing path, which is how deep links (`/week/1`, `/setup`, …) and page refreshes survive. `.nojekyll` at the root keeps Jekyll from touching the build output.
+
+## Viewing the Legacy Site
+
+```bash
+open legacy/index.html                    # Legacy home page
+open legacy/week4.html                     # Any week's slides
+open legacy/labs/lab1-cloudtrail.html      # Any lab page
+```
+
+No build step required for legacy pages. Changes are visible immediately on browser refresh.
 
 ## Architecture
 

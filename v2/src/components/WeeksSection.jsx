@@ -1,7 +1,10 @@
 import { motion } from 'framer-motion'
 import { useInView } from 'framer-motion'
 import { useRef } from 'react'
+import { Link } from 'react-router-dom'
 import { enabledWeekIds } from '../courseConfig'
+
+const MotionLink = motion.create(Link)
 
 const allWeeks = [
   {
@@ -61,9 +64,9 @@ function WeekCard({ week, index }) {
   const inView = useInView(ref, { once: true, margin: '-80px' })
 
   return (
-    <motion.a
+    <MotionLink
       ref={ref}
-      href={`/week/${week.num}`}
+      to={`/week/${week.num}`}
       initial={{ opacity: 0, y: 40 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6, delay: index * 0.07, ease: [0.25, 0.1, 0.25, 1] }}
@@ -104,7 +107,7 @@ function WeekCard({ week, index }) {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
         </svg>
       </div>
-    </motion.a>
+    </MotionLink>
   )
 }
 
@@ -135,7 +138,7 @@ export default function WeeksSection() {
             <span className="text-[#c4aaff]">Cloud Mastery</span>
           </h2>
           <p className="text-white/40 text-sm mt-4 max-w-lg">
-            Thursdays, 6:00 PM ET · 2–3 hours per week · February – March 2026
+            Thursdays, 6:00 PM ET · 2–3 hours per week · July – August 2026
           </p>
         </motion.div>
 

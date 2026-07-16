@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { useInView } from 'framer-motion'
 import { useRef } from 'react'
+import { Link } from 'react-router-dom'
 import { enabledPillarIds } from '../courseConfig'
 
 const allPillars = [
@@ -35,9 +36,9 @@ function PillarCard({ pillar, index }) {
       {/* Labs */}
       <div className="space-y-2">
         {pillar.labs.map((lab, i) => (
-          <a
+          <Link
             key={lab}
-            href={`/labs/${pillar.id}-${i + 1}`}
+            to={`/labs/${pillar.id}-${i + 1}`}
             className="flex items-center gap-3 group"
           >
             <span
@@ -49,7 +50,7 @@ function PillarCard({ pillar, index }) {
             <span className="text-[#1e1e6e]/70 text-sm group-hover:text-[#5c5ce0] transition-colors duration-150 leading-snug">
               {lab}
             </span>
-          </a>
+          </Link>
         ))}
       </div>
     </motion.div>
