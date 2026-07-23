@@ -318,16 +318,16 @@ function SlideContent({ content }) {
   return (
     <div className="w-full h-full relative flex flex-col px-16 pt-24 pb-16 bg-white overflow-y-auto select-none">
       {/* Header */}
-      {content.subtitle && <SectionEyebrow large>{content.subtitle}</SectionEyebrow>}
-      {content.sectionSubtitle && <SectionEyebrow large>{content.sectionSubtitle}</SectionEyebrow>}
       {content.title && (
         <div
-          className="text-[#1e1e6e] font-bold mb-5 leading-snug"
+          className={`text-[#1e1e6e] font-bold leading-snug ${(content.subtitle || content.sectionSubtitle) ? 'mb-1.5' : 'mb-5'}`}
           style={{ fontFamily: 'Playfair Display, serif', fontSize: dense ? 'clamp(26px, 3.4vw, 38px)' : 'clamp(32px, 4.2vw, 48px)' }}
         >
           {content.title}
         </div>
       )}
+      {content.subtitle && <SectionEyebrow large>{content.subtitle}</SectionEyebrow>}
+      {content.sectionSubtitle && <SectionEyebrow large>{content.sectionSubtitle}</SectionEyebrow>}
 
       {/* Description */}
       {content.description && (
