@@ -8,6 +8,10 @@ import LabPage from './pages/LabPage'
 import AssignmentPage from './pages/AssignmentPage'
 import DemoPage from './pages/DemoPage'
 import SetupPage from './pages/SetupPage'
+import QuizJoin from './pages/quiz/QuizJoin'
+import QuizRoom from './pages/quiz/QuizRoom'
+import PresenterPicker from './pages/quiz/PresenterPicker'
+import PresenterConsole from './pages/quiz/PresenterConsole'
 
 // Manage scroll on navigation:
 //  - with a hash (e.g. /#workshops), scroll to that section — works even when
@@ -52,6 +56,12 @@ export default function App() {
       <Routes>
         {/* Full-screen pages — no navbar */}
         <Route path="/week/:weekNum" element={<SlideViewer />} />
+
+        {/* Live quiz — reachable by URL/QR only, never linked from site nav (spec §4) */}
+        <Route path="/quiz" element={<QuizJoin />} />
+        <Route path="/quiz/room/:code" element={<QuizRoom />} />
+        <Route path="/quiz/present" element={<PresenterPicker />} />
+        <Route path="/quiz/present/:quizId" element={<PresenterConsole />} />
 
         {/* Content pages with navbar */}
         <Route path="/" element={<WithNav><Home /></WithNav>} />

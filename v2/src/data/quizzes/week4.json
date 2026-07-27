@@ -1,117 +1,118 @@
 {
-  "source": "Mentimeter — 'AWS Cloud Quiz - Week 4 - Feb 2026' (alak7jsvep883pnwt1yazcq4rzyi4w3c)",
-  "extractedAt": "2026-07-26",
+  "id": "week4",
   "title": "AWS Core Concepts",
   "subtitle": "These questions are taken/modeled after questions that appear in AWS Cloud Practitioner Exam",
-  "defaults": { "timeToRespondSeconds": 45, "scoreAllocation": "time-based" },
+  "defaults": { "timeToRespondSeconds": 45 },
+  "source": "Mentimeter — 'AWS Cloud Quiz - Week 4 - Feb 2026' (alak7jsvep883pnwt1yazcq4rzyi4w3c)",
+  "extractedAt": "2026-07-26",
   "questions": [
     {
       "id": 1,
       "type": "single",
+      "selections": 1,
       "prompt": "A Japanese company hosts its instances in Tokyo Region. What can the company do to reduce latency for the users in the US while minimizing costs?",
       "options": [
         "Applying the Amazon Connect latency-based routing policy.",
         "Registering a new US domain name to serve the users in the US.",
         "Building a new data center in the US and implementing a hybrid model.",
         "Deploying new Amazon EC2 instances in a Region located in the US."
-      ],
-      "correct": [3]
+      ]
     },
     {
       "id": 2,
       "type": "single",
+      "selections": 1,
       "prompt": "Your company has a data store application that requires access to a NoSQL database. Which AWS database offering would meet this requirement?",
       "options": [
         "Amazon Aurora",
         "Amazon DynamoDB",
         "Amazon Elastic Block Store",
         "Amazon Redshift"
-      ],
-      "correct": [1]
+      ]
     },
     {
       "id": 3,
       "type": "single",
+      "selections": 1,
       "prompt": "You want to run a questionnaire application for only one day (without interruption), which Amazon EC2 purchase option should you use?",
       "options": [
         "Reserved instances",
         "Spot instances.",
         "Dedicated instances.",
         "On-demand instances."
-      ],
-      "correct": [3]
+      ]
     },
     {
       "id": 4,
       "type": "single",
+      "selections": 1,
       "prompt": "Which statement is true in relation to the security of Amazon EC2?",
       "options": [
         "You should use instance store volumes to store login data.",
         "You should regularly patch OS and applications on your EC2 instances",
         "Deploy critical components of your application in an AZ that you trust",
         "You can track all API calls using Amazon Athena"
-      ],
-      "correct": [1]
+      ]
     },
     {
       "id": 5,
       "type": "single",
+      "selections": 1,
       "prompt": "Who from the following will get the largest discount?",
       "options": [
         "On-demand, Convertible, Partial upfront instances",
         "Reserved, Convertible, All upfront instances",
         "Reserved, Standard, No upfront instances",
         "Reserved, Standard, All upfront instances"
-      ],
-      "correct": [3]
+      ]
     },
     {
       "id": 6,
       "type": "single",
+      "selections": 1,
       "prompt": "A developer is planning to build a two-tier web application that has a MySQL DB layer. Which AWS DB services would provide automated backups?",
       "options": [
         "A MySQL database installed on an EC2 instance",
         "Amazon Aurora",
         "Amazon DynamoDB",
         "Amazon Neptune"
-      ],
-      "correct": [1]
+      ]
     },
     {
       "id": 7,
       "type": "single",
+      "selections": 1,
       "prompt": "For storing regular backups, which is the most cost-effective storage option that provides immediate retrieval of your backups?",
       "options": [
         "Amazon S3 Glacier Deep Archive",
         "Amazon S3 Standard-Infrequent Access",
         "Amazon S3 Glacier",
         "Instance Store"
-      ],
-      "correct": [1]
+      ]
     },
     {
       "id": 8,
       "type": "single",
+      "selections": 1,
       "prompt": "Which of the following acts as a virtual firewall at the Amazon EC2 instance level to control traffic for one or more instances?",
       "options": [
         "Access keys",
         "Virtual private gateways",
         "Security groups",
         "Access Control Lists (ACL)"
-      ],
-      "correct": [2]
+      ]
     },
     {
       "id": 9,
       "type": "single",
+      "selections": 1,
       "prompt": "A user is planning to launch two additional Amazon EC2 instances to increase availability. Which launch strategy should the user employ?",
       "options": [
         "Spread instances across multiple (AZ) in a single AWS Region",
         "EC2 Reserved Instances in the same AWS Region and the same AZ",
         "Multiple AWS Regions but in the same Availability Zone",
         "EC2 Spot Instances in the same AWS Region but in different AZs"
-      ],
-      "correct": [0]
+      ]
     },
     {
       "id": 10,
@@ -124,8 +125,7 @@
         "Gaining complete control over the physical infrastructure.",
         "Operating applications on behalf of customers.",
         "All physical and most of data/network security are taken care of"
-      ],
-      "correct": [0, 4]
+      ]
     },
     {
       "id": 11,
@@ -138,8 +138,7 @@
         "Ensure that EBS data is encrypted at rest.",
         "Store a backup daily in an external drive.",
         "Prevent any unauthorized access to AWS data centers."
-      ],
-      "correct": [1, 2]
+      ]
     },
     {
       "id": 12,
@@ -152,8 +151,7 @@
         "Amazon RDS",
         "AWS Database Migration service (DMS)",
         "AWS Lambda"
-      ],
-      "correct": [1, 2]
+      ]
     },
     {
       "id": 13,
@@ -166,8 +164,7 @@
         "Backing up databases",
         "Creating database schema",
         "Running penetration tests"
-      ],
-      "correct": [0, 2]
+      ]
     }
   ]
 }
