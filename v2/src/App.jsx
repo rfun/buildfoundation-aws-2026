@@ -1,5 +1,5 @@
 import './index.css'
-import { useLayoutEffect } from 'react'
+import { lazy, Suspense, useLayoutEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Home from './pages/Home'
@@ -12,6 +12,13 @@ import QuizJoin from './pages/quiz/QuizJoin'
 import QuizRoom from './pages/quiz/QuizRoom'
 import PresenterPicker from './pages/quiz/PresenterPicker'
 import PresenterConsole from './pages/quiz/PresenterConsole'
+
+// Phase 2 transport harness. `import.meta.env.DEV` is a compile-time constant, so
+// in a production build this whole branch is dead code and the chunk is never
+// emitted — the harness exists only on the dev server.
+const TransportHarness = import.meta.env.DEV
+  ? lazy(() => import('./pages/quiz/TransportHarness'))
+  : null
 
 // Manage scroll on navigation:
 //  - with a hash (e.g. /#workshops), scroll to that section — works even when
@@ -62,6 +69,16 @@ export default function App() {
         <Route path="/quiz/room/:code" element={<QuizRoom />} />
         <Route path="/quiz/present" element={<PresenterPicker />} />
         <Route path="/quiz/present/:quizId" element={<PresenterConsole />} />
+        {TransportHarness ? (
+          <Route
+            path="/quiz/dev-transport"
+            element={
+              <Suspense fallback={null}>
+                <TransportHarness />
+              </Suspense>
+            }
+          />
+        ) : null}
 
         {/* Content pages with navbar */}
         <Route path="/" element={<WithNav><Home /></WithNav>} />
