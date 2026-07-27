@@ -303,6 +303,49 @@ function SlideCards({ content }) {
   )
 }
 
+// Code on the left, annotations on the right — for teaching syntax.
+// content: { title, subtitle, code, annotations: [{ label, text }], note }
+function SlideCode({ content }) {
+  return (
+    <div className="w-full h-full relative flex flex-col px-16 pt-20 pb-24 bg-white overflow-y-auto select-none">
+      <div
+        className="text-[#1e1e6e] font-bold leading-snug mb-1.5"
+        style={{ fontFamily: 'Playfair Display, serif', fontSize: 'clamp(26px, 3.4vw, 38px)' }}
+      >
+        {content.title}
+      </div>
+      {content.subtitle && <SectionEyebrow large>{content.subtitle}</SectionEyebrow>}
+
+      <div className="grid grid-cols-[1.1fr_1fr] gap-8 items-start mt-1">
+        <pre className="bg-[#12123f] rounded-xl p-5 overflow-x-auto">
+          <code className="text-[#c4aaff] font-mono leading-relaxed whitespace-pre text-[13px]">
+            {content.code}
+          </code>
+        </pre>
+
+        {content.annotations && (
+          <div className="space-y-2">
+            {content.annotations.map((a, i) => (
+              <div key={i} className="bg-[#f0eeff] rounded-lg px-4 py-2">
+                <div className="text-[#5c5ce0] text-sm font-semibold">{a.label}</div>
+                <div className="text-[#1e1e6e]/65 text-[13px] leading-snug">{a.text}</div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {content.note && (
+        <div className="mt-4 bg-amber-50 border border-amber-200 rounded-lg px-5 py-2.5 text-amber-800 text-sm">
+          {content.note}
+        </div>
+      )}
+
+      <Footer dark={false} />
+    </div>
+  )
+}
+
 // Most flexible layout — handles many content shapes
 function SlideContent({ content }) {
   // Dense slides (many sections/items) need a smaller scale to stay on one screen —
@@ -313,7 +356,9 @@ function SlideContent({ content }) {
     (content.breachCards?.length ?? 0) +
     (content.securityItems?.length ?? 0) +
     (content.definitionGrid?.length ?? 0)
-  const dense = itemCount >= 5
+  // `dense: true` in the slide data forces the compact scale — needed when a slide
+  // pairs a figure with several sections, where the raw item count under-reports height.
+  const dense = content.dense ?? itemCount >= 5
 
   return (
     <div className="w-full h-full relative flex flex-col px-16 pt-24 pb-16 bg-white overflow-y-auto select-none">
@@ -329,6 +374,10 @@ function SlideContent({ content }) {
       {content.subtitle && <SectionEyebrow large>{content.subtitle}</SectionEyebrow>}
       {content.sectionSubtitle && <SectionEyebrow large>{content.sectionSubtitle}</SectionEyebrow>}
 
+      {/* Body — splits into a text column + figure column when content.figure is set */}
+      <div className={content.figure ? 'grid grid-cols-[1.15fr_1fr] gap-10 items-start' : ''}>
+      <div>
+
       {/* Description */}
       {content.description && (
         <p className="text-[#1e1e6e]/65 text-xl leading-relaxed mb-5 max-w-3xl">{content.description}</p>
@@ -341,8 +390,8 @@ function SlideContent({ content }) {
 
       {/* Definition callout box */}
       {content.definitionBox && (
-        <div className="bg-[#1e1e6e] text-white rounded-xl p-8 mb-5">
-          <p className="text-white/85 text-2xl leading-relaxed italic">"{content.definitionBox}"</p>
+        <div className={`bg-[#1e1e6e] text-white rounded-xl mb-5 ${dense ? 'p-5' : 'p-8'}`}>
+          <p className={`text-white/85 leading-relaxed italic ${dense ? 'text-lg' : 'text-2xl'}`}>"{content.definitionBox}"</p>
         </div>
       )}
 
@@ -376,6 +425,44 @@ function SlideContent({ content }) {
             <Bullet key={i} size={dense ? 'sm' : 'lg'}>{item}</Bullet>
           ))}
         </ul>
+      )}
+
+      {/* Comparison matrix — { head, rows } */}
+      {content.matrix && (
+        <div className="overflow-x-auto mb-4">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr>
+                {content.matrix.head.map((h, i) => (
+                  <th
+                    key={i}
+                    className="text-[#5c5ce0] text-xs uppercase tracking-wide font-semibold pb-2 pr-4 border-b-2 border-[#5c5ce0]/25"
+                  >
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {content.matrix.rows.map((row, i) => (
+                <tr key={i}>
+                  {row.map((cell, j) => (
+                    <td
+                      key={j}
+                      className={`py-2 pr-4 align-top border-b border-[#c4aaff]/25 ${
+                        j === 0
+                          ? 'text-[#1e1e6e] font-semibold text-base whitespace-nowrap'
+                          : 'text-[#1e1e6e]/65 text-sm leading-snug'
+                      }`}
+                    >
+                      {cell}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
 
       {/* Definition grid (VPC slide) */}
@@ -491,6 +578,28 @@ function SlideContent({ content }) {
       {/* Reading links */}
       {content.readingLinks && <ReadingLinks links={content.readingLinks} compact={dense} />}
 
+      </div>
+
+      {content.figure && (
+        <figure className="mt-2">
+          <img
+            src={`${import.meta.env.BASE_URL}${content.figure.src}`}
+            alt={content.figure.alt || ''}
+            className="w-full rounded-xl border border-[#c4aaff]/30 bg-white"
+            draggable={false}
+          />
+          {(content.figure.caption || content.figure.credit) && (
+            <figcaption className="text-[#1e1e6e]/40 text-xs mt-2 leading-snug">
+              {content.figure.caption}
+              {content.figure.credit && (
+                <span className="block text-[#1e1e6e]/30 italic">Source: {content.figure.credit}</span>
+              )}
+            </figcaption>
+          )}
+        </figure>
+      )}
+      </div>
+
       <Footer dark={false} />
     </div>
   )
@@ -537,6 +646,7 @@ const LAYOUT_MAP = {
   'slide-agenda': SlideAgenda,
   'slide-toc': SlideToc,
   'slide-content': SlideContent,
+  'slide-code': SlideCode,
   'slide-two-column': SlideTwoColumn,
   'slide-callout': SlideCallout,
   'slide-table': SlideTable,
