@@ -1,0 +1,1 @@
+var e=`week4`,t={1:[3],2:[1],3:[3],4:[1],5:[3],6:[1],7:[1],8:[2],9:[0],10:[0,4],11:[1,2],12:[1,2],13:[0,2]},n={quizId:e,answers:t};export{t as answers,n as default,e as quizId};

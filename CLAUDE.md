@@ -21,7 +21,7 @@ cd v2 && npm install && npm run dev     # local dev at http://localhost:5173/
 Key facts:
 - **Routing** (`v2/src/App.jsx`) uses `<BrowserRouter basename={import.meta.env.BASE_URL}>`. All internal navigation must be base-aware — use react-router `<Link to="/...">` (or `motion.create(Link)` for animated cards), **never** a raw `<a href="/...">` (that drops the base path and 404s on GitHub Pages).
 - **Content toggles** live in `v2/course.config.json` (which weeks / labs / assignments are enabled). Read via `v2/src/courseConfig.js`.
-- **Slide data** is in `v2/src/data/slides.js`; slide images resolve to `${import.meta.env.BASE_URL}slides/weekN/SlideN.jpeg`.
+- **Slide data** is in `v2/src/data/slides/` — one module per week (`week1.js` … `week8.js`), each default-exporting `{ title, slides: [...] }`, assembled by `v2/src/data/slides/index.js`; slide images resolve to `${import.meta.env.BASE_URL}slides/weekN/SlideN.jpeg`.
 
 ### Building & deploying the v2 app
 

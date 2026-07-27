@@ -208,8 +208,8 @@ or push unless I ask.
 ## Phase 7 — Build, deploy, docs *(needs everything)*
 
 ```
-Read spec/live-quiz-spec.md and spec/live-quiz-implementation-plan.md first. All prior phases
-are merged.
+Read spec/live-quiz-spec.md and spec/live-quiz-implementation-plan.md first. Phases 0-6 are
+done, on this branch.
 
 Implement Phase 7 only (Build, deploy, docs).
 
