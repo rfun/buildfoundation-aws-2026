@@ -1,0 +1,11 @@
+# Copy this file to terraform.tfvars and edit it:
+#   cp terraform.tfvars.example terraform.tfvars
+#
+# Terraform loads terraform.tfvars automatically — no CLI flags needed.
+# terraform.tfvars is gitignored because it often holds environment-specific
+# (and sometimes sensitive) values.
+
+owner              = "yourname"
+environment        = "dev"
+aws_region         = "us-east-1"
+log_retention_days = 1

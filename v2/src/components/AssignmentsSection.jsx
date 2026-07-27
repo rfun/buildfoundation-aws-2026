@@ -114,6 +114,46 @@ export default function AssignmentsSection() {
             <AssignmentCard key={a.week} item={a} index={i} />
           ))}
         </div>
+
+        {/* Walkthrough companion to the Week 4 assignment — the demo run in class */}
+        {enabledAssignmentWeeks.has(4) && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={titleInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.7, delay: 0.3 }}
+            className="max-w-4xl mt-6"
+          >
+            <Link
+              to="/demo/week4-terraform"
+              className="group flex items-center gap-5 bg-white/10 hover:bg-white/15 border border-white/20 hover:border-[#c4aaff]/50 rounded-2xl px-7 py-6 transition-all duration-300 no-underline"
+            >
+              <div className="flex-1">
+                <span className="text-white/50 text-xs font-semibold uppercase tracking-widest">
+                  Week 4 · Live Demo Walkthrough
+                </span>
+                <h3
+                  className="text-white font-bold text-xl mt-2 mb-1.5 group-hover:text-[#c4aaff] transition-colors duration-200"
+                  style={{ fontFamily: 'Playfair Display, serif' }}
+                >
+                  Terraform on AWS
+                </h3>
+                <p className="text-white/50 text-sm leading-relaxed">
+                  The demo run in class, step by step — init, plan, apply, destroy, and how to
+                  read the provider docs. Uses different resources than the assignment, so it
+                  won't do your homework for you.
+                </p>
+              </div>
+              <svg
+                className="w-5 h-5 text-white/30 group-hover:text-[#c4aaff] flex-shrink-0 transition-colors duration-200"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+          </motion.div>
+        )}
       </div>
     </section>
   )

@@ -6,6 +6,7 @@ import Home from './pages/Home'
 import SlideViewer from './pages/SlideViewer'
 import LabPage from './pages/LabPage'
 import AssignmentPage from './pages/AssignmentPage'
+import DemoPage from './pages/DemoPage'
 import SetupPage from './pages/SetupPage'
 
 // Manage scroll on navigation:
@@ -56,6 +57,7 @@ export default function App() {
         <Route path="/" element={<WithNav><Home /></WithNav>} />
         <Route path="/labs/:labId" element={<WithNav><LabPage /></WithNav>} />
         <Route path="/assignment/:weekNum" element={<WithNav><AssignmentPage /></WithNav>} />
+        <Route path="/demo/:demoId" element={<WithNav><DemoPage /></WithNav>} />
         <Route path="/setup" element={<WithNav><SetupPage /></WithNav>} />
 
         {/* Unknown paths (incl. GitHub Pages 404 fallback) → home */}

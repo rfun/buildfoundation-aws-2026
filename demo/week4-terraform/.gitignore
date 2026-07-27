@@ -1,0 +1,23 @@
+# DEMO TALKING POINT: walk this file before the first `apply`.
+# The state file is the single most important thing here — it can contain
+# secrets in plain text, and it is machine-specific. It never goes in Git.
+
+# Local state and backups
+*.tfstate
+*.tfstate.*
+
+# Downloaded providers/modules — recreated by `terraform init`
+.terraform/
+
+# NOTE: .terraform.lock.hcl is deliberately NOT ignored. It pins the exact
+# provider versions so everyone on the team resolves the same ones. Commit it.
+
+# Variable files with real values
+*.tfvars
+!*.tfvars.example
+
+# Saved plans
+*.tfplan
+
+# Crash logs
+crash.log
