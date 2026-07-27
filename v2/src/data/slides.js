@@ -1488,8 +1488,7 @@ output "table_arn" {
               items: [
                 'Your Terraform code (main.tf, variables.tf, outputs.tf) in your GitHub repo',
                 'A screenshot of a clean terraform plan',
-                'Console screenshots proving the VPC, EC2, EBS volume and bucket exist',
-                'A simple architecture diagram — draw.io or anything else',
+                'Console screenshots proving the VPC, EC2, EBS volume and bucket exist'              
               ],
             },
           ],
