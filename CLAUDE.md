@@ -42,6 +42,23 @@ cp v2/dist/index.html 404.html   # site-root 404.html = SPA deep-link/refresh fa
 
 `404.html` **must** be a copy of `index.html` at the repo root — GitHub Pages serves the *site-root* 404 page for any missing path, which is how deep links (`/week/1`, `/setup`, …) and page refreshes survive. `.nojekyll` at the root keeps Jekyll from touching the build output.
 
+### ALWAYS keep the root build current
+
+The repo root **is** the deployed site. Source changes under `v2/` do nothing until they are built and copied to the root, so a commit that touches `v2/` without a matching root rebuild leaves the live site serving stale code.
+
+**Any time you change anything under `v2/` — `v2/src/`, `v2/public/`, `v2/course.config.json`, `v2/package.json` — run the build and root-sync commands above before you finish the task, and commit the resulting root changes.** Do this without being asked. Treat it as part of the change, not a separate follow-up.
+
+Verify after syncing:
+
+```bash
+diff -q index.html 404.html                    # must be identical
+grep -o 'index-[A-Za-z0-9_-]*\.js' index.html  # must match the file in assets/
+```
+
+If you spot that the root is already stale from an earlier session — the bundle named in `index.html` predates recent `v2/` commits — rebuild and sync it as part of whatever you're doing, and say so in the commit message.
+
+The only exception is when the user explicitly says to leave the build alone (e.g. "source only, no build"). In that case say plainly, in your final message, that the live site is unchanged until a rebuild happens.
+
 ## Viewing the Legacy Site
 
 ```bash
