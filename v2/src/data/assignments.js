@@ -26,11 +26,7 @@ const assignments = {
       {
         title: 'Deployed resources',
         desc: 'Screenshots from the AWS Console confirming the VPC, EC2, EBS, and S3 bucket exist.',
-      },
-      {
-        title: 'Architecture diagram',
-        desc: 'A simple diagram showing how the resources connect (draw.io or any diagramming tool is fine).',
-      },
+      }
     ],
     sections: [
       {

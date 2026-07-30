@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useParams, useSearchParams, Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import slidesData from '../data/slides.js'
+import slidesData from '../data/slides/index.js'
 import SlideRenderer from '../components/SlideRenderer.jsx'
 
 export default function SlideViewer() {

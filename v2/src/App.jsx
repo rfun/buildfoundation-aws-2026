@@ -1,12 +1,24 @@
 import './index.css'
-import { useLayoutEffect } from 'react'
+import { lazy, Suspense, useLayoutEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Home from './pages/Home'
 import SlideViewer from './pages/SlideViewer'
 import LabPage from './pages/LabPage'
 import AssignmentPage from './pages/AssignmentPage'
+import DemoPage from './pages/DemoPage'
 import SetupPage from './pages/SetupPage'
+import QuizJoin from './pages/quiz/QuizJoin'
+import QuizRoom from './pages/quiz/QuizRoom'
+import PresenterPicker from './pages/quiz/PresenterPicker'
+import PresenterConsole from './pages/quiz/PresenterConsole'
+
+// Phase 2 transport harness. `import.meta.env.DEV` is a compile-time constant, so
+// in a production build this whole branch is dead code and the chunk is never
+// emitted — the harness exists only on the dev server.
+const TransportHarness = import.meta.env.DEV
+  ? lazy(() => import('./pages/quiz/TransportHarness'))
+  : null
 
 // Manage scroll on navigation:
 //  - with a hash (e.g. /#workshops), scroll to that section — works even when
@@ -52,10 +64,27 @@ export default function App() {
         {/* Full-screen pages — no navbar */}
         <Route path="/week/:weekNum" element={<SlideViewer />} />
 
+        {/* Live quiz — reachable by URL/QR only, never linked from site nav (spec §4) */}
+        <Route path="/quiz" element={<QuizJoin />} />
+        <Route path="/quiz/room/:code" element={<QuizRoom />} />
+        <Route path="/quiz/present" element={<PresenterPicker />} />
+        <Route path="/quiz/present/:quizId" element={<PresenterConsole />} />
+        {TransportHarness ? (
+          <Route
+            path="/quiz/dev-transport"
+            element={
+              <Suspense fallback={null}>
+                <TransportHarness />
+              </Suspense>
+            }
+          />
+        ) : null}
+
         {/* Content pages with navbar */}
         <Route path="/" element={<WithNav><Home /></WithNav>} />
         <Route path="/labs/:labId" element={<WithNav><LabPage /></WithNav>} />
         <Route path="/assignment/:weekNum" element={<WithNav><AssignmentPage /></WithNav>} />
+        <Route path="/demo/:demoId" element={<WithNav><DemoPage /></WithNav>} />
         <Route path="/setup" element={<WithNav><SetupPage /></WithNav>} />
 
         {/* Unknown paths (incl. GitHub Pages 404 fallback) → home */}
