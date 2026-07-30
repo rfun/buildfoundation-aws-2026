@@ -1,19 +1,24 @@
 /**
- * `/quiz` — participant join (spec §7.1). Default landing for the QR code.
+ * `/quiz` — participant join (spec §7.1). Default landing for the QR code, which
+ * arrives with `?code=` already filled in so a phone only has to type a name.
  *
- * Phase 1: the code is not validated against a live room; anything 4 digits
- * navigates through to the mocked room.
+ * The code is not validated here — there is no server to validate it against.
+ * Anything four digits opens `/quiz/room/<code>`; a wrong code lands in an empty
+ * Ably channel where nothing ever arrives, and the room screen says as much.
  */
 
 import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import { rememberName, recallName } from '../../quiz/participantSession'
 import { QuizShell, Eyebrow, PrimaryButton, Card } from '../../quiz/ui'
 
 export default function QuizJoin() {
   const navigate = useNavigate()
   const [params] = useSearchParams()
   const [code, setCode] = useState(params.get('code') ?? '')
-  const [name, setName] = useState('')
+  // Prefilled if this tab has already joined once — someone who backs out to
+  // re-scan the QR shouldn't have to retype their name.
+  const [name, setName] = useState(() => recallName())
 
   const codeOk = /^\d{4}$/.test(code)
   const nameOk = name.trim().length > 0
@@ -22,7 +27,11 @@ export default function QuizJoin() {
   const join = (e) => {
     e.preventDefault()
     if (!ready) return
-    navigate(`/quiz/room/${code}?name=${encodeURIComponent(name.trim())}`)
+    const trimmed = name.trim()
+    // Kept alongside the `clientId` in `sessionStorage` so a refresh of the room
+    // rejoins as the same person, under the same name (spec §6, §9).
+    rememberName(trimmed)
+    navigate(`/quiz/room/${code}?name=${encodeURIComponent(trimmed)}`)
   }
 
   const field =

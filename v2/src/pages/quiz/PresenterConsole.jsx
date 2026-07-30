@@ -13,7 +13,7 @@
 
 import { Link, useParams } from 'react-router-dom'
 import { usePresenterSession } from '../../quiz/presenterSession'
-import { useCountdown, optionLetter, formatClock } from '../../quiz/mockSession'
+import { useCountdown, optionLetter, formatClock } from '../../quiz/display'
 import { CORRECT, WRONG } from '../../quiz/scoring'
 import { CONNECTED, FAILED, RECONNECTING, CONNECTING } from '../../quiz/useQuizChannel'
 import AnswerDistribution from '../../quiz/AnswerDistribution'

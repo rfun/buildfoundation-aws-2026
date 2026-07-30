@@ -5,10 +5,10 @@
  * layout simply scales up on a laptop rather than sprawling (spec §7.1).
  */
 
-import { optionLetter } from './mockSession'
+import { optionLetter } from './display'
 
 /** Page frame: dark navy field, centred column, safe-area padding. */
-export function QuizShell({ children, width = 'max-w-xl', footer = null }) {
+export function QuizShell({ children, width = 'max-w-xl' }) {
   return (
     <div className="min-h-screen bg-[#14145a] text-white flex flex-col">
       <div
@@ -17,7 +17,6 @@ export function QuizShell({ children, width = 'max-w-xl', footer = null }) {
       >
         <div className={`w-full mx-auto flex-1 flex flex-col ${width}`}>{children}</div>
       </div>
-      {footer}
     </div>
   )
 }
@@ -69,6 +68,7 @@ export function Option({ index, label, state = 'idle', onClick, disabled, badge 
       type={onClick ? 'button' : undefined}
       onClick={onClick}
       disabled={disabled}
+      data-testid={`opt-${index}`}
       className={`w-full min-h-[56px] flex items-start gap-3 text-left rounded-xl border px-4 py-3 transition-colors ${
         STATE_STYLES[state]
       } ${disabled && onClick ? 'opacity-60 cursor-not-allowed' : ''} ${onClick ? 'cursor-pointer' : ''}`}
@@ -111,32 +111,6 @@ export function Card({ children, className = '' }) {
   return (
     <div className={`rounded-2xl border border-white/10 bg-white/[0.06] p-4 sm:p-5 ${className}`}>
       {children}
-    </div>
-  )
-}
-
-/**
- * Phase 1 only: a strip that drives the mock presenter state from the
- * participant view, so every phase is reachable without a second tab.
- * Deleted when Phase 2 wires up the real channel.
- */
-export function MockControls({ items }) {
-  return (
-    <div className="border-t border-white/10 bg-black/30 backdrop-blur">
-      <div className="max-w-xl mx-auto px-4 py-3 flex flex-wrap items-center gap-2">
-        <span className="text-[10px] uppercase tracking-widest text-white/35 mr-1">Mock presenter</span>
-        {items.map((item) => (
-          <button
-            key={item.label}
-            type="button"
-            onClick={item.onClick}
-            disabled={item.disabled}
-            className="min-h-[44px] rounded-lg border border-white/15 px-3 text-xs font-semibold text-white/80 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed"
-          >
-            {item.label}
-          </button>
-        ))}
-      </div>
     </div>
   )
 }

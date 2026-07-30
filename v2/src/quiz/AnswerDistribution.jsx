@@ -52,7 +52,7 @@
  * readable on a laptop and from the back of a lecture hall.
  */
 
-import { optionLetter } from './mockSession'
+import { optionLetter } from './display'
 
 /** Chart palette. See the header for how each of these was validated. */
 const SURFACE = '#14145a'
