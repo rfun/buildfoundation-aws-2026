@@ -3,6 +3,7 @@ import { useParams, useSearchParams, Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import slidesData from '../data/slides/index.js'
 import SlideRenderer from '../components/SlideRenderer.jsx'
+import { createDeckChannel } from '../deckSync.js'
 
 export default function SlideViewer() {
   const { weekNum } = useParams()
@@ -34,6 +35,46 @@ export default function SlideViewer() {
   useEffect(() => {
     if (notesRef.current) notesRef.current.scrollTop = 0
   }, [current])
+
+  // ── Sync with the presenter-notes window ──────────────────────────────────
+  // Declared before the broadcast effect below so the channel exists by the
+  // time that one fires on mount.
+  const channelRef = useRef(null)
+  // Mirrors `current` so the channel's message handler — which is registered
+  // once — always reads the live value instead of a stale closure.
+  const currentRef = useRef(0)
+  useEffect(() => { currentRef.current = current }, [current])
+
+  useEffect(() => {
+    if (!weekData) return
+    const ch = createDeckChannel(week)
+    if (!ch) return
+    channelRef.current = ch
+
+    ch.onmessage = (e) => {
+      const msg = e.data
+      // The notes window just opened and wants to know where we are.
+      if (msg?.type === 'request') {
+        ch.postMessage({ type: 'slide', index: currentRef.current, total: TOTAL })
+      }
+      // The presenter advanced from the notes window.
+      if (msg?.type === 'goto' && Number.isInteger(msg.index)) {
+        const next = Math.max(0, Math.min(TOTAL - 1, msg.index))
+        setDirection(next >= currentRef.current ? 1 : -1)
+        setCurrent(next)
+      }
+    }
+
+    return () => {
+      ch.close()
+      channelRef.current = null
+    }
+  }, [week, TOTAL, weekData])
+
+  // Broadcast our position whenever it changes.
+  useEffect(() => {
+    channelRef.current?.postMessage({ type: 'slide', index: current, total: TOTAL })
+  }, [current, TOTAL])
 
   if (!weekData) {
     return (
@@ -95,9 +136,26 @@ export default function SlideViewer() {
       </div>
 
       {isAdmin && (
-        <span className="fixed top-[30px] right-10 z-[1001] bg-[#c4aaff]/20 border border-[#c4aaff]/30 text-[#c4aaff] text-xs font-semibold px-2.5 py-1 rounded-full backdrop-blur-md">
-          Admin
-        </span>
+        <div className="fixed top-[30px] right-10 z-[1001] flex items-center gap-2.5">
+          {/* Opens the week's notes in a second window — sized for a laptop screen
+              while the deck itself is on the shared display. */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              window.open(
+                `${import.meta.env.BASE_URL}week/${week}/notes`,
+                `notes-week-${week}`,
+                'width=900,height=1000,noopener',
+              )
+            }}
+            className="bg-[#2d2d7a]/85 border-2 border-white/30 text-white/90 text-xs font-medium px-3 py-1.5 rounded-lg backdrop-blur-md transition-colors hover:bg-[#1e1e5a]/95 hover:border-[#f5a623]"
+          >
+            Notes ↗
+          </button>
+          <span className="bg-[#c4aaff]/20 border border-[#c4aaff]/30 text-[#c4aaff] text-xs font-semibold px-2.5 py-1 rounded-full backdrop-blur-md">
+            Admin
+          </span>
+        </div>
       )}
 
       {/* Bottom nav — floating overlay, matches original deck chrome */}

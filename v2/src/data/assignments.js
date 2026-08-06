@@ -17,7 +17,7 @@ const assignments = {
     deliverables: [
       {
         title: 'Terraform code',
-        desc: 'A working Terraform project (main.tf, variables.tf, outputs.tf) committed to your GitHub repo.',
+        desc: 'A working Terraform project (main.tf, variables.tf, outputs.tf) placed in your homework directory.',
       },
       {
         title: 'terraform plan output',
@@ -84,7 +84,7 @@ const assignments = {
     deliverables: [
       {
         title: 'Updated Terraform code',
-        desc: 'The Week 4 Terraform project updated with security hardening and ASG, committed to GitHub.',
+        desc: 'The Week 4 Terraform project updated with security hardening and ASG, placed in the homework directory. Use a different directory (week-5) for this one. ',
       },
       {
         title: 'Auto Scaling Group screenshot',

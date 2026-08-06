@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import Navbar from './components/Navbar'
 import Home from './pages/Home'
 import SlideViewer from './pages/SlideViewer'
+import PresenterNotes from './pages/PresenterNotes'
 import LabPage from './pages/LabPage'
 import AssignmentPage from './pages/AssignmentPage'
 import DemoPage from './pages/DemoPage'
@@ -63,6 +64,8 @@ export default function App() {
       <Routes>
         {/* Full-screen pages — no navbar */}
         <Route path="/week/:weekNum" element={<SlideViewer />} />
+        {/* Presenter notes for the whole week — meant for a second window/screen */}
+        <Route path="/week/:weekNum/notes" element={<PresenterNotes />} />
 
         {/* Live quiz — reachable by URL/QR only, never linked from site nav (spec §4) */}
         <Route path="/quiz" element={<QuizJoin />} />
