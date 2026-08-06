@@ -366,7 +366,7 @@ resource "aws_autoscaling_policy" "cpu" {
     },
     {
       type: 'slide-content',
-      note: 'Set expectations clearly: this builds directly on their Week 4 code — they are editing that project, not starting a new one. Flag the two things that catch people out: the ASG needs a second AZ so their Week 4 VPC has to grow a subnet, and backup vaults refuse to delete while they hold recovery points, so cleanup takes an extra step. End on destroy.',
+      note: 'Set expectations clearly: this builds directly on their Week 4 code, but it goes in a fresh week-5 directory — they copy Week 4 forward and edit the copy, so last week\'s working project stays intact. Flag the two things that catch people out: the ASG needs a second AZ so their Week 4 VPC has to grow a subnet, and backup vaults refuse to delete while they hold recovery points, so cleanup takes an extra step. End on destroy.',
       content: {
         title: 'Your Assignment This Week',
         subtitle: 'Security & Resilience Hardening — about 2 hours',
@@ -384,7 +384,7 @@ resource "aws_autoscaling_policy" "cpu" {
           {
             heading: 'What you hand in',
             items: [
-              'Your updated Terraform project in GitHub — the Week 4 repo, moved forward',
+              'Your updated Terraform project in a separate week-5 homework directory — your Week 4 code, moved forward',
               'Console screenshots of the ASG with a running instance, and of the Backup plan',
               'A half-page reflection: what changed, what risk each change removes, what you would add next',
             ],

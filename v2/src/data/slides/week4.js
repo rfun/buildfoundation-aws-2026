@@ -275,7 +275,7 @@ output "table_arn" {
           {
             heading: 'What you hand in',
             items: [
-              'Your Terraform code (main.tf, variables.tf, outputs.tf) in your GitHub repo',
+              'Your Terraform code (main.tf, variables.tf, outputs.tf) in your homework directory',
               'A screenshot of a clean terraform plan',
               'Console screenshots proving the VPC, EC2, EBS volume and bucket exist'              
             ],
