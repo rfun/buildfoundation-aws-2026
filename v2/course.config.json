@@ -4,7 +4,7 @@
     { "id": 2, "enabled": true },
     { "id": 3, "enabled": true },
     { "id": 4, "enabled": true },
-    { "id": 5, "enabled": false },
+    { "id": 5, "enabled": true },
     { "id": 6, "enabled": false },
     { "id": 7, "enabled": false },
     { "id": 8, "enabled": false }
@@ -24,7 +24,7 @@
     "enabled": true,
     "items": [
       { "week": 4, "enabled": true },
-      { "week": 5, "enabled": false }
+      { "week": 5, "enabled": true }
     ]
   }
 }
