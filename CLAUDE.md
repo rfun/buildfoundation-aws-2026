@@ -18,6 +18,10 @@ React + Vite + Tailwind + react-router SPA. Source lives in `v2/`.
 cd v2 && npm install && npm run dev     # local dev at http://localhost:5173/
 ```
 
+
+
+
+
 Key facts:
 - **Routing** (`v2/src/App.jsx`) uses `<BrowserRouter basename={import.meta.env.BASE_URL}>`. All internal navigation must be base-aware — use react-router `<Link to="/...">` (or `motion.create(Link)` for animated cards), **never** a raw `<a href="/...">` (that drops the base path and 404s on GitHub Pages).
 - **Content toggles** live in `v2/course.config.json` (which weeks / labs / assignments are enabled). Read via `v2/src/courseConfig.js`.
