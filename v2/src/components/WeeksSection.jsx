@@ -3,6 +3,7 @@ import { useInView } from 'framer-motion'
 import { useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { enabledWeekIds } from '../courseConfig'
+import { projectFile, projectFileUrl } from '../data/projectFile.js'
 
 const MotionLink = motion.create(Link)
 
@@ -40,8 +41,8 @@ const allWeeks = [
   {
     num: 6,
     title: 'Cloud Migration Project',
-    desc: 'Introduction to the final project scenario: develop a migration strategy for moving a web architecture from On-Prem to AWS using the 6 Rs framework.',
-    topics: ['The 6 Rs', 'Migration Strategy', 'Architecture Diagrams', 'Cost Estimation'],
+    desc: 'Architecture diagramming with Cloudcraft, subnet and CIDR planning, right-sizing EC2 and RDS — then the final project brief: migrate a three-tier web architecture from on-prem to AWS.',
+    topics: ['Diagramming', 'Subnetting', 'Right-Sizing', 'Final Project'],
   },
   {
     num: 7,
@@ -147,6 +148,37 @@ export default function WeeksSection() {
             <WeekCard key={week.num} week={week} index={i} />
           ))}
         </div>
+
+        {/* Project deck download — appears once the project week is live */}
+        {enabledWeekIds.has(projectFile.week) && (
+          <motion.a
+            href={projectFileUrl()}
+            download
+            initial={{ opacity: 0, y: 20 }}
+            animate={titleInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="group mt-6 flex flex-wrap items-center justify-between gap-5 rounded-2xl border border-[#c4aaff]/25 bg-white/5 px-8 py-6 no-underline backdrop-blur-sm transition-colors hover:border-[#f5a623]/60 hover:bg-white/10"
+          >
+            <div>
+              <p className="mb-1.5 text-xs font-medium uppercase tracking-[0.25em] text-[#c4aaff]/60">
+                Final Project
+              </p>
+              <h3
+                className="text-xl font-bold text-white"
+                style={{ fontFamily: 'Playfair Display, serif' }}
+              >
+                {projectFile.label}
+              </h3>
+              <p className="mt-1.5 max-w-xl text-sm leading-relaxed text-white/45">
+                {projectFile.description} Download it and work in your own copy.
+              </p>
+            </div>
+            <span className="inline-flex flex-shrink-0 items-center gap-2 rounded-lg border-2 border-white/30 bg-[#2d2d7a]/70 px-6 py-3 text-sm font-medium text-white/90 transition-colors group-hover:border-[#f5a623] group-hover:bg-[#1e1e5a]/90">
+              ↓ Download .pptx
+              <span className="text-white/40">({projectFile.size})</span>
+            </span>
+          </motion.a>
+        )}
       </div>
     </section>
   )

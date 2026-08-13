@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import slidesData from '../data/slides/index.js'
 import SlideRenderer from '../components/SlideRenderer.jsx'
 import { createDeckChannel } from '../deckSync.js'
+import { projectFile, projectFileUrl } from '../data/projectFile.js'
 
 export default function SlideViewer() {
   const { weekNum } = useParams()
@@ -126,13 +127,25 @@ export default function SlideViewer() {
       </div>
 
       {/* Back to home — floating pill, top-left */}
-      <div className="fixed top-[30px] left-10 z-[1001]">
+      <div className="fixed top-[30px] left-10 z-[1001] flex items-center gap-2.5">
         <Link
           to="/"
           className="inline-flex items-center gap-1.5 text-white/90 text-sm font-medium bg-[#2d2d7a]/85 border-2 border-white/30 rounded-lg px-5 py-2.5 backdrop-blur-md transition-colors hover:bg-[#1e1e5a]/95 hover:border-[#f5a623]"
         >
           ← Back to Home
         </Link>
+        {/* Project deck download — only on the week that hands out the project */}
+        {week === projectFile.week && (
+          <a
+            href={projectFileUrl()}
+            download
+            onClick={(e) => e.stopPropagation()}
+            title={`${projectFile.description} (${projectFile.size})`}
+            className="inline-flex items-center gap-1.5 text-white/90 text-sm font-medium bg-[#2d2d7a]/85 border-2 border-white/30 rounded-lg px-5 py-2.5 backdrop-blur-md no-underline transition-colors hover:bg-[#1e1e5a]/95 hover:border-[#f5a623]"
+          >
+            ↓ {projectFile.label}
+          </a>
+        )}
       </div>
 
       {isAdmin && (
