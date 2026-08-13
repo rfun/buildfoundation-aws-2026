@@ -37,6 +37,14 @@ function SectionEyebrow({ children, light = false, large = false }) {
   )
 }
 
+// Reading links are usually external, but some point at files we ship with the
+// build (the project deck). Relative URLs get the base path so they survive the
+// /buildfoundation-aws-2026/ subpath on GitHub Pages instead of resolving
+// against the current route.
+function linkHref(url) {
+  return /^[a-z]+:|^\/\//i.test(url) ? url : `${import.meta.env.BASE_URL}${url}`
+}
+
 function ReadingLinks({ links, compact = false }) {
   if (!links?.length) return null
   return (
@@ -44,7 +52,7 @@ function ReadingLinks({ links, compact = false }) {
       {links.map((link, i) => (
         <a
           key={i}
-          href={link.url}
+          href={linkHref(link.url)}
           target="_blank"
           rel="noopener noreferrer"
           className={`flex items-center gap-4 rounded-lg border-l-4 border-[#7c4dff] bg-[#f5f3ff] hover:bg-[#ece7ff] transition-colors no-underline ${
@@ -134,7 +142,7 @@ function SlideSectionDark({ content }) {
           {content.readingLinks.map((link, i) => (
             <a
               key={i}
-              href={link.url}
+              href={linkHref(link.url)}
               target="_blank"
               rel="noopener noreferrer"
               className="text-[#c4aaff]/80 text-xl hover:text-[#c4aaff] block"

@@ -39,9 +39,22 @@ Then sync the build to the repo root and refresh the SPA fallback:
 
 ```bash
 # from repo root
-rm -rf assets index.html 404.html icons.svg favicon.svg slides
-cp -R v2/dist/index.html v2/dist/icons.svg v2/dist/favicon.svg v2/dist/assets v2/dist/slides .
-cp v2/dist/index.html 404.html   # site-root 404.html = SPA deep-link/refresh fallback
+rm -rf assets index.html 404.html icons.svg favicon.svg
+cp -R v2/dist/index.html v2/dist/icons.svg v2/dist/favicon.svg v2/dist/assets .
+cp -R v2/dist/slides/. slides/    # merge, don't replace — see the warning below
+cp v2/dist/index.html 404.html    # site-root 404.html = SPA deep-link/refresh fallback
+```
+
+**Do not `rm -rf slides`.** It holds one file that is *not* build output:
+`slides/FinalProject.pptx`, the final-project deck students download. It is
+served from the site root and deliberately kept out of `v2/public/` (a 21 MB
+binary there would be duplicated into every build). Copy the week image
+directories *into* `slides/` with `cp -R v2/dist/slides/.` rather than
+replacing the directory, or the download 404s. After syncing, check it
+survived:
+
+```bash
+ls -la slides/FinalProject.pptx
 ```
 
 `404.html` **must** be a copy of `index.html` at the repo root — GitHub Pages serves the *site-root* 404 page for any missing path, which is how deep links (`/week/1`, `/setup`, …) and page refreshes survive. `.nojekyll` at the root keeps Jekyll from touching the build output.

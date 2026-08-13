@@ -433,6 +433,9 @@ export default {
           },
         ],
         callout: 'Download the project deck and make your own copy to work in.',
+        readingLinks: [
+          { icon: '📦', label: 'Download the project deck (.pptx)', url: 'slides/FinalProject.pptx' },
+        ],
       },
     },
     {
